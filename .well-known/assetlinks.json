@@ -1,8 +1,1 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "io.github.ekaanttaparia2_code.twa",
-        "sha256_cert_fingerprints": ["B1:6C:BC:AA:F3:32:B8:49:0B:07:28:FF:6F:CA:97:2A:9F:74:99:43:EF:89:0B:94:E5:E9:48:2B:27:32:5C:A2"]
-      }
-    }]
+
