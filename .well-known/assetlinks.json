@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "io.github.ekaanttaparia2_code.twa",
-        "sha256_cert_fingerprints": ["95:7B:02:AB:5C:09:0C:93:FF:9D:2E:3B:F9:88:62:F0:17:BF:6A:2E:3A:46:59:56:05:52:7E:3F:83:91:59:76"]
+        "sha256_cert_fingerprints": ["B1:6C:BC:AA:F3:32:B8:49:0B:07:28:FF:6F:CA:97:2A:9F:74:99:43:EF:89:0B:94:E5:E9:48:2B:27:32:5C:A2"]
       }
     }]
