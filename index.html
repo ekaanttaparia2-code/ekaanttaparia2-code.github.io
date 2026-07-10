@@ -259,9 +259,9 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       </div>
     </div>
     <label>Email</label>
-    <input type="email" id="auth-email" placeholder="you@example.com"/>
+    <input type="email" id="auth-email" placeholder="you@example.com" data-i18n-ph="ph_email"/>
     <label>Password</label>
-    <input type="password" id="auth-pass" placeholder="At least 6 characters"/>
+    <input type="password" id="auth-pass" placeholder="At least 6 characters" data-i18n-ph="ph_pass"/>
     <p id="auth-error" style="color:var(--red);font-size:12.5px;display:none;margin:6px 0 0"></p>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn primary" style="flex:1" onclick="authAction('login')"><i class="ti ti-login"></i> Log in</button>
@@ -315,15 +315,15 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div>
           <label data-i18n="lbl_source">Source</label>
           <select id="inc-src">
-            <option value="Salary">Salary</option>
-            <option value="Business income">Business income</option>
-            <option value="Pension">Pension</option>
-            <option value="Rent received">Rent received</option>
-            <option value="Investment/Interest">Investment/Interest</option>
-            <option value="Allowance">Allowance</option>
-            <option value="Gift">Gift</option>
-            <option value="Freelance/Side income">Freelance/Side income</option>
-            <option value="Other">Other</option>
+            <option value="Salary" data-hi="वेतन">Salary</option>
+            <option value="Business income" data-hi="व्यवसाय आय">Business income</option>
+            <option value="Pension" data-hi="पेंशन">Pension</option>
+            <option value="Rent received" data-hi="किराया प्राप्त">Rent received</option>
+            <option value="Investment/Interest" data-hi="निवेश/ब्याज">Investment/Interest</option>
+            <option value="Allowance" data-hi="भत्ता">Allowance</option>
+            <option value="Gift" data-hi="उपहार">Gift</option>
+            <option value="Freelance/Side income" data-hi="फ्रीलांस/अतिरिक्त आय">Freelance/Side income</option>
+            <option value="Other" data-hi="अन्य">Other</option>
           </select>
         </div>
         <div>
@@ -336,7 +336,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         </div>
       </div>
       <label data-i18n="lbl_note">Note (optional)</label>
-      <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60"/>
+      <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60" data-i18n-ph="ph_inc_note"/>
       <div class="btn-row">
         <button class="btn primary" onclick="addIncome()"><i class="ti ti-plus"></i> <span id="inc-btn-label" data-i18n="btn_add_income">Add income</span></button>
       </div>
@@ -348,11 +348,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div>
           <label data-i18n="lbl_category">Category</label>
           <select id="exp-cat">
-            <option value="food">Food & snacks</option>
-            <option value="travel">Travel</option>
-            <option value="friends">Friends plan</option>
-            <option value="home">Home goods</option>
-            <option value="other">Other</option>
+            <option value="food" data-hi="खाना और नाश्ता">Food & snacks</option>
+            <option value="travel" data-hi="यात्रा">Travel</option>
+            <option value="friends" data-hi="दोस्तों का प्लान">Friends plan</option>
+            <option value="home" data-hi="घरेलू सामान">Home goods</option>
+            <option value="other" data-hi="अन्य">Other</option>
           </select>
         </div>
         <div>
@@ -365,7 +365,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         </div>
       </div>
       <label data-i18n="lbl_desc">Description</label>
-      <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60"/>
+      <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60" data-i18n-ph="ph_exp_desc"/>
       <div class="btn-row">
         <button class="btn primary" onclick="addExpense()"><i class="ti ti-plus"></i> <span id="exp-btn-label">Add expense</span></button>
         <button class="btn" id="cancel-edit-btn" style="display:none" onclick="cancelEdit()"><i class="ti ti-x"></i> Cancel edit</button>
@@ -385,45 +385,45 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="filter-bar" style="margin-top:-6px">
         <span style="font-size:12.5px;color:var(--text-dim)">Sort</span>
         <select id="entry-sort" onchange="renderEntries()" style="width:auto;padding:8px 10px">
-          <option value="date-desc">Newest day first</option>
-          <option value="date-asc">Oldest day first</option>
-          <option value="amt-desc">Amount: high to low</option>
-          <option value="amt-asc">Amount: low to high</option>
+          <option value="date-desc" data-hi="नई तारीख पहले">Newest day first</option>
+          <option value="date-asc" data-hi="पुरानी तारीख पहले">Oldest day first</option>
+          <option value="amt-desc" data-hi="राशि: ज्यादा से कम">Amount: high to low</option>
+          <option value="amt-asc" data-hi="राशि: कम से ज्यादा">Amount: low to high</option>
         </select>
       </div>
       <p class="sec-title" style="margin-bottom:8px"><i class="ti ti-list"></i><span data-i18n="sec_entries">Entries</span></p>
-      <div id="entries-list"><p class="empty">No entries yet — log something!</p></div>
+      <div id="entries-list"><p class="empty" data-i18n="msg_no_entries">No entries yet — log something!</p></div>
     </div>
   </div>
 
   <div id="tab-report" style="display:none">
     <div class="card">
       <div class="filter-bar" style="margin-bottom:0">
-        <span style="font-size:12.5px;color:var(--text-dim)">Period</span>
+        <span style="font-size:12.5px;color:var(--text-dim)" data-i18n="lbl_period">Period</span>
         <div class="toggle-grp" id="period-toggle">
-          <button class="active" onclick="setPeriod('week')">This week</button>
-          <button onclick="setPeriod('all')">All time</button>
-          <button onclick="setPeriod('custom')">Custom</button>
+          <button class="active" onclick="setPeriod('week')" data-i18n="period_week">This week</button>
+          <button onclick="setPeriod('all')" data-i18n="period_all">All time</button>
+          <button onclick="setPeriod('custom')" data-i18n="period_custom">Custom</button>
         </div>
         <input type="date" id="rep-from" style="display:none" onchange="renderReport()"/>
-        <span id="rep-to-label" style="display:none;font-size:12.5px;color:var(--text-dim)">To</span>
+        <span id="rep-to-label" style="display:none;font-size:12.5px;color:var(--text-dim)" data-i18n="lbl_to">To</span>
         <input type="date" id="rep-to" style="display:none" onchange="renderReport()"/>
       </div>
     </div>
 
     <div class="grid4">
-      <div class="metric"><div class="metric-label">Total income</div><div class="metric-val green" id="r-income">₹0</div></div>
-      <div class="metric"><div class="metric-label">Total spent</div><div class="metric-val red" id="r-spent">₹0</div></div>
-      <div class="metric"><div class="metric-label">Balance left</div><div class="metric-val amber" id="r-balance">₹0</div></div>
-      <div class="metric"><div class="metric-label">Entries</div><div class="metric-val" id="r-count">0</div></div>
+      <div class="metric"><div class="metric-label" data-i18n="metric_total_income">Total income</div><div class="metric-val green" id="r-income">₹0</div></div>
+      <div class="metric"><div class="metric-label" data-i18n="metric_total_spent">Total spent</div><div class="metric-val red" id="r-spent">₹0</div></div>
+      <div class="metric"><div class="metric-label" data-i18n="metric_balance_left">Balance left</div><div class="metric-val amber" id="r-balance">₹0</div></div>
+      <div class="metric"><div class="metric-label" data-i18n="metric_entries">Entries</div><div class="metric-val" id="r-count">0</div></div>
     </div>
 
     <div class="card">
       <p class="sec-title"><i class="ti ti-target-arrow"></i><span data-i18n="sec_budget">Weekly budget</span></p>
       <div class="grid3" style="align-items:end">
         <div>
-          <label>Set weekly budget (₹)</label>
-          <input type="number" id="budget-input" placeholder="e.g. 1000" min="0" max="10000000" step="1"/>
+          <label data-i18n="lbl_set_budget">Set weekly budget (₹)</label>
+          <input type="number" id="budget-input" placeholder="e.g. 1000" min="0" max="10000000" step="1" data-i18n-ph="ph_budget"/>
         </div>
         <div>
           <button class="btn primary" onclick="saveBudget()" style="width:100%"><i class="ti ti-check"></i> <span data-i18n="btn_save_budget">Save budget</span></button>
@@ -481,17 +481,17 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <div>
             <label>Event type</label>
             <select id="new-event-type">
-              <option value="Birthday">🎂 Birthday</option>
-              <option value="Wedding">💍 Wedding</option>
-              <option value="Trip">✈️ Trip</option>
-              <option value="Festival">🎆 Festival</option>
-              <option value="Party">🎉 Party</option>
+              <option value="Birthday" data-hi="🎂 जन्मदिन">🎂 Birthday</option>
+              <option value="Wedding" data-hi="💍 शादी">💍 Wedding</option>
+              <option value="Trip" data-hi="✈️ यात्रा">✈️ Trip</option>
+              <option value="Festival" data-hi="🎆 त्योहार">🎆 Festival</option>
+              <option value="Party" data-hi="🎉 पार्टी">🎉 Party</option>
               <option value="Other">📌 Other</option>
             </select>
           </div>
           <div style="grid-column:span 2">
             <label>Event name</label>
-            <input type="text" id="new-event-name" placeholder="e.g. Riya's Birthday Bash" maxlength="40"/>
+            <input type="text" id="new-event-name" placeholder="e.g. Riya's Birthday Bash" maxlength="40" data-i18n-ph="ph_event_name"/>
           </div>
         </div>
         <div class="grid3">
@@ -505,7 +505,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           </div>
         </div>
         <label data-i18n="lbl_desc_opt">Description (optional)</label>
-        <input type="text" id="new-event-desc" placeholder="e.g. Turning 16, small get-together at home" maxlength="100"/>
+        <input type="text" id="new-event-desc" placeholder="e.g. Turning 16, small get-together at home" maxlength="100" data-i18n-ph="ph_event_desc"/>
         <div class="btn-row">
           <button class="btn primary" id="event-form-submit-btn" onclick="createNewEvent()"><i class="ti ti-check"></i> Create event</button>
           <button class="btn" onclick="toggleAddEventForm()">Cancel</button>
@@ -537,9 +537,9 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <div>
             <label data-i18n="lbl_source">Source</label>
             <select id="ev-inc-src">
-              <option value="Cash gift">Cash gift</option>
-              <option value="Contribution">Contribution</option>
-              <option value="Other">Other</option>
+              <option value="Cash gift" data-hi="नकद उपहार">Cash gift</option>
+              <option value="Contribution" data-hi="योगदान">Contribution</option>
+              <option value="Other" data-hi="अन्य">Other</option>
             </select>
           </div>
           <div>
@@ -552,7 +552,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           </div>
         </div>
         <label data-i18n="lbl_note">Note (optional)</label>
-        <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60"/>
+        <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60" data-i18n-ph="ph_ev_inc_note"/>
         <div class="btn-row">
           <button class="btn primary" onclick="addEventIncome()"><i class="ti ti-plus"></i> <span id="ev-inc-submit-btn">Add income</span></button>
         </div>
@@ -564,11 +564,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <div>
             <label data-i18n="lbl_category">Category</label>
             <select id="ev-exp-cat">
-              <option value="food">Food & catering</option>
+              <option value="food" data-hi="खाना और खानपान">Food & catering</option>
               <option value="travel">Travel</option>
-              <option value="friends">Decor / friends</option>
-              <option value="home">Venue / home</option>
-              <option value="other">Other</option>
+              <option value="friends" data-hi="सजावट/दोस्त">Decor / friends</option>
+              <option value="home" data-hi="स्थान/घर">Venue / home</option>
+              <option value="other" data-hi="अन्य">Other</option>
             </select>
           </div>
           <div>
@@ -581,7 +581,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           </div>
         </div>
         <label data-i18n="lbl_desc">Description</label>
-        <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60"/>
+        <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60" data-i18n-ph="ph_ev_exp_desc"/>
         <div class="btn-row">
           <button class="btn primary" onclick="addEventExpense()"><i class="ti ti-plus"></i> <span id="ev-exp-submit-btn">Add expense</span></button>
         </div>
@@ -614,6 +614,16 @@ const TRANSLATIONS = {
   sec_add_income:{en:'Add income',hi:'आय जोड़ें'},
   sec_add_expense:{en:'Add expense',hi:'खर्च जोड़ें'},
   sec_budget:{en:'Weekly budget',hi:'साप्ताहिक बजट'},
+  lbl_set_budget:{en:'Set weekly budget (₹)',hi:'साप्ताहिक बजट सेट करें (₹)'},
+  lbl_period:{en:'Period',hi:'अवधि'},
+  lbl_to:{en:'To',hi:'तक'},
+  period_week:{en:'This week',hi:'इस सप्ताह'},
+  period_all:{en:'All time',hi:'सभी समय'},
+  period_custom:{en:'Custom',hi:'कस्टम'},
+  metric_total_income:{en:'Total income',hi:'कुल आय'},
+  metric_total_spent:{en:'Total spent',hi:'कुल खर्च'},
+  metric_balance_left:{en:'Balance left',hi:'बचा हुआ बैलेंस'},
+  metric_entries:{en:'Entries',hi:'एंट्रीज़'},
   sec_cat:{en:'Spending by category',hi:'श्रेणी अनुसार खर्च'},
   sec_full:{en:'Full breakdown',hi:'पूरा विवरण'},
   btn_add_income:{en:'Add income',hi:'आय जोड़ें'},
@@ -645,8 +655,21 @@ const TRANSLATIONS = {
   menu_title:{en:'Menu',hi:'मेन्यू'},
   lbl_from:{en:'From',hi:'से'},
   lbl_till:{en:'Till',hi:'तक'},
+  msg_no_entries:{en:'No entries yet — log something!',hi:'अभी तक कोई एंट्री नहीं — कुछ लॉग करें!'},
 };
 let currentLang = localStorage.getItem('pocketTrackLang') || 'en';
+
+const PLACEHOLDER_TRANSLATIONS = {
+  ph_email:{en:'you@example.com',hi:'you@example.com'},
+  ph_pass:{en:'At least 6 characters',hi:'कम से कम 6 अक्षर'},
+  ph_inc_note:{en:'e.g. Monthly allowance',hi:'जैसे मासिक भत्ता'},
+  ph_exp_desc:{en:'e.g. Samosa at school, Auto to market...',hi:'जैसे स्कूल में समोसा, बाज़ार का ऑटो...'},
+  ph_budget:{en:'e.g. 1000',hi:'जैसे 1000'},
+  ph_event_name:{en:"e.g. Riya's Birthday Bash",hi:'जैसे रिया का जन्मदिन'},
+  ph_event_desc:{en:'e.g. Turning 16, small get-together at home',hi:'जैसे 16 साल का जन्मदिन, घर पर छोटी सी पार्टी'},
+  ph_ev_inc_note:{en:'e.g. From Grandma',hi:'जैसे दादी की तरफ से'},
+  ph_ev_exp_desc:{en:'e.g. Cake order, Decorations...',hi:'जैसे केक ऑर्डर, सजावट...'},
+};
 
 function applyLanguage(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
@@ -654,7 +677,22 @@ function applyLanguage(){
     const entry = TRANSLATIONS[key];
     if(entry) el.textContent = entry[currentLang] || entry.en;
   });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    const key = el.getAttribute('data-i18n-ph');
+    const entry = PLACEHOLDER_TRANSLATIONS[key];
+    if(entry) el.placeholder = entry[currentLang] || entry.en;
+  });
+  document.querySelectorAll('option[data-hi]').forEach(opt=>{
+    if(!opt.dataset.enText) opt.dataset.enText = opt.textContent; // cache original English on first run
+    opt.textContent = currentLang==='hi' ? opt.getAttribute('data-hi') : opt.dataset.enText;
+  });
   document.getElementById('lang-toggle-label').textContent = currentLang==='en' ? 'हिंदी' : 'English';
+  // re-render dynamic sections so their generated text (category names, empty states) updates too
+  if(document.getElementById('tab-entries').style.display!=='none') renderEntries();
+  if(document.getElementById('tab-report').style.display!=='none') renderReport();
+  if(currentEventId) renderEventDetail();
+  else if(document.getElementById('tab-events').style.display!=='none') renderEventsList();
+  checkBudget();
 }
 
 function toggleLanguage(){
@@ -680,7 +718,47 @@ const db = firebase.firestore();
 let currentUser = null;
 let unsubscribeEntries = null;
 
-const CAT_LABELS = {food:'Food & snacks',travel:'Travel',friends:'Friends plan',home:'Home goods',other:'Other',income:'Income'};
+const CAT_LABELS_BI = {
+  food:{en:'Food & snacks',hi:'खाना और नाश्ता'},
+  travel:{en:'Travel',hi:'यात्रा'},
+  friends:{en:'Friends plan',hi:'दोस्तों का प्लान'},
+  home:{en:'Home goods',hi:'घरेलू सामान'},
+  other:{en:'Other',hi:'अन्य'},
+  income:{en:'Income',hi:'आय'},
+};
+function CAT_LABEL(cat){ return (CAT_LABELS_BI[cat] && CAT_LABELS_BI[cat][currentLang]) || cat; }
+const CAT_LABELS = new Proxy({}, { get: (_, cat) => CAT_LABEL(cat) }); // backward-compatible drop-in
+
+const MSG = {
+  no_entries_log:{en:'No entries yet — log something!',hi:'अभी तक कोई एंट्री नहीं — कुछ लॉग करें!'},
+  no_events_yet:{en:'No events yet — tap "Add event" to create your first one',hi:'अभी तक कोई इवेंट नहीं — अपना पहला इवेंट बनाने के लिए "Add event" दबाएं'},
+  no_entries_event:{en:'No entries yet for this event',hi:'इस इवेंट में अभी तक कोई एंट्री नहीं'},
+  no_entries_range:{en:'No entries in this range',hi:'इस अवधि में कोई एंट्री नहीं'},
+  no_expenses:{en:'No expenses logged yet',hi:'अभी तक कोई खर्च दर्ज नहीं'},
+  nothing_period:{en:'Nothing in this period',hi:'इस अवधि में कुछ नहीं'},
+  income_added:{en:'Income added!',hi:'आय जोड़ी गई!'},
+  income_updated:{en:'Income updated!',hi:'आय अपडेट हुई!'},
+  expense_added:{en:'Expense added!',hi:'खर्च जोड़ा गया!'},
+  expense_updated:{en:'Expense updated!',hi:'खर्च अपडेट हुआ!'},
+  entry_deleted:{en:'Entry deleted',hi:'एंट्री हटाई गई'},
+  event_created:{en:'Event created!',hi:'इवेंट बनाया गया!'},
+  event_updated:{en:'Event updated!',hi:'इवेंट अपडेट हुआ!'},
+  event_deleted:{en:'Event deleted',hi:'इवेंट हटाया गया'},
+  income_added_event:{en:'Income added to event!',hi:'इवेंट में आय जोड़ी गई!'},
+  expense_added_event:{en:'Expense added to event!',hi:'इवेंट में खर्च जोड़ा गया!'},
+  budget_saved:{en:'Budget saved!',hi:'बजट सेव हुआ!'},
+  notifs_enabled:{en:'Notifications enabled!',hi:'सूचनाएं चालू हुईं!'},
+  editing_entry:{en:'Editing entry — make changes and save',hi:'एंट्री एडिट हो रही है — बदलाव करें और सेव करें'},
+  give_event_name:{en:'Give your event a name',hi:'अपने इवेंट को एक नाम दें'},
+  enter_valid_amount:{en:'Enter a valid amount between ₹0.01 and ₹1,00,00,000',hi:'₹0.01 से ₹1,00,00,000 के बीच सही राशि डालें'},
+  enter_valid_date:{en:'Enter a valid date',hi:'सही तारीख डालें'},
+  add_description:{en:'Add a description',hi:'विवरण जोड़ें'},
+  all_cleared:{en:'All entries cleared',hi:'सभी एंट्रीज़ हटा दी गईं'},
+  report_copied:{en:'Report copied to clipboard!',hi:'रिपोर्ट क्लिपबोर्ड में कॉपी हुई!'},
+  not_logged_in:{en:'Not logged in',hi:'लॉग इन नहीं है'},
+};
+function TT(key){ return (MSG[key] && MSG[key][currentLang]) || (MSG[key] && MSG[key].en) || key; }
+
 const CAT_COLORS = {food:'#4ade80',travel:'#60a5fa',friends:'#ffb84d',home:'#ff7eb3',other:'#9b95c2'};
 let entries = [];
 let period = 'week';
@@ -758,7 +836,7 @@ function authAction(mode){
   const errEl=document.getElementById('auth-error');
   errEl.style.display='none';
   if(!email||!pass||pass.length<6){
-    errEl.textContent='Enter a valid email and a password with 6+ characters.';
+    errEl.textContent = currentLang==='hi' ? 'सही ईमेल और कम से कम 6 अक्षरों का पासवर्ड डालें।' : 'Enter a valid email and a password with 6+ characters.';
     errEl.style.display='block';
     return;
   }
@@ -811,13 +889,13 @@ async function loadBudget(){
 }
 
 async function saveBudget(){
-  if(!currentUser){toast('Not logged in','error');return;}
+  if(!currentUser){toast(TT('not_logged_in'),'error');return;}
   const val=parseFloat(document.getElementById('budget-input').value);
   if(!isFinite(val)||val<0){toast('Enter a valid budget amount','error');return;}
   try{
     await db.collection('users').doc(currentUser.uid).set({weeklyBudget:val},{merge:true});
     weeklyBudget=val;
-    toast('Budget saved!','success');
+    toast(TT('budget_saved'),'success');
     checkBudget();
   }catch(e){toast('Could not save budget: '+e.message,'error');}
 }
@@ -855,17 +933,19 @@ function checkBudget(){
   const spent=getThisWeekEntries().filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
   const pct=Math.min(Math.round(spent/weeklyBudget*100),100);
   const over=spent>weeklyBudget;
+  const spentOfText = currentLang==='hi' ? `₹${spent} खर्च हुआ ₹${weeklyBudget} में से (इस सप्ताह)` : `₹${spent} spent of ₹${weeklyBudget} this week`;
+  const overText = currentLang==='hi' ? "आपने अपना साप्ताहिक बजट पार कर लिया है!" : "You've exceeded your weekly budget!";
   statusEl.innerHTML=`
     <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-dim);margin-bottom:4px">
-      <span>₹${spent} spent of ₹${weeklyBudget} this week</span>
+      <span>${spentOfText}</span>
       <span style="color:${over?'var(--red)':'var(--text-dim)'}">${pct}%</span>
     </div>
     <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${over?'var(--red)':'#4ade80'}"></div></div>
-    ${over?"<p style=\"color:var(--red);font-size:12.5px;margin-top:6px\"><i class=\"ti ti-alert-triangle\"></i> You've exceeded your weekly budget!</p>":''}
+    ${over?`<p style="color:var(--red);font-size:12.5px;margin-top:6px"><i class="ti ti-alert-triangle"></i> ${overText}</p>`:''}
   `;
   if(over && !window._budgetAlertShown){
-    toast("⚠️ You've exceeded your weekly budget!",'error');
-    showLocalNotification('Budget alert', "You've exceeded your weekly budget!");
+    toast('⚠️ '+overText,'error');
+    showLocalNotification('Budget alert', overText);
     window._budgetAlertShown=true;
   }
   if(!over) window._budgetAlertShown=false;
@@ -878,7 +958,7 @@ function requestNotifPermission(){
   if(Notification.permission==='granted'){toast('Notifications already enabled!','success');return;}
   if(Notification.permission==='denied'){toast('Notifications blocked — enable them in your browser/app settings','error');return;}
   Notification.requestPermission().then(perm=>{
-    if(perm==='granted')toast('Notifications enabled!','success');
+    if(perm==='granted')toast(TT('notifs_enabled'),'success');
     else toast('Notifications not enabled','error');
   });
 }
@@ -939,12 +1019,12 @@ function refreshEventsViewsIfOpen(){
 
 
 async function saveEntry(entry){
-  if(!currentUser){toast('Not logged in','error');return;}
+  if(!currentUser){toast(TT('not_logged_in'),'error');return;}
   await db.collection('users').doc(currentUser.uid).collection('entries').add(entry);
 }
 
 async function updateEntry(id, entry){
-  if(!currentUser){toast('Not logged in','error');return;}
+  if(!currentUser){toast(TT('not_logged_in'),'error');return;}
   await db.collection('users').doc(currentUser.uid).collection('entries').doc(id).update(entry);
 }
 
@@ -1040,23 +1120,23 @@ function startEditEvent(id){
 }
 
 async function createNewEvent(){
-  if(!currentUser){toast('Not logged in','error');return;}
+  if(!currentUser){toast(TT('not_logged_in'),'error');return;}
   const type=document.getElementById('new-event-type').value;
   const name=document.getElementById('new-event-name').value.trim().slice(0,40);
   const desc=document.getElementById('new-event-desc').value.trim().slice(0,100);
   let fromDate=document.getElementById('new-event-from').value||todayStr();
   let tillDate=document.getElementById('new-event-till').value||fromDate;
   if(tillDate<fromDate){ const tmp=fromDate; fromDate=tillDate; tillDate=tmp; } // auto-swap if entered backwards
-  if(!name){toast('Give your event a name','error');return;}
+  if(!name){toast(TT('give_event_name'),'error');return;}
   try{
     if(editingEventId){
       await db.collection('users').doc(currentUser.uid).collection('events').doc(editingEventId).update({type, name, desc, fromDate, tillDate});
-      toast('Event updated!','success');
+      toast(TT('event_updated'),'success');
     } else {
       await db.collection('users').doc(currentUser.uid).collection('events').add({
         type, name, desc, fromDate, tillDate, createdAt: Date.now()
       });
-      toast('Event created!','success');
+      toast(TT('event_created'),'success');
     }
     editingEventId=null;
     toggleAddEventForm();
@@ -1073,7 +1153,7 @@ function eventStats(eventName){
 function renderEventsList(){
   const listEl=document.getElementById('events-list');
   if(!events.length){
-    listEl.innerHTML='<p class="empty" style="margin-top:12px">No events yet — tap "Add event" to create your first one</p>';
+    listEl.innerHTML=`<p class="empty" style="margin-top:12px">${TT('no_events_yet')}</p>`;
     return;
   }
   listEl.innerHTML = events.map(ev=>{
@@ -1144,7 +1224,7 @@ function renderEventDetail(){
         <button class="icon-btn" onclick="startEditEventEntry('${e._id}')" aria-label="edit">✏️</button>
         <button class="icon-btn" onclick="deleteEntry('${e._id}')" aria-label="delete">🗑️</button>
       </div>
-    </div>`).join('') : '<p class="empty">No entries yet for this event</p>';
+    </div>`).join('') : `<p class="empty">${TT('no_entries_event')}</p>`;
 }
 
 let editingEventEntryId=null;
@@ -1168,7 +1248,7 @@ function startEditEventEntry(id){
     document.getElementById('ev-exp-submit-btn').textContent='Update expense';
     document.getElementById('ev-exp-submit-btn').scrollIntoView({behavior:'smooth',block:'center'});
   }
-  toast('Editing entry — make changes and save','info');
+  toast(TT('editing_entry'),'info');
 }
 
 function resetEventEntryEditState(){
@@ -1183,17 +1263,17 @@ async function addEventIncome(){
   const amt=parseFloat(document.getElementById('ev-inc-amt').value);
   const note=document.getElementById('ev-inc-note').value.trim().slice(0,60);
   const date=document.getElementById('ev-inc-date').value||todayStr();
-  if(!isValidAmount(amt)){toast('Enter a valid amount','error');return;}
-  if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
+  if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'income',cat:'income',label:src,note,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
     if(editingEventEntryId){
       await updateEntry(editingEventEntryId, payload);
-      toast('Income updated!','success');
+      toast(TT('income_updated'),'success');
       resetEventEntryEditState();
     } else {
       await saveEntry(payload);
-      toast('Income added to event!','success');
+      toast(TT('income_added_event'),'success');
     }
     document.getElementById('ev-inc-amt').value='';
     document.getElementById('ev-inc-note').value='';
@@ -1206,18 +1286,18 @@ async function addEventExpense(){
   const amt=parseFloat(document.getElementById('ev-exp-amt').value);
   const desc=document.getElementById('ev-exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('ev-exp-date').value||todayStr();
-  if(!isValidAmount(amt)){toast('Enter a valid amount','error');return;}
-  if(!desc){toast('Add a description','error');return;}
-  if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
+  if(!desc){toast(TT('add_description'),'error');return;}
+  if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'expense',cat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
     if(editingEventEntryId){
       await updateEntry(editingEventEntryId, payload);
-      toast('Expense updated!','success');
+      toast(TT('expense_updated'),'success');
       resetEventEntryEditState();
     } else {
       await saveEntry(payload);
-      toast('Expense added to event!','success');
+      toast(TT('expense_added_event'),'success');
     }
     document.getElementById('ev-exp-amt').value='';
     document.getElementById('ev-exp-desc').value='';
@@ -1236,7 +1316,7 @@ async function deleteCurrentEvent(){
   showAppConfirm(`Delete "${currentEventName}"? This won't delete its logged entries, just the event card.`, async ()=>{
     try{
       await db.collection('users').doc(currentUser.uid).collection('events').doc(idToDelete).delete();
-      toast('Event deleted','success');
+      toast(TT('event_deleted'),'success');
       backToEventsList();
     }catch(e){toast('Could not delete: '+e.message,'error');}
   });
@@ -1247,17 +1327,17 @@ async function addIncome(){
   const amt=parseFloat(document.getElementById('inc-amt').value);
   const note=document.getElementById('inc-note').value.trim().slice(0,60);
   const date=document.getElementById('inc-date').value||todayStr();
-  if(!isValidAmount(amt)){toast('Enter a valid amount between ₹0.01 and ₹1,00,00,000','error');return;}
-  if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
+  if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'income',cat:'income',label:src,note,amt:Math.round(amt*100)/100,date};
   try{
     if(editingId){
       await updateEntry(editingId, payload);
-      toast('Income updated!','success');
+      toast(TT('income_updated'),'success');
       cancelEdit();
     } else {
       await saveEntry(payload);
-      toast('Income added!','success');
+      toast(TT('income_added'),'success');
     }
     document.getElementById('inc-amt').value='';
     document.getElementById('inc-note').value='';
@@ -1269,18 +1349,18 @@ async function addExpense(){
   const amt=parseFloat(document.getElementById('exp-amt').value);
   const desc=document.getElementById('exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('exp-date').value||todayStr();
-  if(!isValidAmount(amt)){toast('Enter a valid amount between ₹0.01 and ₹1,00,00,000','error');return;}
-  if(!desc){toast('Add a description','error');return;}
-  if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
+  if(!desc){toast(TT('add_description'),'error');return;}
+  if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'expense',cat,label:desc,amt:Math.round(amt*100)/100,date};
   try{
     if(editingId){
       await updateEntry(editingId, payload);
-      toast('Expense updated!','success');
+      toast(TT('expense_updated'),'success');
       cancelEdit();
     } else {
       await saveEntry(payload);
-      toast('Expense added!','success');
+      toast(TT('expense_added'),'success');
       checkBudget();
     }
     document.getElementById('exp-amt').value='';
@@ -1308,7 +1388,7 @@ function startEdit(id){
       document.getElementById('exp-btn-label').textContent='Update expense';
     document.getElementById('cancel-edit-btn').style.display='inline-flex';
   }
-  toast('Editing entry — make changes and save','info');
+  toast(TT('editing_entry'),'info');
 }
 
 function cancelEdit(){
@@ -1324,7 +1404,7 @@ function cancelEdit(){
 
 function deleteEntry(id){
   showAppConfirm('Delete this entry?', ()=>{
-    removeEntry(id).then(()=>toast('Entry deleted','success')).catch(e=>toast('Could not delete: '+e.message,'error'));
+    removeEntry(id).then(()=>toast(TT('entry_deleted'),'success')).catch(e=>toast('Could not delete: '+e.message,'error'));
   });
 }
 
@@ -1343,7 +1423,7 @@ function renderEntries(){
   if(from)list=list.filter(e=>e.date>=from);
   if(to)list=list.filter(e=>e.date<=to);
   const el=document.getElementById('entries-list');
-  if(!list.length){el.innerHTML='<p class="empty">No entries in this range</p>';return;}
+  if(!list.length){el.innerHTML=`<p class="empty">${TT('no_entries_range')}</p>`;return;}
 
   // Group entries by date to compute per-day balance
   const byDate={};
@@ -1432,10 +1512,10 @@ function renderReport(){
       <span style="font-size:13px;min-width:110px;color:var(--text-dim)">${CAT_LABELS[c]}</span>
       <div class="bar-track"><div class="bar-fill" style="width:${Math.round(a/maxCat*100)}%;background:${CAT_COLORS[c]}"></div></div>
       <span style="font-size:13px;font-weight:600;min-width:50px;text-align:right">₹${a}</span>
-    </div>`).join(''):'<p class="empty">No expenses logged yet</p>';
+    </div>`).join(''):`<p class="empty">${TT('no_expenses')}</p>`;
 
   const sorted=[...list].sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):CAT_LABELS[e.cat]+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):'<p class="empty">Nothing in this period</p>';
+  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):CAT_LABELS[e.cat]+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):`<p class="empty">${TT('nothing_period')}</p>`;
 }
 
 function copyReport(){
@@ -1449,9 +1529,9 @@ function copyReport(){
   Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([c,a])=>{txt+=`  ${CAT_LABELS[c]}: ₹${a}\n`;});
   txt+=`\nAll Entries:\n`;
   [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{txt+=`  ${fmtDate(e.date)} | ${e.type==='income'?'INCOME':'EXPENSE'} | ${CAT_LABELS[e.cat]} | ${e.label}${e.note?' ('+e.note+')':''} | ${e.type==='income'?'+':'-'}₹${e.amt}\n`;});
-  navigator.clipboard.writeText(txt).then(()=>toast('Report copied to clipboard!','success')).catch(()=>{
+  navigator.clipboard.writeText(txt).then(()=>toast(TT('report_copied'),'success')).catch(()=>{
     const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-    toast('Report copied to clipboard!','success');
+    toast(TT('report_copied'),'success');
   });
 }
 
@@ -1617,7 +1697,7 @@ async function clearAll(){
     const batch = db.batch();
     snap.docs.forEach(d=>batch.delete(d.ref));
     await batch.commit();
-    toast('All entries cleared','success');
+    toast(TT('all_cleared'),'success');
   });
 }
 
