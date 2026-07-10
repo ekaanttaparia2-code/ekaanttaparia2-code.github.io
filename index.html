@@ -181,6 +181,18 @@ input[type=date]{color-scheme:dark}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.1rem}
+.exp-badge{
+  font-size:10px;font-weight:700;letter-spacing:0.3px;color:#ffb84d;
+  background:rgba(255,184,77,0.14);border:1px solid rgba(255,184,77,0.3);
+  padding:2px 8px;border-radius:100px;white-space:nowrap;
+}
+#upi-apps-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.upi-app-btn{
+  padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--card);
+  color:var(--text);font-size:13.5px;font-weight:600;cursor:pointer;text-align:center;
+  transition:background 0.2s;
+}
+.upi-app-btn:hover{background:rgba(155,107,255,0.12);border-color:var(--accent)}
 .metric{
   background:var(--card);border:1px solid var(--border);border-radius:14px;
   padding:1rem;text-align:center;backdrop-filter:blur(14px);
@@ -225,6 +237,14 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
 </head>
 <body>
 <div id="toast-container" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
+
+<div id="app-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;align-items:center;justify-content:center;padding:20px">
+  <div id="app-modal-box" style="width:100%;max-width:340px;background:#1f1840;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+    <p id="app-modal-title" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin-bottom:8px"></p>
+    <p id="app-modal-message" style="font-size:13.5px;color:var(--text-dim);line-height:1.5;white-space:pre-line"></p>
+    <div id="app-modal-buttons" class="btn-row" style="margin-top:18px"></div>
+  </div>
+</div>
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
 
@@ -258,39 +278,48 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="brand-icon"><img src="data:image/png;base64,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" alt="PocketTrack logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit"/></div>
       <div>
         <h1>PocketTrack</h1>
-        <p>Track income & expenses, know your balance</p>
+        <p><span data-i18n="tagline">Track income & expenses, know your balance</span></p>
       </div>
     </div>
     <div class="pill"><span class="dot"></span><span id="sync-status">Connecting...</span></div>
   </header>
 
   <div class="stat-pills" id="header-stat-pills">
-    <div class="stat-pill"><span class="stat-pill-label">Income</span><span class="stat-pill-val green" id="hdr-income">₹0</span></div>
-    <div class="stat-pill"><span class="stat-pill-label">Spent</span><span class="stat-pill-val red" id="hdr-spent">₹0</span></div>
-    <div class="stat-pill"><span class="stat-pill-label">Balance</span><span class="stat-pill-val amber" id="hdr-balance">₹0</span></div>
-    <div class="stat-pill"><span class="stat-pill-label">Entries</span><span class="stat-pill-val" id="hdr-count">0</span></div>
+    <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_income">Income</span><span class="stat-pill-val green" id="hdr-income">₹0</span></div>
+    <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_spent">Spent</span><span class="stat-pill-val red" id="hdr-spent">₹0</span></div>
+    <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_balance">Balance</span><span class="stat-pill-val amber" id="hdr-balance">₹0</span></div>
+    <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_entries">Entries</span><span class="stat-pill-val" id="hdr-count">0</span></div>
   </div>
 
 
   <div id="menu-backdrop" class="menu-backdrop" onclick="closeMenu()" style="display:none"></div>
   <div id="side-menu" class="side-menu">
     <div class="side-menu-header">
-      <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px">Menu</span>
+      <span style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px" data-i18n="menu_title">Menu</span>
       <button class="icon-btn" onclick="closeMenu()" style="margin-left:auto"><i class="ti ti-x"></i></button>
     </div>
-    <button class="side-menu-item active" data-tab="log" onclick="setTab('log')"><i class="ti ti-plus"></i> Log</button>
-    <button class="side-menu-item" data-tab="entries" onclick="setTab('entries')"><i class="ti ti-list"></i> Entries</button>
-    <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> Report</button>
-    <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> Events</button>
+    <button class="side-menu-item active" data-tab="log" onclick="setTab('log')"><i class="ti ti-plus"></i> <span data-i18n="nav_log">Log</span></button>
+    <button class="side-menu-item" data-tab="entries" onclick="setTab('entries')"><i class="ti ti-list"></i> <span data-i18n="nav_entries">Entries</span></button>
+    <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
+    <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
+    <button class="side-menu-item" onclick="goToUPI()"><i class="ti ti-link"></i> <span data-i18n="nav_upi">UPI Connect</span> <span class="exp-badge" style="margin-left:auto">🧪</span></button>
+    <button class="side-menu-item" onclick="toggleLanguage()"><i class="ti ti-language"></i> <span id="lang-toggle-label">हिंदी</span></button>
+    <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
+    <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>
 
   <div id="tab-log">
     <div class="card">
-      <p class="sec-title"><i class="ti ti-cash"></i>Add income</p>
+      <p class="sec-title"><i class="ti ti-cash"></i><span data-i18n="sec_add_income">Add income</span></p>
       <div class="grid3">
         <div>
-          <label>Source</label>
+          <label data-i18n="lbl_source">Source</label>
           <select id="inc-src">
+            <option value="Salary">Salary</option>
+            <option value="Business income">Business income</option>
+            <option value="Pension">Pension</option>
+            <option value="Rent received">Rent received</option>
+            <option value="Investment/Interest">Investment/Interest</option>
             <option value="Allowance">Allowance</option>
             <option value="Gift">Gift</option>
             <option value="Freelance/Side income">Freelance/Side income</option>
@@ -298,26 +327,26 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           </select>
         </div>
         <div>
-          <label>Amount (₹)</label>
+          <label data-i18n="lbl_amount">Amount (₹)</label>
           <input type="number" id="inc-amt" placeholder="300" min="0.01" max="10000000" step="0.01"/>
         </div>
         <div>
-          <label>Date</label>
+          <label data-i18n="lbl_date">Date</label>
           <input type="date" id="inc-date"/>
         </div>
       </div>
-      <label>Note (optional)</label>
+      <label data-i18n="lbl_note">Note (optional)</label>
       <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60"/>
       <div class="btn-row">
-        <button class="btn primary" onclick="addIncome()"><i class="ti ti-plus"></i> <span id="inc-btn-label">Add income</span></button>
+        <button class="btn primary" onclick="addIncome()"><i class="ti ti-plus"></i> <span id="inc-btn-label" data-i18n="btn_add_income">Add income</span></button>
       </div>
     </div>
 
     <div class="card">
-      <p class="sec-title"><i class="ti ti-receipt"></i>Add expense</p>
+      <p class="sec-title"><i class="ti ti-receipt"></i><span data-i18n="sec_add_expense">Add expense</span></p>
       <div class="grid3">
         <div>
-          <label>Category</label>
+          <label data-i18n="lbl_category">Category</label>
           <select id="exp-cat">
             <option value="food">Food & snacks</option>
             <option value="travel">Travel</option>
@@ -327,15 +356,15 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           </select>
         </div>
         <div>
-          <label>Amount (₹)</label>
+          <label data-i18n="lbl_amount">Amount (₹)</label>
           <input type="number" id="exp-amt" placeholder="50" min="0.01" max="10000000" step="0.01"/>
         </div>
         <div>
-          <label>Date</label>
+          <label data-i18n="lbl_date">Date</label>
           <input type="date" id="exp-date"/>
         </div>
       </div>
-      <label>Description</label>
+      <label data-i18n="lbl_desc">Description</label>
       <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60"/>
       <div class="btn-row">
         <button class="btn primary" onclick="addExpense()"><i class="ti ti-plus"></i> <span id="exp-btn-label">Add expense</span></button>
@@ -362,7 +391,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <option value="amt-asc">Amount: low to high</option>
         </select>
       </div>
-      <p class="sec-title" style="margin-bottom:8px"><i class="ti ti-list"></i>Entries</p>
+      <p class="sec-title" style="margin-bottom:8px"><i class="ti ti-list"></i><span data-i18n="sec_entries">Entries</span></p>
       <div id="entries-list"><p class="empty">No entries yet — log something!</p></div>
     </div>
   </div>
@@ -390,33 +419,48 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     </div>
 
     <div class="card">
-      <p class="sec-title"><i class="ti ti-target-arrow"></i>Weekly budget</p>
+      <p class="sec-title"><i class="ti ti-target-arrow"></i><span data-i18n="sec_budget">Weekly budget</span></p>
       <div class="grid3" style="align-items:end">
         <div>
           <label>Set weekly budget (₹)</label>
           <input type="number" id="budget-input" placeholder="e.g. 1000" min="0" max="10000000" step="1"/>
         </div>
         <div>
-          <button class="btn primary" onclick="saveBudget()" style="width:100%"><i class="ti ti-check"></i> Save budget</button>
+          <button class="btn primary" onclick="saveBudget()" style="width:100%"><i class="ti ti-check"></i> <span data-i18n="btn_save_budget">Save budget</span></button>
         </div>
       </div>
       <div id="budget-status" style="margin-top:10px"></div>
+      <button class="btn" style="margin-top:10px;width:100%" onclick="requestNotifPermission()"><i class="ti ti-bell"></i> <span data-i18n="btn_enable_notif">Enable notifications</span></button>
+    </div>
+
+    <div class="card" id="upi-connect-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+        <p class="sec-title" style="margin:0"><i class="ti ti-link"></i><span data-i18n="sec_upi">UPI connection</span></p>
+        <span class="exp-badge">🧪 Experimental</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="upi_desc">Connect your favorite UPI app to auto-track payments. This feature is a work in progress.</p>
+      <div id="upi-apps-grid">
+        <button class="upi-app-btn" onclick="tryConnectUPI('Google Pay')">📱 Google Pay</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('PhonePe')">📱 PhonePe</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('Paytm')">📱 Paytm</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('BHIM')">📱 BHIM</button>
+      </div>
     </div>
 
     <div class="card">
-      <p class="sec-title"><i class="ti ti-chart-pie"></i>Spending by category</p>
+      <p class="sec-title"><i class="ti ti-chart-pie"></i><span data-i18n="sec_cat">Spending by category</span></p>
       <div id="cat-breakdown"></div>
     </div>
 
     <div class="card">
-      <p class="sec-title"><i class="ti ti-history"></i>Full breakdown</p>
+      <p class="sec-title"><i class="ti ti-history"></i><span data-i18n="sec_full">Full breakdown</span></p>
       <div id="full-breakdown"></div>
     </div>
 
     <div class="btn-row">
-      <button class="btn" onclick="copyReport()"><i class="ti ti-copy"></i> Copy report</button>
-      <button class="btn primary" onclick="exportPDF()"><i class="ti ti-download"></i> Export as PDF</button>
-      <button class="btn danger" onclick="clearAll()">🗑️ Clear all</button>
+      <button class="btn" onclick="copyReport()"><i class="ti ti-copy"></i> <span data-i18n="btn_copy_report">Copy report</span></button>
+      <button class="btn primary" onclick="exportPDF()"><i class="ti ti-download"></i> <span data-i18n="btn_export_pdf">Export as PDF</span></button>
+      <button class="btn danger" onclick="clearAll()">🗑️ <span data-i18n="btn_clear_all">Clear all</span></button>
     </div>
   </div>
 
@@ -425,14 +469,14 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <div id="events-list-view">
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <p class="sec-title" style="margin:0"><i class="ti ti-confetti"></i>Your events</p>
+          <p class="sec-title" style="margin:0"><i class="ti ti-confetti"></i><span data-i18n="sec_your_events">Your events</span></p>
           <button class="btn primary" style="padding:8px 14px" onclick="toggleAddEventForm()"><i class="ti ti-plus"></i> Add event</button>
         </div>
         <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 0">Track a birthday, wedding, trip or any occasion as its own mini ledger — with its own log, entries and totals.</p>
       </div>
 
       <div class="card" id="add-event-form" style="display:none">
-        <p class="sec-title"><i class="ti ti-sparkles"></i>Create a new event</p>
+        <p class="sec-title" id="event-form-title"><i class="ti ti-sparkles"></i><span data-i18n="sec_create_event">Create a new event</span></p>
         <div class="grid3">
           <div>
             <label>Event type</label>
@@ -450,10 +494,20 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             <input type="text" id="new-event-name" placeholder="e.g. Riya's Birthday Bash" maxlength="40"/>
           </div>
         </div>
-        <label>Description (optional)</label>
+        <div class="grid3">
+          <div>
+            <label data-i18n="lbl_from">From</label>
+            <input type="date" id="new-event-from"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_till">Till</label>
+            <input type="date" id="new-event-till"/>
+          </div>
+        </div>
+        <label data-i18n="lbl_desc_opt">Description (optional)</label>
         <input type="text" id="new-event-desc" placeholder="e.g. Turning 16, small get-together at home" maxlength="100"/>
         <div class="btn-row">
-          <button class="btn primary" onclick="createNewEvent()"><i class="ti ti-check"></i> Create event</button>
+          <button class="btn primary" id="event-form-submit-btn" onclick="createNewEvent()"><i class="ti ti-check"></i> Create event</button>
           <button class="btn" onclick="toggleAddEventForm()">Cancel</button>
         </div>
       </div>
@@ -471,17 +525,17 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       </div>
 
       <div class="stat-pills">
-        <div class="stat-pill"><span class="stat-pill-label">Income</span><span class="stat-pill-val green" id="ev-income">₹0</span></div>
-        <div class="stat-pill"><span class="stat-pill-label">Spent</span><span class="stat-pill-val red" id="ev-spent">₹0</span></div>
-        <div class="stat-pill"><span class="stat-pill-label">Balance</span><span class="stat-pill-val amber" id="ev-balance">₹0</span></div>
-        <div class="stat-pill"><span class="stat-pill-label">Entries</span><span class="stat-pill-val" id="ev-count">0</span></div>
+        <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_income">Income</span><span class="stat-pill-val green" id="ev-income">₹0</span></div>
+        <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_spent">Spent</span><span class="stat-pill-val red" id="ev-spent">₹0</span></div>
+        <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_balance">Balance</span><span class="stat-pill-val amber" id="ev-balance">₹0</span></div>
+        <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_entries">Entries</span><span class="stat-pill-val" id="ev-count">0</span></div>
       </div>
 
       <div class="card">
-        <p class="sec-title"><i class="ti ti-cash"></i>Add income to this event</p>
+        <p class="sec-title"><i class="ti ti-cash"></i><span data-i18n="sec_add_income_event">Add income to this event</span></p>
         <div class="grid3">
           <div>
-            <label>Source</label>
+            <label data-i18n="lbl_source">Source</label>
             <select id="ev-inc-src">
               <option value="Cash gift">Cash gift</option>
               <option value="Contribution">Contribution</option>
@@ -489,26 +543,26 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             </select>
           </div>
           <div>
-            <label>Amount (₹)</label>
+            <label data-i18n="lbl_amount">Amount (₹)</label>
             <input type="number" id="ev-inc-amt" placeholder="500" min="0.01" max="10000000" step="0.01"/>
           </div>
           <div>
-            <label>Date</label>
+            <label data-i18n="lbl_date">Date</label>
             <input type="date" id="ev-inc-date"/>
           </div>
         </div>
-        <label>Note (optional)</label>
+        <label data-i18n="lbl_note">Note (optional)</label>
         <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60"/>
         <div class="btn-row">
-          <button class="btn primary" onclick="addEventIncome()"><i class="ti ti-plus"></i> Add income</button>
+          <button class="btn primary" onclick="addEventIncome()"><i class="ti ti-plus"></i> <span id="ev-inc-submit-btn">Add income</span></button>
         </div>
       </div>
 
       <div class="card">
-        <p class="sec-title"><i class="ti ti-receipt"></i>Add expense to this event</p>
+        <p class="sec-title"><i class="ti ti-receipt"></i><span data-i18n="sec_add_expense_event">Add expense to this event</span></p>
         <div class="grid3">
           <div>
-            <label>Category</label>
+            <label data-i18n="lbl_category">Category</label>
             <select id="ev-exp-cat">
               <option value="food">Food & catering</option>
               <option value="travel">Travel</option>
@@ -518,37 +572,98 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             </select>
           </div>
           <div>
-            <label>Amount (₹)</label>
+            <label data-i18n="lbl_amount">Amount (₹)</label>
             <input type="number" id="ev-exp-amt" placeholder="500" min="0.01" max="10000000" step="0.01"/>
           </div>
           <div>
-            <label>Date</label>
+            <label data-i18n="lbl_date">Date</label>
             <input type="date" id="ev-exp-date"/>
           </div>
         </div>
-        <label>Description</label>
+        <label data-i18n="lbl_desc">Description</label>
         <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60"/>
         <div class="btn-row">
-          <button class="btn primary" onclick="addEventExpense()"><i class="ti ti-plus"></i> Add expense</button>
+          <button class="btn primary" onclick="addEventExpense()"><i class="ti ti-plus"></i> <span id="ev-exp-submit-btn">Add expense</span></button>
         </div>
       </div>
 
       <div class="card">
-        <p class="sec-title"><i class="ti ti-list"></i>Entries for this event</p>
+        <p class="sec-title"><i class="ti ti-list"></i><span data-i18n="sec_entries_event">Entries for this event</span></p>
         <div id="event-entries-list"></div>
       </div>
 
       <div class="btn-row">
+        <button class="btn" onclick="editCurrentEventFromDetail()">✏️ Edit event</button>
         <button class="btn danger" onclick="deleteCurrentEvent()">🗑️ Delete this event</button>
       </div>
     </div>
   </div>
 
-  <button class="logout-footer-btn" onclick="logOut()"><i class="ti ti-logout"></i> Log out</button>
   <footer>PocketTrack · synced to the cloud · your data, your account</footer>
 </div>
 
 <script>
+// --- Language / i18n ---
+const TRANSLATIONS = {
+  tagline:{en:'Track income & expenses, know your balance',hi:'आय और खर्च को ट्रैक करें, अपना बैलेंस जानें'},
+  nav_log:{en:'Log',hi:'लॉग'},
+  nav_entries:{en:'Entries',hi:'एंट्रीज़'},
+  nav_report:{en:'Report',hi:'रिपोर्ट'},
+  nav_events:{en:'Events',hi:'इवेंट्स'},
+  nav_logout:{en:'Log out',hi:'लॉग आउट'},
+  sec_add_income:{en:'Add income',hi:'आय जोड़ें'},
+  sec_add_expense:{en:'Add expense',hi:'खर्च जोड़ें'},
+  sec_budget:{en:'Weekly budget',hi:'साप्ताहिक बजट'},
+  sec_cat:{en:'Spending by category',hi:'श्रेणी अनुसार खर्च'},
+  sec_full:{en:'Full breakdown',hi:'पूरा विवरण'},
+  btn_add_income:{en:'Add income',hi:'आय जोड़ें'},
+  btn_save_budget:{en:'Save budget',hi:'बजट सेव करें'},
+  btn_enable_notif:{en:'Enable notifications',hi:'सूचनाएं चालू करें'},
+  btn_copy_report:{en:'Copy report',hi:'रिपोर्ट कॉपी करें'},
+  btn_export_pdf:{en:'Export as PDF',hi:'PDF में सेव करें'},
+  btn_clear_all:{en:'Clear all',hi:'सब हटाएं'},
+  lbl_amount:{en:'Amount (₹)',hi:'राशि (₹)'},
+  lbl_date:{en:'Date',hi:'तारीख'},
+  lbl_category:{en:'Category',hi:'श्रेणी'},
+  lbl_source:{en:'Source',hi:'स्रोत'},
+  lbl_note:{en:'Note (optional)',hi:'नोट (वैकल्पिक)'},
+  lbl_desc:{en:'Description',hi:'विवरण'},
+  lbl_desc_opt:{en:'Description (optional)',hi:'विवरण (वैकल्पिक)'},
+  sec_entries:{en:'Entries',hi:'एंट्रीज़'},
+  sec_your_events:{en:'Your events',hi:'आपके इवेंट्स'},
+  sec_create_event:{en:'Create a new event',hi:'नया इवेंट बनाएं'},
+  sec_add_income_event:{en:'Add income to this event',hi:'इस इवेंट में आय जोड़ें'},
+  sec_add_expense_event:{en:'Add expense to this event',hi:'इस इवेंट में खर्च जोड़ें'},
+  sec_entries_event:{en:'Entries for this event',hi:'इस इवेंट की एंट्रीज़'},
+  sec_upi:{en:'UPI connection',hi:'UPI कनेक्शन'},
+  upi_desc:{en:'Connect your favorite UPI app to auto-track payments. This feature is a work in progress.',hi:'भुगतान अपने आप ट्रैक करने के लिए अपना पसंदीदा UPI ऐप कनेक्ट करें। यह फीचर अभी बन रहा है।'},
+  nav_upi:{en:'UPI Connect',hi:'UPI कनेक्ट'},
+  stat_income:{en:'Income',hi:'आय'},
+  stat_spent:{en:'Spent',hi:'खर्च'},
+  stat_balance:{en:'Balance',hi:'बैलेंस'},
+  stat_entries:{en:'Entries',hi:'एंट्रीज़'},
+  menu_title:{en:'Menu',hi:'मेन्यू'},
+  lbl_from:{en:'From',hi:'से'},
+  lbl_till:{en:'Till',hi:'तक'},
+};
+let currentLang = localStorage.getItem('pocketTrackLang') || 'en';
+
+function applyLanguage(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    const entry = TRANSLATIONS[key];
+    if(entry) el.textContent = entry[currentLang] || entry.en;
+  });
+  document.getElementById('lang-toggle-label').textContent = currentLang==='en' ? 'हिंदी' : 'English';
+}
+
+function toggleLanguage(){
+  currentLang = currentLang==='en' ? 'hi' : 'en';
+  localStorage.setItem('pocketTrackLang', currentLang);
+  applyLanguage();
+  toast(currentLang==='en' ? 'Switched to English' : 'हिंदी में बदल गया', 'success');
+}
+
 // --- Firebase setup ---
 const firebaseConfig = {
   apiKey: "AIzaSyCxs1ltKht43N9JuwAIKymk0drlGsjxCvM",
@@ -608,6 +723,34 @@ function toast(message, type){
   }, 2200);
 }
 
+// --- Custom in-app popups (replaces native browser alert/confirm) ---
+function showAppAlert(message, title){
+  title = title || (currentLang==='hi' ? 'सूचना' : 'Notice');
+  document.getElementById('app-modal-title').textContent = title;
+  document.getElementById('app-modal-message').textContent = message;
+  const okLabel = currentLang==='hi' ? 'ठीक है' : 'OK';
+  document.getElementById('app-modal-buttons').innerHTML = `<button class="btn primary" style="flex:1" onclick="closeAppModal()">${okLabel}</button>`;
+  document.getElementById('app-modal-backdrop').style.display='flex';
+}
+
+function showAppConfirm(message, onConfirm, title){
+  title = title || (currentLang==='hi' ? 'पुष्टि करें' : 'Please confirm');
+  document.getElementById('app-modal-title').textContent = title;
+  document.getElementById('app-modal-message').textContent = message;
+  const yesLabel = currentLang==='hi' ? 'हां' : 'Yes';
+  const cancelLabel = currentLang==='hi' ? 'रद्द करें' : 'Cancel';
+  document.getElementById('app-modal-buttons').innerHTML = `
+    <button class="btn" style="flex:1" onclick="closeAppModal()">${cancelLabel}</button>
+    <button class="btn danger" style="flex:1" id="app-modal-confirm-btn">${yesLabel}</button>
+  `;
+  document.getElementById('app-modal-confirm-btn').onclick = ()=>{ closeAppModal(); onConfirm(); };
+  document.getElementById('app-modal-backdrop').style.display='flex';
+}
+
+function closeAppModal(){
+  document.getElementById('app-modal-backdrop').style.display='none';
+}
+
 // --- Auth handling ---
 function authAction(mode){
   const email=document.getElementById('auth-email').value.trim();
@@ -629,10 +772,11 @@ function authAction(mode){
 }
 
 function logOut(){
-  if(confirm('Log out?')){
+  showAppConfirm(currentLang==='hi'?'क्या आप लॉग आउट करना चाहते हैं?':'Log out?', ()=>{
     if(unsubscribeEntries) unsubscribeEntries();
+    if(unsubscribeEvents) unsubscribeEvents();
     auth.signOut();
-  }
+  });
 }
 
 auth.onAuthStateChanged(user=>{
@@ -678,6 +822,21 @@ async function saveBudget(){
   }catch(e){toast('Could not save budget: '+e.message,'error');}
 }
 
+function goToUPI(){
+  setTab('report');
+  setTimeout(()=>{
+    document.getElementById('upi-connect-card').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 150);
+}
+
+function tryConnectUPI(appName){
+  const msg = currentLang==='hi'
+    ? 'आपका UPI कनेक्ट नहीं है।\n\nक्षमा करें, यह फीचर अभी बन रहा है। 🚧'
+    : 'Your UPI is not connected.\n\nSorry, this feature is still under construction. 🚧';
+  showAppAlert(msg, appName);
+  showLocalNotification('UPI Connection', `${appName} — this feature is still under construction 🚧`);
+}
+
 function getThisWeekEntries(){
   const now=new Date();
   const day=now.getDay();
@@ -706,9 +865,42 @@ function checkBudget(){
   `;
   if(over && !window._budgetAlertShown){
     toast("⚠️ You've exceeded your weekly budget!",'error');
+    showLocalNotification('Budget alert', "You've exceeded your weekly budget!");
     window._budgetAlertShown=true;
   }
   if(!over) window._budgetAlertShown=false;
+}
+
+// --- Local notifications (works while app is open/backgrounded — no server needed) ---
+let notifPermissionAsked=false;
+function requestNotifPermission(){
+  if(!('Notification' in window)){toast('Notifications not supported on this browser','error');return;}
+  if(Notification.permission==='granted'){toast('Notifications already enabled!','success');return;}
+  if(Notification.permission==='denied'){toast('Notifications blocked — enable them in your browser/app settings','error');return;}
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted')toast('Notifications enabled!','success');
+    else toast('Notifications not enabled','error');
+  });
+}
+
+function showLocalNotification(title, body){
+  if(!('Notification' in window))return;
+  if(Notification.permission!=='granted'){
+    if(!notifPermissionAsked){
+      notifPermissionAsked=true;
+      Notification.requestPermission().then(perm=>{
+        if(perm==='granted') showLocalNotification(title, body);
+      });
+    }
+    return;
+  }
+  if(navigator.serviceWorker && navigator.serviceWorker.ready){
+    navigator.serviceWorker.ready.then(reg=>{
+      reg.showNotification(title, {body, icon:'icon-192.png', badge:'icon-192.png'});
+    });
+  } else {
+    new Notification(title, {body, icon:'icon-192.png'});
+  }
 }
 
 function updateHeaderStats(){
@@ -813,13 +1005,38 @@ function listenToEvents(){
     }, err=>console.error(err));
 }
 
+let editingEventId=null;
+
 function toggleAddEventForm(){
   const f=document.getElementById('add-event-form');
   f.style.display = f.style.display==='none' ? 'block' : 'none';
-  if(f.style.display==='block'){
+  if(f.style.display==='block' && !editingEventId){
+    document.getElementById('event-form-title').innerHTML='<i class="ti ti-sparkles"></i>Create a new event';
+    document.getElementById('event-form-submit-btn').innerHTML='<i class="ti ti-check"></i> Create event';
+    document.getElementById('new-event-type').value='Birthday';
     document.getElementById('new-event-name').value='';
     document.getElementById('new-event-desc').value='';
+    document.getElementById('new-event-from').value=todayStr();
+    document.getElementById('new-event-till').value=todayStr();
   }
+  if(f.style.display==='none'){
+    editingEventId=null;
+  }
+}
+
+function startEditEvent(id){
+  const ev=events.find(e=>e._id===id);
+  if(!ev)return;
+  editingEventId=id;
+  document.getElementById('event-form-title').innerHTML='<i class="ti ti-pencil"></i>Edit event';
+  document.getElementById('event-form-submit-btn').innerHTML='<i class="ti ti-check"></i> Save changes';
+  document.getElementById('new-event-type').value=ev.type||'Other';
+  document.getElementById('new-event-name').value=ev.name||'';
+  document.getElementById('new-event-desc').value=ev.desc||'';
+  document.getElementById('new-event-from').value=ev.fromDate||ev.date||todayStr();
+  document.getElementById('new-event-till').value=ev.tillDate||ev.date||todayStr();
+  document.getElementById('add-event-form').style.display='block';
+  document.getElementById('add-event-form').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 async function createNewEvent(){
@@ -827,14 +1044,23 @@ async function createNewEvent(){
   const type=document.getElementById('new-event-type').value;
   const name=document.getElementById('new-event-name').value.trim().slice(0,40);
   const desc=document.getElementById('new-event-desc').value.trim().slice(0,100);
+  let fromDate=document.getElementById('new-event-from').value||todayStr();
+  let tillDate=document.getElementById('new-event-till').value||fromDate;
+  if(tillDate<fromDate){ const tmp=fromDate; fromDate=tillDate; tillDate=tmp; } // auto-swap if entered backwards
   if(!name){toast('Give your event a name','error');return;}
   try{
-    await db.collection('users').doc(currentUser.uid).collection('events').add({
-      type, name, desc, createdAt: Date.now()
-    });
-    toast('Event created!','success');
+    if(editingEventId){
+      await db.collection('users').doc(currentUser.uid).collection('events').doc(editingEventId).update({type, name, desc, fromDate, tillDate});
+      toast('Event updated!','success');
+    } else {
+      await db.collection('users').doc(currentUser.uid).collection('events').add({
+        type, name, desc, fromDate, tillDate, createdAt: Date.now()
+      });
+      toast('Event created!','success');
+    }
+    editingEventId=null;
     toggleAddEventForm();
-  }catch(e){toast('Could not create event: '+e.message,'error');}
+  }catch(e){toast('Could not save event: '+e.message,'error');}
 }
 
 function eventStats(eventName){
@@ -853,16 +1079,19 @@ function renderEventsList(){
   listEl.innerHTML = events.map(ev=>{
     const stats = eventStats(ev.name);
     return `
-    <div class="card" style="cursor:pointer;margin-top:10px" onclick="openEventDetail('${ev._id}')">
-      <div style="display:flex;justify-content:space-between;align-items:center">
+    <div class="card" style="margin-top:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="openEventDetail('${ev._id}')">
         <div>
           <p style="font-weight:600;font-size:14.5px;margin-bottom:2px">${EVENT_ICONS[ev.type]||'📌'} ${escapeHTML(ev.name)}</p>
-          <p style="font-size:11.5px;color:var(--text-faint)">${stats.count} ${stats.count===1?'entry':'entries'}${ev.desc?' · '+escapeHTML(ev.desc):''}</p>
+          <p style="font-size:11.5px;color:var(--text-faint)">${ev.fromDate?fmtDate(ev.fromDate)+(ev.tillDate&&ev.tillDate!==ev.fromDate?' – '+fmtDate(ev.tillDate):'')+' · ':''}${stats.count} ${stats.count===1?'entry':'entries'}${ev.desc?' · '+escapeHTML(ev.desc):''}</p>
         </div>
         <div style="text-align:right">
           <p style="font-size:14px;font-weight:700;color:${stats.balance>=0?'var(--green)':'var(--red)'}">₹${stats.balance}</p>
           <p style="font-size:11px;color:var(--text-faint)">net</p>
         </div>
+      </div>
+      <div style="margin-top:8px;text-align:right">
+        <button class="icon-btn" onclick="event.stopPropagation();startEditEvent('${ev._id}')" aria-label="edit event">✏️ Edit</button>
       </div>
     </div>`;
   }).join('');
@@ -883,13 +1112,15 @@ function openEventDetail(id){
   document.getElementById('events-list-view').style.display='none';
   document.getElementById('event-detail-view').style.display='block';
   document.getElementById('event-detail-title').innerHTML=`${EVENT_ICONS[ev.type]||'📌'} ${escapeHTML(ev.name)}`;
-  document.getElementById('event-detail-desc').textContent = ev.desc || '';
+  document.getElementById('event-detail-desc').textContent = (ev.fromDate?fmtDate(ev.fromDate)+(ev.tillDate&&ev.tillDate!==ev.fromDate?' – '+fmtDate(ev.tillDate):'')+' · ':'') + (ev.desc || '');
   document.getElementById('ev-inc-date').value = todayStr();
   document.getElementById('ev-exp-date').value = todayStr();
+  resetEventEntryEditState();
   renderEventDetail();
 }
 
 function backToEventsList(){
+  resetEventEntryEditState();
   showEventsListView();
   renderEventsList();
 }
@@ -909,8 +1140,41 @@ function renderEventDetail(){
       ${e.type==='expense'?`<span class="badge ${e.cat}">${CAT_LABELS[e.cat]}</span>`:''}
       <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}${e.note?' — '+escapeHTML(e.note):''}</span>
       <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
-      <div class="row-actions"><button class="icon-btn" onclick="deleteEntry('${e._id}')" aria-label="delete">🗑️</button></div>
+      <div class="row-actions">
+        <button class="icon-btn" onclick="startEditEventEntry('${e._id}')" aria-label="edit">✏️</button>
+        <button class="icon-btn" onclick="deleteEntry('${e._id}')" aria-label="delete">🗑️</button>
+      </div>
     </div>`).join('') : '<p class="empty">No entries yet for this event</p>';
+}
+
+let editingEventEntryId=null;
+
+function startEditEventEntry(id){
+  const entry=entries.find(e=>e._id===id);
+  if(!entry)return;
+  editingEventEntryId=id;
+  if(entry.type==='income'){
+    document.getElementById('ev-inc-src').value=entry.label;
+    document.getElementById('ev-inc-amt').value=entry.amt;
+    document.getElementById('ev-inc-date').value=entry.date;
+    document.getElementById('ev-inc-note').value=entry.note||'';
+    document.getElementById('ev-inc-submit-btn').textContent='Update income';
+    document.getElementById('ev-inc-submit-btn').scrollIntoView({behavior:'smooth',block:'center'});
+  } else {
+    document.getElementById('ev-exp-cat').value=entry.cat;
+    document.getElementById('ev-exp-amt').value=entry.amt;
+    document.getElementById('ev-exp-date').value=entry.date;
+    document.getElementById('ev-exp-desc').value=entry.label;
+    document.getElementById('ev-exp-submit-btn').textContent='Update expense';
+    document.getElementById('ev-exp-submit-btn').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  toast('Editing entry — make changes and save','info');
+}
+
+function resetEventEntryEditState(){
+  editingEventEntryId=null;
+  document.getElementById('ev-inc-submit-btn').textContent='Add income';
+  document.getElementById('ev-exp-submit-btn').textContent='Add expense';
 }
 
 async function addEventIncome(){
@@ -921,9 +1185,16 @@ async function addEventIncome(){
   const date=document.getElementById('ev-inc-date').value||todayStr();
   if(!isValidAmount(amt)){toast('Enter a valid amount','error');return;}
   if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  const payload={type:'income',cat:'income',label:src,note,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
-    await saveEntry({type:'income',cat:'income',label:src,note,event:currentEventName,amt:Math.round(amt*100)/100,date});
-    toast('Income added to event!','success');
+    if(editingEventEntryId){
+      await updateEntry(editingEventEntryId, payload);
+      toast('Income updated!','success');
+      resetEventEntryEditState();
+    } else {
+      await saveEntry(payload);
+      toast('Income added to event!','success');
+    }
     document.getElementById('ev-inc-amt').value='';
     document.getElementById('ev-inc-note').value='';
   }catch(e){toast('Could not save: '+e.message,'error');}
@@ -938,22 +1209,37 @@ async function addEventExpense(){
   if(!isValidAmount(amt)){toast('Enter a valid amount','error');return;}
   if(!desc){toast('Add a description','error');return;}
   if(!isValidDate(date)){toast('Enter a valid date','error');return;}
+  const payload={type:'expense',cat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
-    await saveEntry({type:'expense',cat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date});
-    toast('Expense added to event!','success');
+    if(editingEventEntryId){
+      await updateEntry(editingEventEntryId, payload);
+      toast('Expense updated!','success');
+      resetEventEntryEditState();
+    } else {
+      await saveEntry(payload);
+      toast('Expense added to event!','success');
+    }
     document.getElementById('ev-exp-amt').value='';
     document.getElementById('ev-exp-desc').value='';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
+function editCurrentEventFromDetail(){
+  const idToEdit = currentEventId;
+  setTab('events');
+  startEditEvent(idToEdit);
+}
+
 async function deleteCurrentEvent(){
   if(!currentEventId)return;
-  if(!confirm(`Delete "${currentEventName}"? This won't delete its logged entries, just the event card.`))return;
-  try{
-    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).delete();
-    toast('Event deleted','success');
-    backToEventsList();
-  }catch(e){toast('Could not delete: '+e.message,'error');}
+  const idToDelete = currentEventId;
+  showAppConfirm(`Delete "${currentEventName}"? This won't delete its logged entries, just the event card.`, async ()=>{
+    try{
+      await db.collection('users').doc(currentUser.uid).collection('events').doc(idToDelete).delete();
+      toast('Event deleted','success');
+      backToEventsList();
+    }catch(e){toast('Could not delete: '+e.message,'error');}
+  });
 }
 
 async function addIncome(){
@@ -1037,7 +1323,9 @@ function cancelEdit(){
 }
 
 function deleteEntry(id){
-  if(confirm('Delete this entry?')){removeEntry(id).then(()=>toast('Entry deleted','success')).catch(e=>toast('Could not delete: '+e.message,'error'));}
+  showAppConfirm('Delete this entry?', ()=>{
+    removeEntry(id).then(()=>toast('Entry deleted','success')).catch(e=>toast('Could not delete: '+e.message,'error'));
+  });
 }
 
 
@@ -1323,15 +1611,18 @@ function exportPDF(){
 }
 
 async function clearAll(){
-  if(!confirm('Clear ALL entries? This cannot be undone.'))return;
   if(!currentUser)return;
-  const snap = await db.collection('users').doc(currentUser.uid).collection('entries').get();
-  const batch = db.batch();
-  snap.docs.forEach(d=>batch.delete(d.ref));
-  await batch.commit();
+  showAppConfirm('Clear ALL entries? This cannot be undone.', async ()=>{
+    const snap = await db.collection('users').doc(currentUser.uid).collection('entries').get();
+    const batch = db.batch();
+    snap.docs.forEach(d=>batch.delete(d.ref));
+    await batch.commit();
+    toast('All entries cleared','success');
+  });
 }
 
 renderReport();
+applyLanguage();
 
 // --- PWA: register service worker ---
 if('serviceWorker' in navigator){
