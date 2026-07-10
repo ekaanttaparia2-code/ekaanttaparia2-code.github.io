@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pockettrack-v1';
+const CACHE_NAME = 'pockettrack-v2'; // 1. BUMPED VERSION TO V2
 const urlsToCache = [
   './',
   './index.html',
@@ -24,11 +24,27 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Network-first for Firebase/API calls, cache-first for app shell
+  // Network-first for Firebase/API calls
   if (event.request.url.includes('firestore') || event.request.url.includes('googleapis')) {
-    return; // let these go straight to network, don't intercept
+    return; 
   }
+  
+  // 2. STRATEGY CHANGE: Network-First with Cache Fallback for regular files
   event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+    fetch(event.request)
+      .then(response => {
+        // If network request is successful, clone it into the cache
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // If network fails (offline), pull from cache
+        return caches.match(event.request);
+      })
   );
 });
