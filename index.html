@@ -193,6 +193,14 @@ input[type=date]{color-scheme:dark}
   transition:background 0.2s;
 }
 .upi-app-btn:hover{background:rgba(155,107,255,0.12);border-color:var(--accent)}
+.lang-option-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-radius:14px;border:1px solid var(--border);background:var(--card);
+  color:var(--text);font-size:14.5px;font-weight:500;cursor:pointer;transition:all 0.2s;
+}
+.lang-option-btn.active{border-color:var(--accent);background:rgba(155,107,255,0.12)}
+.lang-option-btn .lang-check{opacity:0;color:var(--accent);font-weight:700;transition:opacity 0.2s}
+.lang-option-btn.active .lang-check{opacity:1}
 .metric{
   background:var(--card);border:1px solid var(--border);border-radius:14px;
   padding:1rem;text-align:center;backdrop-filter:blur(14px);
@@ -302,8 +310,8 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <button class="side-menu-item" data-tab="entries" onclick="setTab('entries')"><i class="ti ti-list"></i> <span data-i18n="nav_entries">Entries</span></button>
     <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
     <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
-    <button class="side-menu-item" onclick="goToUPI()"><i class="ti ti-link"></i> <span data-i18n="nav_upi">UPI Connect</span> <span class="exp-badge" style="margin-left:auto">🧪</span></button>
-    <button class="side-menu-item" onclick="toggleLanguage()"><i class="ti ti-language"></i> <span id="lang-toggle-label">हिंदी</span></button>
+    <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-link"></i> <span data-i18n="nav_upi">UPI Connect</span> <span class="exp-badge" style="margin-left:auto">🧪</span></button>
+    <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>
@@ -314,7 +322,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="grid3">
         <div>
           <label data-i18n="lbl_source">Source</label>
-          <select id="inc-src">
+          <select id="inc-src" onchange="toggleOtherField('inc')">
             <option value="Salary" data-hi="वेतन">Salary</option>
             <option value="Business income" data-hi="व्यवसाय आय">Business income</option>
             <option value="Pension" data-hi="पेंशन">Pension</option>
@@ -335,6 +343,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <input type="date" id="inc-date"/>
         </div>
       </div>
+      <div id="inc-other-wrap" style="display:none">
+        <label data-i18n="lbl_specify">Please specify</label>
+        <input type="text" id="inc-src-other" placeholder="e.g. Tuition income" maxlength="40"/>
+      </div>
       <label data-i18n="lbl_note">Note (optional)</label>
       <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60" data-i18n-ph="ph_inc_note"/>
       <div class="btn-row">
@@ -347,7 +359,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="grid3">
         <div>
           <label data-i18n="lbl_category">Category</label>
-          <select id="exp-cat">
+          <select id="exp-cat" onchange="toggleOtherField('exp')">
             <option value="food" data-hi="खाना और नाश्ता">Food & snacks</option>
             <option value="travel" data-hi="यात्रा">Travel</option>
             <option value="friends" data-hi="दोस्तों का प्लान">Friends plan</option>
@@ -363,6 +375,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <label data-i18n="lbl_date">Date</label>
           <input type="date" id="exp-date"/>
         </div>
+      </div>
+      <div id="exp-other-wrap" style="display:none">
+        <label data-i18n="lbl_specify">Please specify</label>
+        <input type="text" id="exp-cat-other" placeholder="e.g. Medical, Repairs" maxlength="40"/>
       </div>
       <label data-i18n="lbl_desc">Description</label>
       <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60" data-i18n-ph="ph_exp_desc"/>
@@ -418,6 +434,14 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="metric"><div class="metric-label" data-i18n="metric_entries">Entries</div><div class="metric-val" id="r-count">0</div></div>
     </div>
 
+    <div class="card" style="background:linear-gradient(135deg,rgba(155,107,255,0.12),rgba(255,126,179,0.08));border-color:rgba(155,107,255,0.3)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <p class="sec-title" style="margin:0"><i class="ti ti-bulb"></i><span data-i18n="sec_money_tip">Money-saving tip</span></p>
+      </div>
+      <p id="money-tip-text" style="font-size:13.5px;color:var(--text);line-height:1.5;margin-bottom:12px"></p>
+      <button class="btn" style="width:100%" onclick="showNextTip()"><i class="ti ti-refresh"></i> <span data-i18n="btn_next_tip">Show me another tip</span></button>
+    </div>
+
     <div class="card">
       <p class="sec-title"><i class="ti ti-target-arrow"></i><span data-i18n="sec_budget">Weekly budget</span></p>
       <div class="grid3" style="align-items:end">
@@ -431,20 +455,6 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       </div>
       <div id="budget-status" style="margin-top:10px"></div>
       <button class="btn" style="margin-top:10px;width:100%" onclick="requestNotifPermission()"><i class="ti ti-bell"></i> <span data-i18n="btn_enable_notif">Enable notifications</span></button>
-    </div>
-
-    <div class="card" id="upi-connect-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-        <p class="sec-title" style="margin:0"><i class="ti ti-link"></i><span data-i18n="sec_upi">UPI connection</span></p>
-        <span class="exp-badge">🧪 Experimental</span>
-      </div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="upi_desc">Connect your favorite UPI app to auto-track payments. This feature is a work in progress.</p>
-      <div id="upi-apps-grid">
-        <button class="upi-app-btn" onclick="tryConnectUPI('Google Pay')">📱 Google Pay</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('PhonePe')">📱 PhonePe</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('Paytm')">📱 Paytm</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('BHIM')">📱 BHIM</button>
-      </div>
     </div>
 
     <div class="card">
@@ -536,7 +546,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div class="grid3">
           <div>
             <label data-i18n="lbl_source">Source</label>
-            <select id="ev-inc-src">
+            <select id="ev-inc-src" onchange="toggleOtherField('ev-inc')">
               <option value="Cash gift" data-hi="नकद उपहार">Cash gift</option>
               <option value="Contribution" data-hi="योगदान">Contribution</option>
               <option value="Other" data-hi="अन्य">Other</option>
@@ -551,6 +561,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             <input type="date" id="ev-inc-date"/>
           </div>
         </div>
+        <div id="ev-inc-other-wrap" style="display:none">
+          <label data-i18n="lbl_specify">Please specify</label>
+          <input type="text" id="ev-inc-src-other" placeholder="e.g. Envelope gift" maxlength="40"/>
+        </div>
         <label data-i18n="lbl_note">Note (optional)</label>
         <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60" data-i18n-ph="ph_ev_inc_note"/>
         <div class="btn-row">
@@ -563,7 +577,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div class="grid3">
           <div>
             <label data-i18n="lbl_category">Category</label>
-            <select id="ev-exp-cat">
+            <select id="ev-exp-cat" onchange="toggleOtherField('ev-exp')">
               <option value="food" data-hi="खाना और खानपान">Food & catering</option>
               <option value="travel">Travel</option>
               <option value="friends" data-hi="सजावट/दोस्त">Decor / friends</option>
@@ -579,6 +593,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             <label data-i18n="lbl_date">Date</label>
             <input type="date" id="ev-exp-date"/>
           </div>
+        </div>
+        <div id="ev-exp-other-wrap" style="display:none">
+          <label data-i18n="lbl_specify">Please specify</label>
+          <input type="text" id="ev-exp-cat-other" placeholder="e.g. Photography, Gifts" maxlength="40"/>
         </div>
         <label data-i18n="lbl_desc">Description</label>
         <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60" data-i18n-ph="ph_ev_exp_desc"/>
@@ -599,6 +617,39 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     </div>
   </div>
 
+  <div id="tab-upi" style="display:none">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+        <p class="sec-title" style="margin:0"><i class="ti ti-link"></i><span data-i18n="sec_upi">UPI connection</span></p>
+        <span class="exp-badge">🧪 Experimental</span>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="upi_desc">Connect your favorite UPI app to auto-track payments. This feature is a work in progress.</p>
+      <div id="upi-apps-grid">
+        <button class="upi-app-btn" onclick="tryConnectUPI('Google Pay')">📱 Google Pay</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('PhonePe')">📱 PhonePe</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('Paytm')">📱 Paytm</button>
+        <button class="upi-app-btn" onclick="tryConnectUPI('BHIM')">📱 BHIM</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-language" style="display:none">
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-language"></i><span data-i18n="sec_language">Language</span></p>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 14px" data-i18n="lang_desc">Choose the language you'd like to use throughout the app.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button class="lang-option-btn" id="lang-opt-en" onclick="setLanguage('en')">
+          <span>🇬🇧 English</span>
+          <span class="lang-check">✓</span>
+        </button>
+        <button class="lang-option-btn" id="lang-opt-hi" onclick="setLanguage('hi')">
+          <span>🇮🇳 हिंदी (Hindi)</span>
+          <span class="lang-check">✓</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer>PocketTrack · synced to the cloud · your data, your account</footer>
 </div>
 
@@ -606,11 +657,12 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
 // --- Language / i18n ---
 const TRANSLATIONS = {
   tagline:{en:'Track income & expenses, know your balance',hi:'आय और खर्च को ट्रैक करें, अपना बैलेंस जानें'},
-  nav_log:{en:'Log',hi:'लॉग'},
-  nav_entries:{en:'Entries',hi:'एंट्रीज़'},
+  nav_log:{en:'Log',hi:'एंट्री जोड़ें'},
+  nav_entries:{en:'Entries',hi:'सभी एंट्रीज़'},
   nav_report:{en:'Report',hi:'रिपोर्ट'},
-  nav_events:{en:'Events',hi:'इवेंट्स'},
-  nav_logout:{en:'Log out',hi:'लॉग आउट'},
+  nav_events:{en:'Events',hi:'आयोजन'},
+  nav_logout:{en:'Log out',hi:'बाहर निकलें'},
+  nav_language:{en:'Language',hi:'भाषा'},
   sec_add_income:{en:'Add income',hi:'आय जोड़ें'},
   sec_add_expense:{en:'Add expense',hi:'खर्च जोड़ें'},
   sec_budget:{en:'Weekly budget',hi:'साप्ताहिक बजट'},
@@ -639,6 +691,10 @@ const TRANSLATIONS = {
   lbl_note:{en:'Note (optional)',hi:'नोट (वैकल्पिक)'},
   lbl_desc:{en:'Description',hi:'विवरण'},
   lbl_desc_opt:{en:'Description (optional)',hi:'विवरण (वैकल्पिक)'},
+  lbl_specify:{en:'Please specify',hi:'कृपया बताएं'},
+  lbl_specify:{en:'Please specify',hi:'कृपया बताएं'},
+  sec_money_tip:{en:'Money-saving tip',hi:'पैसे बचाने की सलाह'},
+  btn_next_tip:{en:'Show me another tip',hi:'दूसरी सलाह दिखाएं'},
   sec_entries:{en:'Entries',hi:'एंट्रीज़'},
   sec_your_events:{en:'Your events',hi:'आपके इवेंट्स'},
   sec_create_event:{en:'Create a new event',hi:'नया इवेंट बनाएं'},
@@ -686,17 +742,30 @@ function applyLanguage(){
     if(!opt.dataset.enText) opt.dataset.enText = opt.textContent; // cache original English on first run
     opt.textContent = currentLang==='hi' ? opt.getAttribute('data-hi') : opt.dataset.enText;
   });
-  document.getElementById('lang-toggle-label').textContent = currentLang==='en' ? 'हिंदी' : 'English';
+  updateLanguageTabUI();
   // re-render dynamic sections so their generated text (category names, empty states) updates too
   if(document.getElementById('tab-entries').style.display!=='none') renderEntries();
-  if(document.getElementById('tab-report').style.display!=='none') renderReport();
+  if(document.getElementById('tab-report').style.display!=='none'){
+    renderReport();
+    const tipEl=document.getElementById('money-tip-text');
+    if(tipEl && lastTipIndex>=0) tipEl.textContent = MONEY_TIPS[lastTipIndex][currentLang] || MONEY_TIPS[lastTipIndex].en;
+  }
   if(currentEventId) renderEventDetail();
   else if(document.getElementById('tab-events').style.display!=='none') renderEventsList();
   checkBudget();
 }
 
-function toggleLanguage(){
-  currentLang = currentLang==='en' ? 'hi' : 'en';
+function updateLanguageTabUI(){
+  const enBtn=document.getElementById('lang-opt-en');
+  const hiBtn=document.getElementById('lang-opt-hi');
+  if(!enBtn||!hiBtn)return;
+  enBtn.classList.toggle('active', currentLang==='en');
+  hiBtn.classList.toggle('active', currentLang==='hi');
+}
+
+function setLanguage(lang){
+  if(lang===currentLang)return;
+  currentLang = lang;
   localStorage.setItem('pocketTrackLang', currentLang);
   applyLanguage();
   toast(currentLang==='en' ? 'Switched to English' : 'हिंदी में बदल गया', 'success');
@@ -728,6 +797,7 @@ const CAT_LABELS_BI = {
 };
 function CAT_LABEL(cat){ return (CAT_LABELS_BI[cat] && CAT_LABELS_BI[cat][currentLang]) || cat; }
 const CAT_LABELS = new Proxy({}, { get: (_, cat) => CAT_LABEL(cat) }); // backward-compatible drop-in
+function catLabelFor(e){ return (e.cat==='other' && e.otherLabel) ? e.otherLabel : CAT_LABEL(e.cat); }
 
 const MSG = {
   no_entries_log:{en:'No entries yet — log something!',hi:'अभी तक कोई एंट्री नहीं — कुछ लॉग करें!'},
@@ -759,8 +829,31 @@ const MSG = {
 };
 function TT(key){ return (MSG[key] && MSG[key][currentLang]) || (MSG[key] && MSG[key].en) || key; }
 
+// --- Money-saving tips (rotates a random tip each time, bilingual) ---
+const MONEY_TIPS = [
+  {en:"Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings. It's simple and keeps you on track without tracking every rupee.",hi:"50/30/20 नियम आज़माएं: 50% ज़रूरतें, 30% इच्छाएं, 20% बचत। यह सरल है और हर रुपया ट्रैक किए बिना भी आपको सही राह पर रखता है।"},
+  {en:"Wait 24 hours before any non-essential purchase over ₹500. Most urges fade — and you'll save without even trying.",hi:"₹500 से ज़्यादा की किसी भी गैर-ज़रूरी खरीद से पहले 24 घंटे रुकें। ज़्यादातर इच्छाएं खुद खत्म हो जाती हैं — और आप बिना कोशिश किए बचत कर लेंगे।"},
+  {en:"Round up every expense to the nearest ₹10 and put the difference aside. Small change adds up faster than you'd think.",hi:"हर खर्च को नज़दीकी ₹10 तक राउंड करें और बचा हुआ पैसा अलग रख दें। छोटी बचत सोच से जल्दी बढ़ती है।"},
+  {en:"Set a weekly budget (you already can, right here!) — people who track weekly, not just monthly, catch overspending 3x faster.",hi:"साप्ताहिक बजट सेट करें (आप यह यहीं कर सकते हैं!) — जो लोग सिर्फ महीने भर की बजाय हर हफ्ते ट्रैक करते हैं, वे अधिक खर्च को 3 गुना तेज़ी से पकड़ लेते हैं।"},
+  {en:"Before subscribing to anything, ask: 'Would I pay for this again next month?' If you hesitate, skip it.",hi:"किसी भी सब्सक्रिप्शन से पहले खुद से पूछें: 'क्या मैं अगले महीने भी इसके लिए भुगतान करूंगा?' अगर झिझक हो, तो छोड़ दें।"},
+  {en:"Cook one extra meal at home each week instead of ordering — over a year, that alone can save thousands.",hi:"हर हफ्ते बाहर से मंगाने की बजाय एक अतिरिक्त बार घर पर खाना बनाएं — साल भर में यह अकेला हज़ारों रुपये बचा सकता है।"},
+  {en:"Keep small cash gifts and change in a separate 'no-spend' jar — out of sight often means it actually gets saved.",hi:"छोटे नकद उपहार और बचे हुए पैसे एक अलग 'नो-स्पेंड' डिब्बे में रखें — आंखों से दूर होने पर अक्सर वह सच में बच जाता है।"},
+  {en:"Review your category breakdown here once a week — just seeing where money goes tends to naturally reduce overspending.",hi:"यहां अपनी श्रेणी अनुसार खर्च की सूची हफ्ते में एक बार देखें — बस यह देखना कि पैसा कहां जा रहा है, अक्सर अपने आप ज़्यादा खर्च को कम कर देता है।"},
+  {en:"Use the Events feature for big occasions — separating event spending from daily spending stops one wedding from wrecking your monthly budget.",hi:"बड़े मौकों के लिए Events फीचर का उपयोग करें — इवेंट के खर्च को रोज़ के खर्च से अलग रखने से एक शादी आपके महीने के बजट को नहीं बिगाड़ती।"},
+  {en:"Name your savings goal (even something small like 'new shoes'). Money saved toward a named goal is far less likely to get spent on impulse.",hi:"अपने बचत लक्ष्य को एक नाम दें (जैसे 'नए जूते')। किसी नामित लक्ष्य के लिए बचाया गया पैसा जल्दी खर्च होने की संभावना बहुत कम होती है।"},
+];
+let lastTipIndex=-1;
+function showNextTip(){
+  let idx;
+  do{ idx=Math.floor(Math.random()*MONEY_TIPS.length); }while(idx===lastTipIndex && MONEY_TIPS.length>1);
+  lastTipIndex=idx;
+  const tipEl=document.getElementById('money-tip-text');
+  if(tipEl) tipEl.textContent = MONEY_TIPS[idx][currentLang] || MONEY_TIPS[idx].en;
+}
+
 const CAT_COLORS = {food:'#4ade80',travel:'#60a5fa',friends:'#ffb84d',home:'#ff7eb3',other:'#9b95c2'};
 let entries = [];
+function mainEntries(){ return entries.filter(e=>!e.event); } // excludes entries tagged to an event — those live only in their event's own view
 let period = 'week';
 
 function todayStr(){return new Date().toISOString().split('T')[0]}
@@ -900,13 +993,6 @@ async function saveBudget(){
   }catch(e){toast('Could not save budget: '+e.message,'error');}
 }
 
-function goToUPI(){
-  setTab('report');
-  setTimeout(()=>{
-    document.getElementById('upi-connect-card').scrollIntoView({behavior:'smooth', block:'start'});
-  }, 150);
-}
-
 function tryConnectUPI(appName){
   const msg = currentLang==='hi'
     ? 'आपका UPI कनेक्ट नहीं है।\n\nक्षमा करें, यह फीचर अभी बन रहा है। 🚧'
@@ -923,7 +1009,7 @@ function getThisWeekEntries(){
   const monStr=mon.toISOString().split('T')[0];
   const sun=new Date(mon);sun.setDate(mon.getDate()+6);
   const sunStr=sun.toISOString().split('T')[0];
-  return entries.filter(e=>e.date>=monStr&&e.date<=sunStr);
+  return mainEntries().filter(e=>e.date>=monStr&&e.date<=sunStr);
 }
 
 function checkBudget(){
@@ -984,12 +1070,13 @@ function showLocalNotification(title, body){
 }
 
 function updateHeaderStats(){
-  const income=entries.filter(e=>e.type==='income').reduce((s,e)=>s+e.amt,0);
-  const spent=entries.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
+  const list = mainEntries();
+  const income=list.filter(e=>e.type==='income').reduce((s,e)=>s+e.amt,0);
+  const spent=list.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
   document.getElementById('hdr-income').textContent='₹'+income;
   document.getElementById('hdr-spent').textContent='₹'+spent;
   document.getElementById('hdr-balance').textContent='₹'+(income-spent);
-  document.getElementById('hdr-count').textContent=entries.length;
+  document.getElementById('hdr-count').textContent=list.length;
 }
 
 function listenToEntries(){
@@ -1038,8 +1125,23 @@ document.getElementById('exp-date').value=todayStr();
 
 let editingId=null; // set when editing an existing entry instead of adding new
 
+function toggleOtherField(prefix){
+  // prefix is one of: inc, exp, ev-inc, ev-exp
+  const selectId = prefix.includes('inc') ? prefix+'-src' : prefix+'-cat';
+  const wrapId = prefix+'-other-wrap';
+  const select = document.getElementById(selectId);
+  const wrap = document.getElementById(wrapId);
+  if(!select || !wrap) return;
+  const val = select.value;
+  wrap.style.display = (val==='Other' || val==='other') ? 'block' : 'none';
+  if(wrap.style.display==='none'){
+    const input = wrap.querySelector('input');
+    if(input) input.value='';
+  }
+}
+
 function setTab(t){
-  ['log','entries','report','events'].forEach((x)=>{
+  ['log','entries','report','events','upi','language'].forEach((x)=>{
     document.getElementById('tab-'+x).style.display=x===t?'block':'none';
   });
   document.querySelectorAll('.side-menu-item').forEach(btn=>{
@@ -1047,11 +1149,12 @@ function setTab(t){
   });
   document.getElementById('header-stat-pills').style.display = (t==='log'||t==='entries') ? 'flex' : 'none';
   if(t==='entries')renderEntries();
-  if(t==='report')renderReport();
+  if(t==='report'){renderReport();showNextTip();}
   if(t==='events'){
     showEventsListView();
     renderEventsList();
   }
+  if(t==='language')updateLanguageTabUI();
   closeMenu();
 }
 
@@ -1217,7 +1320,7 @@ function renderEventDetail(){
   document.getElementById('event-entries-list').innerHTML = sorted.length ? sorted.map(e=>`
     <div class="entry-row">
       <span class="date-chip">${fmtDate(e.date)}</span>
-      ${e.type==='expense'?`<span class="badge ${e.cat}">${CAT_LABELS[e.cat]}</span>`:''}
+      ${e.type==='expense'?`<span class="badge ${e.cat}">${escapeHTML(catLabelFor(e))}</span>`:''}
       <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}${e.note?' — '+escapeHTML(e.note):''}</span>
       <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
       <div class="row-actions">
@@ -1234,7 +1337,17 @@ function startEditEventEntry(id){
   if(!entry)return;
   editingEventEntryId=id;
   if(entry.type==='income'){
-    document.getElementById('ev-inc-src').value=entry.label;
+    const srcSelect=document.getElementById('ev-inc-src');
+    const knownValues=[...srcSelect.options].map(o=>o.value);
+    if(knownValues.includes(entry.label)){
+      srcSelect.value=entry.label;
+      document.getElementById('ev-inc-other-wrap').style.display='none';
+      document.getElementById('ev-inc-src-other').value='';
+    } else {
+      srcSelect.value='Other';
+      document.getElementById('ev-inc-other-wrap').style.display='block';
+      document.getElementById('ev-inc-src-other').value=entry.label;
+    }
     document.getElementById('ev-inc-amt').value=entry.amt;
     document.getElementById('ev-inc-date').value=entry.date;
     document.getElementById('ev-inc-note').value=entry.note||'';
@@ -1242,6 +1355,13 @@ function startEditEventEntry(id){
     document.getElementById('ev-inc-submit-btn').scrollIntoView({behavior:'smooth',block:'center'});
   } else {
     document.getElementById('ev-exp-cat').value=entry.cat;
+    if(entry.cat==='other' && entry.otherLabel){
+      document.getElementById('ev-exp-other-wrap').style.display='block';
+      document.getElementById('ev-exp-cat-other').value=entry.otherLabel;
+    } else {
+      document.getElementById('ev-exp-other-wrap').style.display='none';
+      document.getElementById('ev-exp-cat-other').value='';
+    }
     document.getElementById('ev-exp-amt').value=entry.amt;
     document.getElementById('ev-exp-date').value=entry.date;
     document.getElementById('ev-exp-desc').value=entry.label;
@@ -1259,10 +1379,14 @@ function resetEventEntryEditState(){
 
 async function addEventIncome(){
   if(!currentEventName){toast('No event selected','error');return;}
-  const src=document.getElementById('ev-inc-src').value;
+  let src=document.getElementById('ev-inc-src').value;
   const amt=parseFloat(document.getElementById('ev-inc-amt').value);
   const note=document.getElementById('ev-inc-note').value.trim().slice(0,60);
   const date=document.getElementById('ev-inc-date').value||todayStr();
+  if(src==='Other'){
+    const customSrc=document.getElementById('ev-inc-src-other').value.trim().slice(0,40);
+    if(customSrc) src=customSrc;
+  }
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'income',cat:'income',label:src,note,event:currentEventName,amt:Math.round(amt*100)/100,date};
@@ -1277,6 +1401,8 @@ async function addEventIncome(){
     }
     document.getElementById('ev-inc-amt').value='';
     document.getElementById('ev-inc-note').value='';
+    document.getElementById('ev-inc-src-other').value='';
+    document.getElementById('ev-inc-other-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
@@ -1286,10 +1412,14 @@ async function addEventExpense(){
   const amt=parseFloat(document.getElementById('ev-exp-amt').value);
   const desc=document.getElementById('ev-exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('ev-exp-date').value||todayStr();
+  let otherLabel='';
+  if(cat==='other'){
+    otherLabel=document.getElementById('ev-exp-cat-other').value.trim().slice(0,40);
+  }
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
   if(!desc){toast(TT('add_description'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
-  const payload={type:'expense',cat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
+  const payload={type:'expense',cat,label:desc,otherLabel,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
     if(editingEventEntryId){
       await updateEntry(editingEventEntryId, payload);
@@ -1301,6 +1431,8 @@ async function addEventExpense(){
     }
     document.getElementById('ev-exp-amt').value='';
     document.getElementById('ev-exp-desc').value='';
+    document.getElementById('ev-exp-cat-other').value='';
+    document.getElementById('ev-exp-other-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
@@ -1323,10 +1455,14 @@ async function deleteCurrentEvent(){
 }
 
 async function addIncome(){
-  const src=document.getElementById('inc-src').value;
+  let src=document.getElementById('inc-src').value;
   const amt=parseFloat(document.getElementById('inc-amt').value);
   const note=document.getElementById('inc-note').value.trim().slice(0,60);
   const date=document.getElementById('inc-date').value||todayStr();
+  if(src==='Other'){
+    const customSrc=document.getElementById('inc-src-other').value.trim().slice(0,40);
+    if(customSrc) src=customSrc;
+  }
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'income',cat:'income',label:src,note,amt:Math.round(amt*100)/100,date};
@@ -1341,6 +1477,8 @@ async function addIncome(){
     }
     document.getElementById('inc-amt').value='';
     document.getElementById('inc-note').value='';
+    document.getElementById('inc-src-other').value='';
+    document.getElementById('inc-other-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
@@ -1349,10 +1487,14 @@ async function addExpense(){
   const amt=parseFloat(document.getElementById('exp-amt').value);
   const desc=document.getElementById('exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('exp-date').value||todayStr();
+  let otherLabel='';
+  if(cat==='other'){
+    otherLabel=document.getElementById('exp-cat-other').value.trim().slice(0,40);
+  }
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
   if(!desc){toast(TT('add_description'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
-  const payload={type:'expense',cat,label:desc,amt:Math.round(amt*100)/100,date};
+  const payload={type:'expense',cat,label:desc,otherLabel,amt:Math.round(amt*100)/100,date};
   try{
     if(editingId){
       await updateEntry(editingId, payload);
@@ -1365,6 +1507,8 @@ async function addExpense(){
     }
     document.getElementById('exp-amt').value='';
     document.getElementById('exp-desc').value='';
+    document.getElementById('exp-cat-other').value='';
+    document.getElementById('exp-other-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
@@ -1375,13 +1519,30 @@ function startEdit(id){
   setTab('log');
 
   if(entry.type==='income'){
-    document.getElementById('inc-src').value=entry.label;
+    const srcSelect=document.getElementById('inc-src');
+    const knownValues=[...srcSelect.options].map(o=>o.value);
+    if(knownValues.includes(entry.label)){
+      srcSelect.value=entry.label;
+      document.getElementById('inc-other-wrap').style.display='none';
+      document.getElementById('inc-src-other').value='';
+    } else {
+      srcSelect.value='Other';
+      document.getElementById('inc-other-wrap').style.display='block';
+      document.getElementById('inc-src-other').value=entry.label;
+    }
     document.getElementById('inc-amt').value=entry.amt;
     document.getElementById('inc-date').value=entry.date;
     document.getElementById('inc-note').value=entry.note||'';
       document.getElementById('inc-btn-label').textContent='Update income';
   } else {
     document.getElementById('exp-cat').value=entry.cat;
+    if(entry.cat==='other' && entry.otherLabel){
+      document.getElementById('exp-other-wrap').style.display='block';
+      document.getElementById('exp-cat-other').value=entry.otherLabel;
+    } else {
+      document.getElementById('exp-other-wrap').style.display='none';
+      document.getElementById('exp-cat-other').value='';
+    }
     document.getElementById('exp-amt').value=entry.amt;
     document.getElementById('exp-date').value=entry.date;
     document.getElementById('exp-desc').value=entry.label;
@@ -1419,7 +1580,7 @@ function renderEntries(){
   const from=document.getElementById('filter-from').value;
   const to=document.getElementById('filter-to').value;
   const sortMode=document.getElementById('entry-sort')?document.getElementById('entry-sort').value:'date-desc';
-  let list=entries.map(e=>({...e}));
+  let list=mainEntries().map(e=>({...e}));
   if(from)list=list.filter(e=>e.date>=from);
   if(to)list=list.filter(e=>e.date<=to);
   const el=document.getElementById('entries-list');
@@ -1447,7 +1608,7 @@ function renderEntries(){
     const rows=items.map(e=>`
       <div class="entry-row">
         <span class="date-chip">${fmtDate(e.date)}</span>
-        <span class="badge ${e.cat}">${CAT_LABELS[e.cat]}</span>
+        <span class="badge ${e.cat}">${escapeHTML(catLabelFor(e))}</span>
         <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}${e.note?' — '+escapeHTML(e.note):''}${e.event?' <span class=\"event-tag\">🎉 '+escapeHTML(e.event)+'</span>':''}</span>
         <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
         <div class="row-actions">
@@ -1479,11 +1640,12 @@ function setPeriod(p){
 }
 
 function getReportEntries(){
-  if(period==='all')return entries;
+  const base = mainEntries();
+  if(period==='all')return base;
   if(period==='custom'){
     const from=document.getElementById('rep-from').value;
     const to=document.getElementById('rep-to').value;
-    return entries.filter(e=>(!from||e.date>=from)&&(!to||e.date<=to));
+    return base.filter(e=>(!from||e.date>=from)&&(!to||e.date<=to));
   }
   const now=new Date();
   const day=now.getDay();
@@ -1492,7 +1654,7 @@ function getReportEntries(){
   const monStr=mon.toISOString().split('T')[0];
   const sun=new Date(mon);sun.setDate(mon.getDate()+6);
   const sunStr=sun.toISOString().split('T')[0];
-  return entries.filter(e=>e.date>=monStr&&e.date<=sunStr);
+  return base.filter(e=>e.date>=monStr&&e.date<=sunStr);
 }
 
 function renderReport(){
@@ -1515,7 +1677,7 @@ function renderReport(){
     </div>`).join(''):`<p class="empty">${TT('no_expenses')}</p>`;
 
   const sorted=[...list].sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):CAT_LABELS[e.cat]+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):`<p class="empty">${TT('nothing_period')}</p>`;
+  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):escapeHTML(catLabelFor(e))+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):`<p class="empty">${TT('nothing_period')}</p>`;
 }
 
 function copyReport(){
@@ -1528,7 +1690,7 @@ function copyReport(){
   let txt=`Weekly Expense Report\n${'─'.repeat(30)}\nTotal Income: ₹${income}\nTotal Spent:  ₹${spent}\nBalance Left: ₹${bal}\n\nSpending Breakdown:\n`;
   Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([c,a])=>{txt+=`  ${CAT_LABELS[c]}: ₹${a}\n`;});
   txt+=`\nAll Entries:\n`;
-  [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{txt+=`  ${fmtDate(e.date)} | ${e.type==='income'?'INCOME':'EXPENSE'} | ${CAT_LABELS[e.cat]} | ${e.label}${e.note?' ('+e.note+')':''} | ${e.type==='income'?'+':'-'}₹${e.amt}\n`;});
+  [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{txt+=`  ${fmtDate(e.date)} | ${e.type==='income'?'INCOME':'EXPENSE'} | ${catLabelFor(e)} | ${e.label}${e.note?' ('+e.note+')':''} | ${e.type==='income'?'+':'-'}₹${e.amt}\n`;});
   navigator.clipboard.writeText(txt).then(()=>toast(TT('report_copied'),'success')).catch(()=>{
     const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
     toast(TT('report_copied'),'success');
@@ -1679,7 +1841,7 @@ function exportPDF(){
     if(i%2===0){doc.setFillColor(247,246,252);doc.rect(marginL,y-4,marginR-marginL,6,'F');}
     doc.setFontSize(8.5);
     doc.setTextColor(60);
-    const label=e.type==='income'?e.label:CAT_LABELS[e.cat]+': '+e.label;
+    const label=e.type==='income'?e.label:catLabelFor(e)+': '+e.label;
     doc.text(fmtDate(e.date)+'  |  '+(e.type==='income'?'INCOME':'EXPENSE')+'  |  '+label+(e.note?' ('+e.note+')':''),marginL+2,y);
     doc.setTextColor(...(e.type==='income'?GREEN:RED));
     doc.text((e.type==='income'?'+':'-')+'Rs.'+e.amt,marginR,y,{align:'right'});
