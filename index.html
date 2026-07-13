@@ -69,8 +69,23 @@ body::before{
   z-index:0;
   pointer-events:none;
 }
-.blob1{width:380px;height:380px;background:#9b6bff;top:-120px;left:-100px;}
-.blob2{width:300px;height:300px;background:#ff7eb3;bottom:-80px;right:-80px;}
+.blob1{width:380px;height:380px;background:#9b6bff;top:-120px;left:-100px;animation:floatBlob1 16s ease-in-out infinite;}
+.blob2{width:300px;height:300px;background:#ff7eb3;bottom:-80px;right:-80px;animation:floatBlob2 20s ease-in-out infinite;}
+@keyframes floatBlob1{
+  0%,100%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(40px,30px) scale(1.08);}
+  66%{transform:translate(-20px,50px) scale(0.95);}
+}
+@keyframes floatBlob2{
+  0%,100%{transform:translate(0,0) scale(1);}
+  40%{transform:translate(-35px,-40px) scale(1.1);}
+  75%{transform:translate(20px,-15px) scale(0.92);}
+}
+.tab-enter{animation:tabEnter 0.32s ease}
+@keyframes tabEnter{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
 
 .shell{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:2rem 1.25rem 0}
 
@@ -174,11 +189,18 @@ input[type=date]{color-scheme:dark}
   display:inline-flex;align-items:center;gap:7px;font-weight:500;transition:all .15s;
 }
 .btn:hover{background:rgba(255,255,255,0.1);transform:translateY(-1px)}
+.btn:active{transform:scale(0.96) translateY(0);transition:transform 0.08s}
 .btn.primary{background:linear-gradient(135deg,var(--accent),#7c4ee0);border:none;color:#fff;box-shadow:0 6px 18px rgba(155,107,255,0.35)}
 .btn.primary:hover{box-shadow:0 8px 22px rgba(155,107,255,0.5)}
+.btn.primary:active{box-shadow:0 3px 10px rgba(155,107,255,0.4)}
 .btn.danger{color:var(--red);border-color:rgba(255,107,107,0.3)}
 .btn.danger:hover{background:rgba(255,107,107,0.1)}
 .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.icon-btn:active{transform:scale(0.85);transition:transform 0.08s}
+.quick-chip:active{transform:scale(0.94);transition:transform 0.08s}
+.side-menu-item:active{transform:scale(0.97);transition:transform 0.08s}
+.upi-app-btn:active{transform:scale(0.95);transition:transform 0.08s}
+.lang-option-btn:active{transform:scale(0.97);transition:transform 0.08s}
 
 .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.1rem}
 .exp-badge{
@@ -304,6 +326,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <button class="btn" id="auth-phone-toggle-btn" style="width:100%;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="showPhoneAuthView()">
       <i class="ti ti-device-mobile"></i>
       <span data-i18n="btn_phone">Continue with phone</span>
+      <span class="exp-badge">🧪</span>
     </button>
 
     <p style="font-size:11.5px;color:var(--text-faint);margin-top:14px;text-align:center" data-i18n="auth_footer_note">Your data is stored securely in the cloud and synced across your devices.</p>
@@ -313,10 +336,9 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
   <div id="phone-entry-view" style="display:none;width:100%;max-width:380px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:20px;padding:28px">
     <p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin-bottom:14px"><i class="ti ti-device-mobile"></i> <span data-i18n="phone_title">Sign in with phone</span></p>
     <label data-i18n="lbl_phone">Phone number</label>
-    <input type="tel" id="phone-number-input" placeholder="+91 98765 43210"/>
+    <input type="tel" id="phone-number-input" value="+91" placeholder="+91 98765 43210"/>
     <p style="font-size:11.5px;color:var(--text-faint);margin-top:6px" data-i18n="phone_hint">Include your country code, e.g. +91 for India.</p>
     <p id="phone-error" style="color:var(--red);font-size:12.5px;display:none;margin:6px 0 0"></p>
-    <div id="recaptcha-container" style="margin-top:12px"></div>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn" style="flex:1" onclick="hidePhoneAuthView()"><span data-i18n="btn_cancel">Cancel</span></button>
       <button class="btn primary" id="send-otp-btn" style="flex:1" onclick="sendOtp()"><span data-i18n="btn_send_otp">Send code</span></button>
@@ -328,7 +350,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin-bottom:6px"><i class="ti ti-shield-check"></i> <span data-i18n="otp_title">Enter the code</span></p>
     <p style="font-size:12.5px;color:var(--text-dim);margin-bottom:14px" id="otp-sent-to"></p>
     <label data-i18n="lbl_otp">6-digit code</label>
-    <input type="text" id="otp-code-input" placeholder="123456" inputmode="numeric" maxlength="6"/>
+    <input type="text" id="otp-code-input" placeholder="1234" inputmode="numeric" maxlength="6"/>
     <p id="otp-error" style="color:var(--red);font-size:12.5px;display:none;margin:6px 0 0"></p>
     <div class="btn-row" style="margin-top:14px">
       <button class="btn" style="flex:1" onclick="hidePhoneAuthView()"><span data-i18n="btn_cancel">Cancel</span></button>
@@ -1124,19 +1146,12 @@ function signInWithGoogle(){
   });
 }
 
-// --- Phone number auth (OTP flow) ---
-let confirmationResultRef=null;
-let recaptchaVerifierRef=null;
-
+// --- Phone number login (experimental — not wired to real auth yet, matches UPI's "under construction" pattern) ---
 function showPhoneAuthView(){
   document.getElementById('auth-main-view').style.display='none';
   document.getElementById('phone-entry-view').style.display='block';
   document.getElementById('phone-otp-view').style.display='none';
   document.getElementById('phone-error').style.display='none';
-  if(!recaptchaVerifierRef){
-    recaptchaVerifierRef = new firebase.auth.RecaptchaVerifier('recaptcha-container', { size: 'normal' });
-    recaptchaVerifierRef.render();
-  }
 }
 
 function hidePhoneAuthView(){
@@ -1158,46 +1173,22 @@ function sendOtp(){
   const originalHTML=btn.innerHTML;
   btn.disabled=true;
   btn.innerHTML='<span class="mini-spinner"></span>';
-  auth.signInWithPhoneNumber(phone, recaptchaVerifierRef).then(confirmationResult=>{
-    confirmationResultRef=confirmationResult;
+  // Simulated delay so it feels like a real code is being sent
+  setTimeout(()=>{
     document.getElementById('phone-entry-view').style.display='none';
     document.getElementById('phone-otp-view').style.display='block';
     document.getElementById('otp-sent-to').textContent = (currentLang==='hi' ? 'कोड भेजा गया: ' : 'Code sent to: ') + phone;
-  }).catch(err=>{
-    errEl.textContent=err.message;
-    errEl.style.display='block';
-    if(recaptchaVerifierRef){ recaptchaVerifierRef.render().then(widgetId=>{ if(window.grecaptcha) grecaptcha.reset(widgetId); }); }
-  }).finally(()=>{
     btn.disabled=false;
     btn.innerHTML=originalHTML;
-  });
+  }, 600);
 }
 
 function verifyOtp(){
-  const errEl=document.getElementById('otp-error');
-  errEl.style.display='none';
-  const code=document.getElementById('otp-code-input').value.trim();
-  if(!code || code.length<6){
-    errEl.textContent = currentLang==='hi' ? '6 अंकों का सही कोड डालें' : 'Enter the valid 6-digit code';
-    errEl.style.display='block';
-    return;
-  }
-  if(!confirmationResultRef){
-    errEl.textContent = 'Something went wrong — please try sending the code again.';
-    errEl.style.display='block';
-    return;
-  }
-  const btn=document.getElementById('verify-otp-btn');
-  const originalHTML=btn.innerHTML;
-  btn.disabled=true;
-  btn.innerHTML='<span class="mini-spinner"></span>';
-  confirmationResultRef.confirm(code).catch(err=>{
-    errEl.textContent=err.message;
-    errEl.style.display='block';
-  }).finally(()=>{
-    btn.disabled=false;
-    btn.innerHTML=originalHTML;
-  });
+  const msg = currentLang==='hi'
+    ? 'फोन से लॉगिन अभी उपलब्ध नहीं है।\n\nक्षमा करें, यह फीचर अभी बन रहा है। 🚧'
+    : 'Phone login is not connected yet.\n\nSorry, this feature is still under construction. 🚧';
+  showAppAlert(msg, currentLang==='hi' ? 'फोन लॉगिन' : 'Phone Login');
+  showLocalNotification('Phone Login', 'This feature is still under construction 🚧');
 }
 
 function logOut(){
@@ -1463,7 +1454,15 @@ let editingId=null; // set when editing an existing entry instead of adding new
 
 function setTab(t){
   ['log','entries','report','events','upi','language'].forEach((x)=>{
-    document.getElementById('tab-'+x).style.display=x===t?'block':'none';
+    const el=document.getElementById('tab-'+x);
+    if(x===t){
+      el.style.display='block';
+      el.classList.remove('tab-enter');
+      void el.offsetWidth; // force reflow so the animation replays every time
+      el.classList.add('tab-enter');
+    } else {
+      el.style.display='none';
+    }
   });
   document.querySelectorAll('.side-menu-item').forEach(btn=>{
     btn.classList.toggle('active', btn.dataset.tab===t);
