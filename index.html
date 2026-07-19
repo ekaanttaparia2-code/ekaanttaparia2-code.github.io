@@ -72,6 +72,10 @@ body::before{
 .blob1{width:380px;height:380px;background:#9b6bff;top:-120px;left:-100px;}
 .blob2{width:300px;height:300px;background:#ff7eb3;bottom:-80px;right:-80px;}
 .tab-enter{animation:tabEnter 0.32s ease}
+.pie-slice{cursor:pointer;transition:transform 0.15s ease}
+.pie-container-3d{margin:10px 0}
+.pie-slice-3d{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));transform:translateZ(1px)}
+.pie-center-3d{transform:translateZ(5px)}
 @keyframes hintPulse{
   0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0.6)}
   50%{box-shadow:0 0 0 6px rgba(255,107,107,0)}
@@ -249,6 +253,7 @@ input[type=date]{color-scheme:dark}
 .badge.friends{background:rgba(255,184,77,0.15);color:#ffcb7d}
 .badge.home{background:rgba(255,126,179,0.15);color:#ff9fc7}
 .badge.other{background:rgba(255,255,255,0.1);color:var(--text-dim)}
+.badge.custom{background:rgba(155,107,255,0.15);color:#c4a8ff}
 .badge.income{background:rgba(74,222,128,0.18);color:#6ee7a8}
 .date-chip{font-size:11.5px;color:var(--text-faint);min-width:60px}
 .row-actions{margin-left:auto}
@@ -266,10 +271,31 @@ input[type=date]{color-scheme:dark}
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
 .filter-bar input[type=date]{width:auto;min-width:130px}
 .toggle-grp{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.04)}
-.toggle-grp button{border:none;background:transparent;padding:8px 14px;font-size:12.5px;cursor:pointer;color:var(--text-dim);font-weight:500}
+.toggle-grp button{flex:1;border:none;background:transparent;padding:8px 6px;font-size:11.5px;cursor:pointer;color:var(--text-dim);font-weight:500;text-align:center;white-space:nowrap}
 .toggle-grp button.active{background:linear-gradient(135deg,var(--accent),#7c4ee0);color:#fff}
 
 footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2rem;padding-bottom:1rem}
+
+body.light-theme {
+  --bg1:#f0edff; --bg2:#e8e4ff; --bg3:#ddd6fe;
+  --accent:#7c3aed; --accent2:#db2777;
+  --card:rgba(255,255,255,0.85); --card-solid:#ffffff;
+  --border:rgba(0,0,0,0.1); --text:#1e1b4b;
+  --text-dim:#4c1d95; --text-faint:#6d28d9;
+  --green:#16a34a; --red:#dc2626; --amber:#ea580c;
+  background: linear-gradient(160deg, #f0edff, #e8e4ff 55%, #ddd6fe);
+  background-attachment:fixed;
+}
+body.light-theme::before{ background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px); }
+body.light-theme .blob1{background:#7c3aed;opacity:0.12}
+body.light-theme .blob2{background:#db2777;opacity:0.1}
+body.light-theme select option{background:#fff;color:#1e1b4b}
+body.light-theme input[type=date]{color-scheme:light}
+body.light-theme .side-menu{background:#fff;border-right-color:rgba(0,0,0,0.1)}
+body.light-theme #auth-screen{background:#f0edff}
+body.light-theme #app-modal-box,
+body.light-theme .side-menu{background:#fff}
+body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
 </style>
 </head>
 <body>
@@ -280,6 +306,16 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <p id="app-modal-title" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin-bottom:8px"></p>
     <p id="app-modal-message" style="font-size:13.5px;color:var(--text-dim);line-height:1.5;white-space:pre-line"></p>
     <div id="app-modal-buttons" class="btn-row" style="margin-top:18px"></div>
+  </div>
+</div>
+
+<div id="manage-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:899;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:380px;max-height:80vh;overflow-y:auto;background:#1f1840;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <p id="manage-modal-title" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin:0"></p>
+      <button class="icon-btn" onclick="closeManageOptions()" aria-label="close">✕</button>
+    </div>
+    <div id="manage-modal-list"></div>
   </div>
 </div>
 <div class="blob blob1"></div>
@@ -367,6 +403,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
     <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-link"></i> <span data-i18n="nav_upi">UPI Connect</span> <span class="exp-badge" style="margin-left:auto">🧪</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
+    <button class="side-menu-item" data-tab="appearance" onclick="setTab('appearance')"><i class="ti ti-palette"></i> <span data-i18n="tab_appearance">Appearance</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>
@@ -392,16 +429,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="grid3">
         <div>
           <label data-i18n="lbl_source">Source</label>
-          <select id="inc-src">
+          <select id="inc-src" onchange="toggleAddCustomField('inc')">
             <option value="Salary" data-hi="वेतन">Salary</option>
-            <option value="Business income" data-hi="व्यवसाय आय">Business income</option>
-            <option value="Pension" data-hi="पेंशन">Pension</option>
-            <option value="Rent received" data-hi="किराया प्राप्त">Rent received</option>
-            <option value="Investment/Interest" data-hi="निवेश/ब्याज">Investment/Interest</option>
             <option value="Allowance" data-hi="भत्ता">Allowance</option>
-            <option value="Gift" data-hi="उपहार">Gift</option>
-            <option value="Freelance/Side income" data-hi="फ्रीलांस/अतिरिक्त आय">Freelance/Side income</option>
-            <option value="Other" data-hi="अन्य">Others</option>
+            <option value="Rent received" data-hi="किराया प्राप्त">Rent received</option>
+            <option value="__add_new__" data-hi="स्रोत जोड़ें">+ Add Source</option>
           </select>
         </div>
         <div>
@@ -413,6 +445,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <input type="date" id="inc-date"/>
         </div>
       </div>
+      <div id="inc-custom-wrap" style="display:none">
+        <label data-i18n="lbl_custom_source">New source name</label>
+        <input type="text" id="inc-custom" placeholder="e.g. Tuition income" maxlength="40"/>
+      </div>
+      <p id="inc-manage-link" style="display:none;font-size:12px;margin:2px 0 10px"><a href="#" onclick="openManageOptions('income');return false;" style="color:var(--accent);text-decoration:none" data-i18n="lnk_manage_sources">Manage your custom sources</a></p>
       <label data-i18n="lbl_note">Note</label>
       <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60" data-i18n-ph="ph_inc_note"/>
       <div class="btn-row">
@@ -425,12 +462,12 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
       <div class="grid3">
         <div>
           <label data-i18n="lbl_category">Category</label>
-          <select id="exp-cat">
+          <select id="exp-cat" onchange="toggleAddCustomField('exp')">
             <option value="food" data-hi="खाना और नाश्ता">Food & snacks</option>
-            <option value="travel" data-hi="यात्रा">Travel</option>
+            <option value="travel" data-hi="यात्रा">Travel/Convenience</option>
             <option value="friends" data-hi="दोस्तों का प्लान">Friends plan</option>
-            <option value="home" data-hi="घरेलू सामान">Home goods</option>
-            <option value="other" data-hi="अन्य">Others</option>
+            <option value="home" data-hi="घरेलू सामान">Household items</option>
+            <option value="__add_new__" data-hi="श्रेणी जोड़ें">+ Add Category</option>
           </select>
         </div>
         <div>
@@ -442,6 +479,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
           <input type="date" id="exp-date"/>
         </div>
       </div>
+      <div id="exp-custom-wrap" style="display:none">
+        <label data-i18n="lbl_custom_category">New category name</label>
+        <input type="text" id="exp-custom" placeholder="e.g. Medical, Repairs" maxlength="40"/>
+      </div>
+      <p id="exp-manage-link" style="display:none;font-size:12px;margin:2px 0 10px"><a href="#" onclick="openManageOptions('expense');return false;" style="color:var(--accent);text-decoration:none" data-i18n="lnk_manage_categories">Manage your custom categories</a></p>
       <label data-i18n="lbl_desc">Description</label>
       <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60" data-i18n-ph="ph_exp_desc"/>
       <div class="btn-row">
@@ -480,6 +522,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <span style="font-size:12.5px;color:var(--text-dim)" data-i18n="lbl_period">Period</span>
         <div class="toggle-grp" id="period-toggle">
           <button class="active" onclick="setPeriod('week')" data-i18n="period_week">This week</button>
+          <button onclick="setPeriod('month')" data-i18n="period_month">This month</button>
           <button onclick="setPeriod('all')" data-i18n="period_all">All time</button>
           <button onclick="setPeriod('custom')" data-i18n="period_custom">Custom</button>
         </div>
@@ -505,10 +548,14 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     </div>
 
     <div class="card">
-      <p class="sec-title"><i class="ti ti-target-arrow"></i><span data-i18n="sec_budget">Weekly budget</span></p>
+      <p class="sec-title"><i class="ti ti-target-arrow"></i><span data-i18n="sec_budget">Budget</span></p>
+      <div class="toggle-grp" id="budget-period-toggle" style="margin-bottom:12px">
+        <button class="active" onclick="setBudgetPeriod('weekly')" data-i18n="period_week">This week</button>
+        <button onclick="setBudgetPeriod('monthly')" data-i18n="period_month">This month</button>
+      </div>
       <div class="grid3" style="align-items:end">
         <div>
-          <label data-i18n="lbl_set_budget">Set weekly budget (₹)</label>
+          <label id="budget-input-label" data-i18n="lbl_set_budget_weekly">Set weekly budget (₹)</label>
           <input type="number" id="budget-input" placeholder="e.g. 1000" min="0" max="10000000" step="1" data-i18n-ph="ph_budget"/>
         </div>
         <div>
@@ -516,11 +563,11 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         </div>
       </div>
       <div id="budget-status" style="margin-top:10px"></div>
-      <button class="btn" style="margin-top:10px;width:100%" onclick="requestNotifPermission()"><i class="ti ti-bell"></i> <span data-i18n="btn_enable_notif">Enable notifications</span></button>
     </div>
 
     <div class="card">
       <p class="sec-title"><i class="ti ti-chart-pie"></i><span data-i18n="sec_cat">Spending by category</span></p>
+      <div id="cat-pie-wrap" style="display:flex;justify-content:center;margin:10px 0" class="pie-container-3d"></div>
       <div id="cat-breakdown"></div>
     </div>
 
@@ -608,10 +655,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div class="grid3">
           <div>
             <label data-i18n="lbl_source">Source</label>
-            <select id="ev-inc-src">
+            <select id="ev-inc-src" onchange="toggleAddCustomField('ev-inc')">
               <option value="Cash gift" data-hi="नकद उपहार">Cash gift</option>
               <option value="Contribution" data-hi="योगदान">Contribution</option>
-              <option value="Other" data-hi="अन्य">Others</option>
+              <option value="__add_new__" data-hi="स्रोत जोड़ें">+ Add Source</option>
             </select>
           </div>
           <div>
@@ -622,6 +669,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             <label data-i18n="lbl_date">Date</label>
             <input type="date" id="ev-inc-date"/>
           </div>
+        </div>
+        <div id="ev-inc-custom-wrap" style="display:none">
+          <label data-i18n="lbl_custom_source">New source name</label>
+          <input type="text" id="ev-inc-custom" placeholder="e.g. Envelope gift" maxlength="40"/>
         </div>
         <label data-i18n="lbl_note">Note</label>
         <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60" data-i18n-ph="ph_ev_inc_note"/>
@@ -635,12 +686,12 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
         <div class="grid3">
           <div>
             <label data-i18n="lbl_category">Category</label>
-            <select id="ev-exp-cat">
+            <select id="ev-exp-cat" onchange="toggleAddCustomField('ev-exp')">
               <option value="food" data-hi="खाना और खानपान">Food & catering</option>
               <option value="travel">Travel</option>
               <option value="friends" data-hi="सजावट/दोस्त">Decor / friends</option>
               <option value="home" data-hi="स्थान/घर">Venue / home</option>
-              <option value="other" data-hi="अन्य">Others</option>
+              <option value="__add_new__" data-hi="श्रेणी जोड़ें">+ Add Category</option>
             </select>
           </div>
           <div>
@@ -651,6 +702,10 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
             <label data-i18n="lbl_date">Date</label>
             <input type="date" id="ev-exp-date"/>
           </div>
+        </div>
+        <div id="ev-exp-custom-wrap" style="display:none">
+          <label data-i18n="lbl_custom_category">New category name</label>
+          <input type="text" id="ev-exp-custom" placeholder="e.g. Photography, Gifts" maxlength="40"/>
         </div>
         <label data-i18n="lbl_desc">Description</label>
         <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60" data-i18n-ph="ph_ev_exp_desc"/>
@@ -731,6 +786,20 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     </div>
   </div>
 
+  <div id="tab-appearance" class="tab-content" style="display:none">
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-palette"></i><span>Appearance</span></p>
+      <button class="lang-option-btn" id="theme-dark-btn" onclick="setTheme('dark')">
+        <span><i class="ti ti-moon" style="margin-right:8px"></i> Dark</span>
+        <span class="lang-check">✓</span>
+      </button>
+      <button class="lang-option-btn" id="theme-light-btn" onclick="setTheme('light')" style="margin-top:10px">
+        <span><i class="ti ti-sun" style="margin-right:8px"></i> Light</span>
+        <span class="lang-check">✓</span>
+      </button>
+    </div>
+  </div>
+
   <footer>PocketTrack · synced to the cloud · your data, your account</footer>
 </div>
 
@@ -752,13 +821,15 @@ const TRANSLATIONS = {
   rewards_how_desc:{en:"Log at least one income or expense on a day to keep your streak alive and earn points. The longer your streak, the more badges you unlock. Points and badges aren't real money — they're yours to show off, unlock fun app themes, and prove you're actually on top of your money.",hi:'अपनी स्ट्रीक जिंदा रखने और पॉइंट्स कमाने के लिए हर दिन कम से कम एक आय या खर्च दर्ज करें। जितनी लंबी स्ट्रीक, उतने ज़्यादा बैज अनलॉक होंगे। पॉइंट्स और बैज असली पैसे नहीं हैं — ये दिखाने के लिए हैं, मज़ेदार ऐप थीम अनलॉक करने के लिए हैं, और यह साबित करने के लिए हैं कि आप वाकई अपने पैसों पर नज़र रखते हैं।'},
   sec_add_income:{en:'Add income',hi:'आय जोड़ें'},
   sec_add_expense:{en:'Add expense',hi:'खर्च जोड़ें'},
-  sec_budget:{en:'Weekly budget',hi:'साप्ताहिक बजट'},
-  lbl_set_budget:{en:'Set weekly budget (₹)',hi:'साप्ताहिक बजट सेट करें (₹)'},
+  sec_budget:{en:'Budget',hi:'बजट'},
+  lbl_set_budget_weekly:{en:'Set weekly budget (₹)',hi:'साप्ताहिक बजट सेट करें (₹)'},
+  lbl_set_budget_monthly:{en:'Set monthly budget (₹)',hi:'मासिक बजट सेट करें (₹)'},
   lbl_period:{en:'Period',hi:'अवधि'},
   lbl_to:{en:'To',hi:'तक'},
-  period_week:{en:'This week',hi:'इस सप्ताह'},
-  period_all:{en:'All time',hi:'सभी समय'},
+  period_week:{en:'Week',hi:'सप्ताह'},
+  period_all:{en:'All time',hi:'सभी'},
   period_custom:{en:'Custom',hi:'कस्टम'},
+  period_month:{en:'Month',hi:'महीना'},
   metric_total_income:{en:'Total income',hi:'कुल आय'},
   metric_total_spent:{en:'Total spent',hi:'कुल खर्च'},
   metric_balance_left:{en:'Balance left',hi:'बचा हुआ बैलेंस'},
@@ -784,7 +855,14 @@ const TRANSLATIONS = {
   lbl_desc:{en:'Description',hi:'विवरण'},
   lbl_desc_opt:{en:'Description (optional)',hi:'विवरण (वैकल्पिक)'},
   lbl_specify:{en:'Please specify',hi:'कृपया बताएं'},
-  lbl_specify:{en:'Please specify',hi:'कृपया बताएं'},
+  lbl_custom_source:{en:'New source name',hi:'नए स्रोत का नाम'},
+  lbl_custom_category:{en:'New category name',hi:'नई श्रेणी का नाम'},
+  lnk_manage_sources:{en:'Manage your custom sources',hi:'अपने कस्टम स्रोत प्रबंधित करें'},
+  lnk_manage_categories:{en:'Manage your custom categories',hi:'अपनी कस्टम श्रेणियां प्रबंधित करें'},
+  no_custom_sources:{en:"You haven't added any custom sources yet",hi:'आपने अभी तक कोई कस्टम स्रोत नहीं जोड़ा है'},
+  no_custom_categories:{en:"You haven't added any custom categories yet",hi:'आपने अभी तक कोई कस्टम श्रेणी नहीं जोड़ी है'},
+  give_source_name:{en:'Type a name for this source',hi:'इस स्रोत के लिए एक नाम लिखें'},
+  give_category_name:{en:'Type a name for this category',hi:'इस श्रेणी के लिए एक नाम लिखें'},
   sec_money_tip:{en:'Money-saving tip',hi:'पैसे बचाने की सलाह'},
   btn_next_tip:{en:'Show me another tip',hi:'दूसरी सलाह दिखाएं'},
   sec_entries:{en:'Entries',hi:'एंट्रीज़'},
@@ -894,6 +972,16 @@ function setLanguage(lang){
   toast(currentLang==='en' ? 'Switched to English' : 'हिंदी में बदल गया', 'success');
 }
 
+let currentTheme = localStorage.getItem('pockettrack_theme') || 'dark';
+function setTheme(t){
+  currentTheme = t;
+  localStorage.setItem('pockettrack_theme', t);
+  document.body.classList.toggle('light-theme', t==='light');
+  document.getElementById('theme-dark-btn').classList.toggle('active', t==='dark');
+  document.getElementById('theme-light-btn').classList.toggle('active', t==='light');
+}
+function initTheme(){ setTheme(currentTheme); }
+
 // --- Firebase setup ---
 const firebaseConfig = {
   apiKey: "AIzaSyCxs1ltKht43N9JuwAIKymk0drlGsjxCvM",
@@ -911,6 +999,7 @@ let currentUser = null;
 let unsubscribeEntries = null;
 
 const CAT_LABELS_BI = {
+  custom:{en:'Custom category',hi:'कस्टम श्रेणी'},
   food:{en:'Food & snacks',hi:'खाना और नाश्ता'},
   travel:{en:'Travel',hi:'यात्रा'},
   friends:{en:'Friends plan',hi:'दोस्तों का प्लान'},
@@ -919,6 +1008,7 @@ const CAT_LABELS_BI = {
   income:{en:'Income',hi:'आय'},
 };
 function CAT_LABEL(cat){ return (CAT_LABELS_BI[cat] && CAT_LABELS_BI[cat][currentLang]) || cat; }
+function displayCatLabel(e){ return (e.cat==='custom' && e.customCat) ? e.customCat : CAT_LABEL(e.cat); }
 const CAT_LABELS = new Proxy({}, { get: (_, cat) => CAT_LABEL(cat) }); // backward-compatible drop-in
 
 const MSG = {
@@ -976,7 +1066,7 @@ function showNextTip(){
   if(tipEl) tipEl.textContent = MONEY_TIPS[idx][currentLang] || MONEY_TIPS[idx].en;
 }
 
-const CAT_COLORS = {food:'#4ade80',travel:'#60a5fa',friends:'#ffb84d',home:'#ff7eb3',other:'#9b95c2'};
+const CAT_COLORS = {food:'#4ade80',travel:'#60a5fa',friends:'#ffb84d',home:'#ff7eb3',other:'#9b95c2',custom:'#c4a8ff'};
 let entries = [];
 function mainEntries(){ return entries.filter(e=>!e.event); } // excludes entries tagged to an event — those live only in their event's own view
 let period = 'week';
@@ -1002,6 +1092,22 @@ function isValidDate(d){
   const min=new Date('2000-01-01');
   const max=new Date(today); max.setFullYear(max.getFullYear()+1);
   return dt>=min && dt<=max;
+}
+
+// --- Shows/hides the "type your own" field when "+ Add Source/Category" is picked ---
+// prefix: 'inc' -> inc-src, 'exp' -> exp-cat, 'ev-inc' -> ev-inc-src, 'ev-exp' -> ev-exp-cat, 'event-type' -> new-event-type
+function toggleAddCustomField(prefix){
+  const selectId = (prefix==='exp'||prefix==='ev-exp') ? prefix+'-cat' : (prefix==='event-type' ? 'new-event-type' : prefix+'-src');
+  const wrapId = prefix+'-custom-wrap';
+  const select=document.getElementById(selectId);
+  const wrap=document.getElementById(wrapId);
+  if(!select||!wrap)return;
+  const isCustom = select.value==='__add_new__';
+  wrap.style.display = isCustom ? 'block' : 'none';
+  if(!isCustom){
+    const input=wrap.querySelector('input');
+    if(input) input.value='';
+  }
 }
 
 // --- In-app toast notifications (replaces browser alert popups) ---
@@ -1156,6 +1262,7 @@ function logOut(){
 }
 
 auth.onAuthStateChanged(user=>{
+  initTheme();
   if(user){
     currentUser=user;
     document.getElementById('auth-screen').style.display='none';
@@ -1186,15 +1293,236 @@ function resendVerification(){
 }
 
 let weeklyBudget=0;
+let monthlyBudget=0;
+let budgetPeriod='weekly'; // which one the Report card is currently showing/editing
+
+function setBudgetPeriod(period){
+  budgetPeriod=period;
+  document.querySelectorAll('#budget-period-toggle button').forEach((btn,i)=>{
+    btn.classList.toggle('active', (period==='weekly'&&i===0)||(period==='monthly'&&i===1));
+  });
+  document.getElementById('budget-input-label').setAttribute('data-i18n', period==='weekly'?'lbl_set_budget_weekly':'lbl_set_budget_monthly');
+  document.getElementById('budget-input').value = (period==='weekly'?weeklyBudget:monthlyBudget) || '';
+  applyLanguage();
+  checkBudget();
+}
+
+let customIncomeSources=[];
+let customExpenseCategories=[];
 
 async function loadBudget(){
   if(!currentUser)return;
   try{
     const doc=await db.collection('users').doc(currentUser.uid).get();
     weeklyBudget = (doc.exists && doc.data().weeklyBudget) || 0;
-    document.getElementById('budget-input').value = weeklyBudget || '';
+    monthlyBudget = (doc.exists && doc.data().monthlyBudget) || 0;
+    customIncomeSources = (doc.exists && doc.data().customIncomeSources) || [];
+    customExpenseCategories = (doc.exists && doc.data().customExpenseCategories) || [];
+    document.getElementById('budget-input').value = (budgetPeriod==='weekly'?weeklyBudget:monthlyBudget) || '';
     checkBudget();
+    renderCustomOptions();
   }catch(e){console.error(e);}
+}
+
+// --- Injects previously-created custom sources/categories into all 4 relevant dropdowns, right before "+ Add" ---
+function renderCustomOptions(){
+  const incomeSelects=['inc-src','ev-inc-src'];
+  const expenseSelects=['exp-cat','ev-exp-cat'];
+
+  incomeSelects.forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    const currentVal=sel.value;
+    [...sel.querySelectorAll('option[data-custom]')].forEach(o=>o.remove());
+    const addOpt=sel.querySelector('option[value="__add_new__"]');
+    customIncomeSources.forEach(name=>{
+      const opt=document.createElement('option');
+      opt.value=name; opt.textContent=name; opt.setAttribute('data-custom','1');
+      sel.insertBefore(opt, addOpt);
+    });
+    if([...sel.options].some(o=>o.value===currentVal)) sel.value=currentVal;
+  });
+
+  expenseSelects.forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    const currentVal=sel.value;
+    [...sel.querySelectorAll('option[data-custom]')].forEach(o=>o.remove());
+    const addOpt=sel.querySelector('option[value="__add_new__"]');
+    customExpenseCategories.forEach(name=>{
+      const opt=document.createElement('option');
+      opt.value='custom:'+name; opt.textContent=name; opt.setAttribute('data-custom','1');
+      sel.insertBefore(opt, addOpt);
+    });
+    if([...sel.options].some(o=>o.value===currentVal)) sel.value=currentVal;
+  });
+
+  renderCustomChips();
+}
+
+function renderCustomChips(){
+  const incLink=document.getElementById('inc-manage-link');
+  if(incLink) incLink.style.display = customIncomeSources.length ? 'block' : 'none';
+  const expLink=document.getElementById('exp-manage-link');
+  if(expLink) expLink.style.display = customExpenseCategories.length ? 'block' : 'none';
+}
+
+let manageOptionsMode=null; // 'income' or 'expense'
+
+function openManageOptions(mode){
+  manageOptionsMode=mode;
+  document.getElementById('manage-modal-title').textContent = mode==='income' ? TT('lnk_manage_sources') : TT('lnk_manage_categories');
+  renderManageOptionsList();
+  document.getElementById('manage-modal-backdrop').style.display='flex';
+}
+
+function closeManageOptions(){
+  document.getElementById('manage-modal-backdrop').style.display='none';
+}
+
+function renderManageOptionsList(){
+  const list = manageOptionsMode==='income' ? customIncomeSources : customExpenseCategories;
+  const listEl=document.getElementById('manage-modal-list');
+  if(!list.length){
+    listEl.innerHTML = `<p class="empty">${manageOptionsMode==='income' ? TT('no_custom_sources') : TT('no_custom_categories')}</p>`;
+    return;
+  }
+  listEl.innerHTML = list.map(name=>`
+    <div class="entry-row">
+      <span style="flex:1;color:var(--text)">${escapeHTML(name)}</span>
+      <div class="row-actions">
+        <button class="icon-btn" onclick="startEditCustomOption('${escapeHTML(name).replace(/'/g,"\\'")}')" aria-label="edit">✏️</button>
+        <button class="icon-btn" onclick="confirmDeleteCustomOption('${escapeHTML(name).replace(/'/g,"\\'")}')" aria-label="delete">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function showAppPrompt(message, defaultValue, onConfirm, title){
+  title = title || (currentLang==='hi' ? 'नया नाम डालें' : 'Enter new name');
+  document.getElementById('app-modal-title').textContent = title;
+  document.getElementById('app-modal-message').innerHTML = `
+    <p style="margin-bottom:12px">${message}</p>
+    <input type="text" id="app-prompt-input" value="${escapeHTML(defaultValue)}"
+      style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px"
+      onkeydown="if(event.key==='Enter')document.getElementById('app-prompt-confirm-btn').click()"
+    >
+  `;
+  const okLabel = currentLang==='hi' ? 'ठीक है' : 'OK';
+  const cancelLabel = currentLang==='hi' ? 'रद्द करें' : 'Cancel';
+  document.getElementById('app-modal-buttons').innerHTML = `
+    <button class="btn" style="flex:1" onclick="closeAppModal()">${cancelLabel}</button>
+    <button class="btn primary" style="flex:1" id="app-prompt-confirm-btn">${okLabel}</button>
+  `;
+  document.getElementById('app-prompt-confirm-btn').onclick = ()=>{
+    const val = document.getElementById('app-prompt-input').value;
+    closeAppModal();
+    onConfirm(val);
+  };
+  document.getElementById('app-modal-backdrop').style.display='flex';
+  setTimeout(()=>document.getElementById('app-prompt-input')?.select(), 50);
+}
+
+function startEditCustomOption(oldName){
+  showAppPrompt(
+    currentLang==='hi' ? 'नया नाम डालें:' : 'Enter new name:',
+    oldName,
+    (newName)=>{
+      if(!newName || !newName.trim() || newName.trim()===oldName) return;
+      const trimmed=newName.trim().slice(0,40);
+      if(manageOptionsMode==='income') renameCustomIncomeSource(oldName, trimmed);
+      else renameCustomExpenseCategory(oldName, trimmed);
+    }
+  );
+}
+
+function confirmDeleteCustomOption(name){
+  showAppConfirm(
+    currentLang==='hi' ? `"${name}" हटाएं?` : `Delete "${name}"?`,
+    ()=>{
+      if(manageOptionsMode==='income') removeCustomIncomeSource(name);
+      else removeCustomExpenseCategory(name);
+      setTimeout(renderManageOptionsList, 300);
+    }
+  );
+}
+
+async function renameCustomIncomeSource(oldName, newName){
+  if(!currentUser)return;
+  try{
+    customIncomeSources = customIncomeSources.map(n=>n===oldName?newName:n);
+    await db.collection('users').doc(currentUser.uid).update({
+      customIncomeSources: firebase.firestore.FieldValue.arrayRemove(oldName)
+    });
+    await db.collection('users').doc(currentUser.uid).update({
+      customIncomeSources: firebase.firestore.FieldValue.arrayUnion(newName)
+    });
+    toast(currentLang==='hi'?'स्रोत का नाम बदला गया':'Source renamed','success');
+    renderCustomOptions();
+    renderManageOptionsList();
+  }catch(e){toast('Could not rename: '+e.message,'error');}
+}
+
+async function renameCustomExpenseCategory(oldName, newName){
+  if(!currentUser)return;
+  try{
+    customExpenseCategories = customExpenseCategories.map(n=>n===oldName?newName:n);
+    await db.collection('users').doc(currentUser.uid).update({
+      customExpenseCategories: firebase.firestore.FieldValue.arrayRemove(oldName)
+    });
+    await db.collection('users').doc(currentUser.uid).update({
+      customExpenseCategories: firebase.firestore.FieldValue.arrayUnion(newName)
+    });
+    toast(currentLang==='hi'?'श्रेणी का नाम बदला गया':'Category renamed','success');
+    renderCustomOptions();
+    renderManageOptionsList();
+  }catch(e){toast('Could not rename: '+e.message,'error');}
+}
+
+
+async function removeCustomIncomeSource(name){
+  if(!currentUser)return;
+  customIncomeSources=customIncomeSources.filter(n=>n!==name);
+  try{
+    await db.collection('users').doc(currentUser.uid).set(
+      {customIncomeSources: firebase.firestore.FieldValue.arrayRemove(name)}, {merge:true}
+    );
+    toast(currentLang==='hi'?'स्रोत हटाया गया':'Source removed','success');
+    renderCustomOptions();
+  }catch(e){toast('Could not remove: '+e.message,'error');}
+}
+
+async function removeCustomExpenseCategory(name){
+  if(!currentUser)return;
+  customExpenseCategories=customExpenseCategories.filter(n=>n!==name);
+  try{
+    await db.collection('users').doc(currentUser.uid).set(
+      {customExpenseCategories: firebase.firestore.FieldValue.arrayRemove(name)}, {merge:true}
+    );
+    toast(currentLang==='hi'?'श्रेणी हटाई गई':'Category removed','success');
+    renderCustomOptions();
+  }catch(e){toast('Could not remove: '+e.message,'error');}
+}
+
+async function saveCustomIncomeSource(name){
+  if(!currentUser || customIncomeSources.includes(name))return;
+  customIncomeSources.push(name);
+  try{
+    await db.collection('users').doc(currentUser.uid).set(
+      {customIncomeSources: firebase.firestore.FieldValue.arrayUnion(name)}, {merge:true}
+    );
+    renderCustomOptions();
+  }catch(e){console.error('Could not save custom source:',e);}
+}
+
+async function saveCustomExpenseCategory(name){
+  if(!currentUser || customExpenseCategories.includes(name))return;
+  customExpenseCategories.push(name);
+  try{
+    await db.collection('users').doc(currentUser.uid).set(
+      {customExpenseCategories: firebase.firestore.FieldValue.arrayUnion(name)}, {merge:true}
+    );
+    renderCustomOptions();
+  }catch(e){console.error('Could not save custom category:',e);}
 }
 
 async function saveBudget(){
@@ -1202,8 +1530,9 @@ async function saveBudget(){
   const val=parseFloat(document.getElementById('budget-input').value);
   if(!isFinite(val)||val<0){toast('Enter a valid budget amount','error');return;}
   try{
-    await db.collection('users').doc(currentUser.uid).set({weeklyBudget:val},{merge:true});
-    weeklyBudget=val;
+    const field = budgetPeriod==='weekly' ? {weeklyBudget:val} : {monthlyBudget:val};
+    await db.collection('users').doc(currentUser.uid).set(field,{merge:true});
+    if(budgetPeriod==='weekly') weeklyBudget=val; else monthlyBudget=val;
     toast(TT('budget_saved'),'success');
     checkBudget();
   }catch(e){toast('Could not save budget: '+e.message,'error');}
@@ -1228,15 +1557,29 @@ function getThisWeekEntries(){
   return mainEntries().filter(e=>e.date>=monStr&&e.date<=sunStr);
 }
 
+function getThisMonthEntries(){
+  const now=new Date();
+  const y=now.getFullYear(), m=now.getMonth();
+  const start=new Date(y,m,1).toISOString().split('T')[0];
+  const end=new Date(y,m+1,0).toISOString().split('T')[0];
+  return mainEntries().filter(e=>e.date>=start&&e.date<=end);
+}
+
 function checkBudget(){
   const statusEl=document.getElementById('budget-status');
   if(!statusEl)return;
-  if(!weeklyBudget){statusEl.innerHTML='';return;}
-  const spent=getThisWeekEntries().filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
-  const pct=Math.min(Math.round(spent/weeklyBudget*100),100);
-  const over=spent>weeklyBudget;
-  const spentOfText = currentLang==='hi' ? `₹${spent} खर्च हुआ ₹${weeklyBudget} में से (इस सप्ताह)` : `₹${spent} spent of ₹${weeklyBudget} this week`;
-  const overText = currentLang==='hi' ? "आपने अपना साप्ताहिक बजट पार कर लिया है!" : "You've exceeded your weekly budget!";
+  const budget = budgetPeriod==='weekly' ? weeklyBudget : monthlyBudget;
+  if(!budget){statusEl.innerHTML='';return;}
+  const list = budgetPeriod==='weekly' ? getThisWeekEntries() : getThisMonthEntries();
+  const spent=list.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
+  const pct=Math.min(Math.round(spent/budget*100),100);
+  const over=spent>budget;
+  const periodWordEn = budgetPeriod==='weekly' ? 'this week' : 'this month';
+  const periodWordHi = budgetPeriod==='weekly' ? 'इस सप्ताह' : 'इस महीने';
+  const spentOfText = currentLang==='hi' ? `₹${spent} खर्च हुआ ₹${budget} में से (${periodWordHi})` : `₹${spent} spent of ₹${budget} ${periodWordEn}`;
+  const overText = currentLang==='hi'
+    ? (budgetPeriod==='weekly' ? "आपने अपना साप्ताहिक बजट पार कर लिया है!" : "आपने अपना मासिक बजट पार कर लिया है!")
+    : (budgetPeriod==='weekly' ? "You've exceeded your weekly budget!" : "You've exceeded your monthly budget!");
   statusEl.innerHTML=`
     <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-dim);margin-bottom:4px">
       <span>${spentOfText}</span>
@@ -1343,11 +1686,34 @@ function renderStreak(){
 
 // --- Rewards: fully derived from entries data, no separate storage needed ---
 const REWARD_MILESTONES = [
-  {days:7,  points:100, icon:'🥉', key:'badge_7'},
-  {days:30, points:500, icon:'🥈', key:'badge_30'},
-  {days:100,points:2000,icon:'🥇', key:'badge_100'},
-  {days:365,points:10000,icon:'💎', key:'badge_365'},
+  {days:7,  bonus:1,  icon:'🥉', key:'badge_7'},
+  {days:30, bonus:5,  icon:'🥈', key:'badge_30'},
+  {days:100,bonus:20, icon:'🥇', key:'badge_100'},
+  {days:365,bonus:100,icon:'💎', key:'badge_365'},
 ];
+
+// Longest run of consecutive logged days ever achieved (not just the live streak — this is what points are based on)
+function getLongestStreakEver(){
+  const days=[...new Set(mainEntries().map(e=>e.date))].sort();
+  if(!days.length)return 0;
+  let longest=1, run=1;
+  for(let i=1;i<days.length;i++){
+    const prev=new Date(days[i-1]+'T00:00:00');
+    const cur=new Date(days[i]+'T00:00:00');
+    const diff=(cur-prev)/86400000;
+    if(diff===1){ run++; } else { run=1; }
+    if(run>longest) longest=run;
+  }
+  return longest;
+}
+
+// Points build up slowly — 1 point per completed week of your longest streak, plus a small milestone bonus
+function calculateRewardPoints(){
+  const longest=getLongestStreakEver();
+  const weeklyPoints=Math.floor(longest/7);
+  const bonusPoints=REWARD_MILESTONES.filter(m=>longest>=m.days).reduce((s,m)=>s+m.bonus,0);
+  return weeklyPoints + bonusPoints;
+}
 
 function getTotalActiveDays(){
   return new Set(mainEntries().map(e=>e.date)).size;
@@ -1356,21 +1722,22 @@ function getTotalActiveDays(){
 function renderRewards(){
   const totalDays = getTotalActiveDays();
   const streak = getCurrentStreak();
-  const points = totalDays * 10;
+  const longest = getLongestStreakEver();
+  const points = calculateRewardPoints();
 
   document.getElementById('rewards-points-total').textContent = points.toLocaleString(currentLang==='hi'?'hi-IN':'en-IN');
   document.getElementById('rewards-streak-sub').textContent = currentLang==='hi'
     ? `${totalDays} दिन लॉग किए गए · अभी ${streak} दिन की स्ट्रीक`
     : `${totalDays} days logged · ${streak}-day streak right now`;
 
-  const next = REWARD_MILESTONES.find(m=>totalDays<m.days);
+  const next = REWARD_MILESTONES.find(m=>longest<m.days);
   if(next){
-    const prevThreshold = REWARD_MILESTONES.filter(m=>m.days<=totalDays).slice(-1)[0]?.days || 0;
-    const pct = Math.min(Math.round(((totalDays-prevThreshold)/(next.days-prevThreshold))*100),100);
+    const prevThreshold = REWARD_MILESTONES.filter(m=>m.days<=longest).slice(-1)[0]?.days || 0;
+    const pct = Math.min(Math.round(((longest-prevThreshold)/(next.days-prevThreshold))*100),100);
     document.getElementById('rewards-progress-label').textContent = currentLang==='hi'
       ? `${next.icon} ${next.days}-दिन बैज तक`
       : `${next.icon} ${next.days}-day badge`;
-    document.getElementById('rewards-progress-pct').textContent = `${totalDays}/${next.days} ${currentLang==='hi'?'दिन':'days'}`;
+    document.getElementById('rewards-progress-pct').textContent = `${longest}/${next.days} ${currentLang==='hi'?'दिन':'days'}`;
     document.getElementById('rewards-progress-bar').style.width = pct+'%';
   } else {
     document.getElementById('rewards-progress-label').textContent = currentLang==='hi' ? 'सभी बैज हासिल कर लिए! 🎉' : "All badges unlocked! 🎉";
@@ -1380,13 +1747,57 @@ function renderRewards(){
 
   const badgesGrid=document.getElementById('rewards-badges-grid');
   badgesGrid.innerHTML = REWARD_MILESTONES.map(m=>{
-    const unlocked = totalDays>=m.days;
+    const unlocked = longest>=m.days;
     return `
     <div style="text-align:center;padding:12px 6px;border-radius:14px;border:1px solid var(--border);background:${unlocked?'rgba(255,184,77,0.12)':'var(--card)'};opacity:${unlocked?1:0.4}">
       <div style="font-size:26px">${m.icon}</div>
       <div style="font-size:11px;color:var(--text-dim);margin-top:4px">${m.days} ${currentLang==='hi'?'दिन':'days'}</div>
     </div>`;
   }).join('');
+}
+
+// --- Milestone celebration popup — fires once per streak milestone reached ---
+function checkMilestoneCelebration(){
+  const longest=getLongestStreakEver();
+  const hit = REWARD_MILESTONES.find(m=>m.days===longest);
+  if(!hit) return;
+  const seenKey='pocketTrackMilestoneSeen_'+hit.key;
+  if(localStorage.getItem(seenKey)) return;
+  localStorage.setItem(seenKey,'1');
+  const msg = currentLang==='hi'
+    ? `${hit.icon} बधाई हो! आपने ${hit.days} दिन की स्ट्रीक पूरी की और +${hit.bonus} बोनस पॉइंट कमाए!`
+    : `${hit.icon} Congrats! You hit a ${hit.days}-day streak and earned +${hit.bonus} bonus points!`;
+  showAppAlert(msg, currentLang==='hi' ? 'नया बैज!' : 'New badge!');
+}
+
+// --- Coin-fly animation: a little coin flies from wherever you logged something, straight to the hamburger/rewards icon ---
+function flyCoinToRewards(originEl){
+  const hamburger=document.getElementById('hamburger-btn');
+  if(!originEl || !hamburger) return;
+  const startRect=originEl.getBoundingClientRect();
+  const endRect=hamburger.getBoundingClientRect();
+  const coin=document.createElement('div');
+  coin.textContent='🪙';
+  coin.style.cssText=`position:fixed;left:${startRect.left+startRect.width/2-12}px;top:${startRect.top+startRect.height/2-12}px;font-size:22px;z-index:1200;pointer-events:none;transition:left 0.7s cubic-bezier(.3,.8,.4,1),top 0.7s cubic-bezier(.3,.8,.4,1),opacity 0.7s ease,transform 0.7s ease;`;
+  document.body.appendChild(coin);
+  requestAnimationFrame(()=>{
+    coin.style.left=(endRect.left+endRect.width/2-12)+'px';
+    coin.style.top=(endRect.top+endRect.height/2-12)+'px';
+    coin.style.transform='scale(0.4)';
+    coin.style.opacity='0.3';
+  });
+  setTimeout(()=>{
+    coin.remove();
+    hamburger.style.transform='scale(1.15)';
+    setTimeout(()=>{ hamburger.style.transform='scale(1)'; }, 150);
+  }, 700);
+}
+
+function celebrateEntryLogged(btnId){
+  const btn=document.getElementById(btnId);
+  flyCoinToRewards(btn);
+  renderRewards();
+  checkMilestoneCelebration();
 }
 
 // --- Quick-add: surfaces your 4 most-repeated exact entries as one-tap chips ---
@@ -1462,7 +1873,7 @@ document.getElementById('exp-date').value=todayStr();
 let editingId=null; // set when editing an existing entry instead of adding new
 
 function setTab(t){
-  ['log','entries','report','events','rewards','upi','language'].forEach((x)=>{
+  ['log','entries','report','events','rewards','upi','language','appearance'].forEach((x)=>{
     const el=document.getElementById('tab-'+x);
     if(x===t){
       el.style.display='block';
@@ -1664,7 +2075,7 @@ function renderEventDetail(){
   document.getElementById('event-entries-list').innerHTML = sorted.length ? sorted.map(e=>`
     <div class="entry-row">
       <span class="date-chip">${fmtDate(e.date)}</span>
-      ${e.type==='expense'?`<span class="badge ${e.cat}">${escapeHTML(CAT_LABEL(e.cat))}</span>`:''}
+      ${e.type==='expense'?`<span class="badge ${e.cat}">${escapeHTML(displayCatLabel(e))}</span>`:''}
       <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}${e.note?' — '+escapeHTML(e.note):''}</span>
       <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
       <div class="row-actions">
@@ -1681,14 +2092,38 @@ function startEditEventEntry(id){
   if(!entry)return;
   editingEventEntryId=id;
   if(entry.type==='income'){
-    document.getElementById('ev-inc-src').value=entry.label;
+    const srcSelect=document.getElementById('ev-inc-src');
+    const knownValues=[...srcSelect.options].map(o=>o.value).filter(v=>v!=='__add_new__');
+    if(knownValues.includes(entry.label)){
+      srcSelect.value=entry.label;
+      document.getElementById('ev-inc-custom-wrap').style.display='none';
+    } else {
+      srcSelect.value='__add_new__';
+      document.getElementById('ev-inc-custom-wrap').style.display='block';
+      document.getElementById('ev-inc-custom').value=entry.label;
+    }
     document.getElementById('ev-inc-amt').value=entry.amt;
     document.getElementById('ev-inc-date').value=entry.date;
     document.getElementById('ev-inc-note').value=entry.note||'';
     document.getElementById('ev-inc-submit-btn').textContent=TT('btn_update_income');
     document.getElementById('ev-inc-submit-btn').scrollIntoView({behavior:'smooth',block:'center'});
   } else {
-    document.getElementById('ev-exp-cat').value=entry.cat;
+    if(entry.cat==='custom' && entry.customCat){
+      const encodedVal='custom:'+entry.customCat;
+      const catSelect=document.getElementById('ev-exp-cat');
+      const hasOption=[...catSelect.options].some(o=>o.value===encodedVal);
+      if(hasOption){
+        catSelect.value=encodedVal;
+        document.getElementById('ev-exp-custom-wrap').style.display='none';
+      } else {
+        catSelect.value='__add_new__';
+        document.getElementById('ev-exp-custom-wrap').style.display='block';
+        document.getElementById('ev-exp-custom').value=entry.customCat;
+      }
+    } else {
+      document.getElementById('ev-exp-cat').value=entry.cat;
+      document.getElementById('ev-exp-custom-wrap').style.display='none';
+    }
     document.getElementById('ev-exp-amt').value=entry.amt;
     document.getElementById('ev-exp-date').value=entry.date;
     document.getElementById('ev-exp-desc').value=entry.label;
@@ -1706,7 +2141,14 @@ function resetEventEntryEditState(){
 
 async function addEventIncome(){
   if(!currentEventName){toast('No event selected','error');return;}
-  const src=document.getElementById('ev-inc-src').value;
+  let src=document.getElementById('ev-inc-src').value;
+  let isNewCustom=false;
+  if(src==='__add_new__'){
+    const custom=document.getElementById('ev-inc-custom').value.trim().slice(0,40);
+    if(!custom){toast(TT('give_source_name'),'error');return;}
+    src=custom;
+    isNewCustom=true;
+  }
   const amt=parseFloat(document.getElementById('ev-inc-amt').value);
   const note=document.getElementById('ev-inc-note').value.trim().slice(0,60);
   const date=document.getElementById('ev-inc-date').value||todayStr();
@@ -1722,22 +2164,36 @@ async function addEventIncome(){
     } else {
       await saveEntry(payload);
       toast(TT('income_added_event'),'success');
+      if(isNewCustom) saveCustomIncomeSource(src);
     }
     document.getElementById('ev-inc-amt').value='';
     document.getElementById('ev-inc-note').value='';
+    document.getElementById('ev-inc-custom').value='';
+    document.getElementById('ev-inc-custom-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
 async function addEventExpense(){
   if(!currentEventName){toast('No event selected','error');return;}
-  const cat=document.getElementById('ev-exp-cat').value;
+  let cat=document.getElementById('ev-exp-cat').value;
+  let customCat='';
+  let isNewCustom=false;
+  if(cat==='__add_new__'){
+    customCat=document.getElementById('ev-exp-custom').value.trim().slice(0,40);
+    if(!customCat){toast(TT('give_category_name'),'error');return;}
+    cat='custom';
+    isNewCustom=true;
+  } else if(cat.startsWith('custom:')){
+    customCat=cat.slice(7);
+    cat='custom';
+  }
   const amt=parseFloat(document.getElementById('ev-exp-amt').value);
   const desc=document.getElementById('ev-exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('ev-exp-date').value||todayStr();
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
   if(!desc){toast(TT('add_description'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
-  const payload={type:'expense',cat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
+  const payload={type:'expense',cat,customCat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
     if(editingEventEntryId){
       await updateEntry(editingEventEntryId, payload);
@@ -1746,9 +2202,12 @@ async function addEventExpense(){
     } else {
       await saveEntry(payload);
       toast(TT('expense_added_event'),'success');
+      if(isNewCustom) saveCustomExpenseCategory(customCat);
     }
     document.getElementById('ev-exp-amt').value='';
     document.getElementById('ev-exp-desc').value='';
+    document.getElementById('ev-exp-custom').value='';
+    document.getElementById('ev-exp-custom-wrap').style.display='none';
   }catch(e){toast('Could not save: '+e.message,'error');}
 }
 
@@ -1772,7 +2231,14 @@ async function deleteCurrentEvent(){
 
 async function addIncome(){
   await withButtonLoading('add-income-btn', async ()=>{
-    const src=document.getElementById('inc-src').value;
+    let src=document.getElementById('inc-src').value;
+    let isNewCustom=false;
+    if(src==='__add_new__'){
+      const custom=document.getElementById('inc-custom').value.trim().slice(0,40);
+      if(!custom){toast(TT('give_source_name'),'error');return;}
+      src=custom;
+      isNewCustom=true;
+    }
     const amt=parseFloat(document.getElementById('inc-amt').value);
     const note=document.getElementById('inc-note').value.trim().slice(0,60);
     const date=document.getElementById('inc-date').value||todayStr();
@@ -1788,23 +2254,37 @@ async function addIncome(){
       } else {
         await saveEntry(payload);
         toast(TT('income_added'),'success');
+        if(isNewCustom) saveCustomIncomeSource(src);
       }
       document.getElementById('inc-amt').value='';
       document.getElementById('inc-note').value='';
+      document.getElementById('inc-custom').value='';
+      document.getElementById('inc-custom-wrap').style.display='none';
     }catch(e){toast('Could not save: '+e.message,'error');}
   });
 }
 
 async function addExpense(){
   await withButtonLoading('add-expense-btn', async ()=>{
-    const cat=document.getElementById('exp-cat').value;
+    let cat=document.getElementById('exp-cat').value;
+    let customCat='';
+    let isNewCustom=false;
+    if(cat==='__add_new__'){
+      customCat=document.getElementById('exp-custom').value.trim().slice(0,40);
+      if(!customCat){toast(TT('give_category_name'),'error');return;}
+      cat='custom';
+      isNewCustom=true;
+    } else if(cat.startsWith('custom:')){
+      customCat=cat.slice(7);
+      cat='custom';
+    }
     const amt=parseFloat(document.getElementById('exp-amt').value);
     const desc=document.getElementById('exp-desc').value.trim().slice(0,60);
     const date=document.getElementById('exp-date').value||todayStr();
     if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
     if(!desc){toast(TT('add_description'),'error');return;}
     if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
-    const payload={type:'expense',cat,label:desc,amt:Math.round(amt*100)/100,date};
+    const payload={type:'expense',cat,customCat,label:desc,amt:Math.round(amt*100)/100,date};
     try{
       if(editingId){
         await updateEntry(editingId, payload);
@@ -1815,9 +2295,12 @@ async function addExpense(){
         toast(TT('expense_added'),'success');
         checkBudget();
         showSpendMoodToast(payload.amt);
+        if(isNewCustom) saveCustomExpenseCategory(customCat);
       }
       document.getElementById('exp-amt').value='';
       document.getElementById('exp-desc').value='';
+      document.getElementById('exp-custom').value='';
+      document.getElementById('exp-custom-wrap').style.display='none';
     }catch(e){toast('Could not save: '+e.message,'error');}
   });
 }
@@ -1829,13 +2312,29 @@ function startEdit(id){
   setTab('log');
 
   if(entry.type==='income'){
-    document.getElementById('inc-src').value=entry.label;
+    const srcSelect=document.getElementById('inc-src');
+    const knownValues=[...srcSelect.options].map(o=>o.value).filter(v=>v!=='__add_new__');
+    if(knownValues.includes(entry.label)){
+      srcSelect.value=entry.label;
+      document.getElementById('inc-custom-wrap').style.display='none';
+    } else {
+      srcSelect.value='__add_new__';
+      document.getElementById('inc-custom-wrap').style.display='block';
+      document.getElementById('inc-custom').value=entry.label;
+    }
     document.getElementById('inc-amt').value=entry.amt;
     document.getElementById('inc-date').value=entry.date;
     document.getElementById('inc-note').value=entry.note||'';
     document.getElementById('inc-btn-label').textContent=TT('btn_update_income');
   } else {
-    document.getElementById('exp-cat').value=entry.cat;
+    if(entry.cat==='custom' && entry.customCat){
+      document.getElementById('exp-cat').value='__add_new__';
+      document.getElementById('exp-custom-wrap').style.display='block';
+      document.getElementById('exp-custom').value=entry.customCat;
+    } else {
+      document.getElementById('exp-cat').value=entry.cat;
+      document.getElementById('exp-custom-wrap').style.display='none';
+    }
     document.getElementById('exp-amt').value=entry.amt;
     document.getElementById('exp-date').value=entry.date;
     document.getElementById('exp-desc').value=entry.label;
@@ -1901,7 +2400,7 @@ function renderEntries(){
     const rows=items.map(e=>`
       <div class="entry-row">
         <span class="date-chip">${fmtDate(e.date)}</span>
-        <span class="badge ${e.cat}">${escapeHTML(CAT_LABEL(e.cat))}</span>
+        <span class="badge ${e.cat}">${escapeHTML(displayCatLabel(e))}</span>
         <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}${e.note?' — '+escapeHTML(e.note):''}${e.event?' <span class=\"event-tag\">🎉 '+escapeHTML(e.event)+'</span>':''}</span>
         <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
         <div class="row-actions">
@@ -1923,7 +2422,7 @@ function renderEntries(){
 function setPeriod(p){
   period=p;
   document.querySelectorAll('#period-toggle button').forEach(b=>b.classList.remove('active'));
-  const idx={week:0,all:1,custom:2}[p];
+  const idx={week:0,month:1,all:2,custom:3}[p];
   document.querySelectorAll('#period-toggle button')[idx].classList.add('active');
   const showCustom=p==='custom';
   document.getElementById('rep-from').style.display=showCustom?'block':'none';
@@ -1940,6 +2439,13 @@ function getReportEntries(){
     const to=document.getElementById('rep-to').value;
     return base.filter(e=>(!from||e.date>=from)&&(!to||e.date<=to));
   }
+  if(period==='month'){
+    const now=new Date();
+    const y=now.getFullYear(), m=now.getMonth();
+    const start=new Date(y,m,1).toISOString().split('T')[0];
+    const end=new Date(y,m+1,0).toISOString().split('T')[0];
+    return base.filter(e=>e.date>=start&&e.date<=end);
+  }
   const now=new Date();
   const day=now.getDay();
   const diff=now.getDate()-(day===0?6:day-1);
@@ -1948,6 +2454,85 @@ function getReportEntries(){
   const sun=new Date(mon);sun.setDate(mon.getDate()+6);
   const sunStr=sun.toISOString().split('T')[0];
   return base.filter(e=>e.date>=monStr&&e.date<=sunStr);
+}
+
+// --- SVG pie chart for category spending — no external chart library needed ---
+function polarToXY(cx,cy,r,angleDeg){
+  const rad=(angleDeg-90)*Math.PI/180;
+  return { x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad) };
+}
+function describeArc(cx,cy,r,startAngle,endAngle){
+  const start=polarToXY(cx,cy,r,endAngle);
+  const end=polarToXY(cx,cy,r,startAngle);
+  const largeArcFlag = endAngle-startAngle <= 180 ? '0' : '1';
+  return `M ${cx} ${cy} L ${start.x} ${start.y} A ${r} ${r} 0 ${largeArcFlag} 0 ${end.x} ${end.y} Z`;
+}
+
+function renderCategoryPieChart(cats){
+  const wrap=document.getElementById('cat-pie-wrap');
+  if(!wrap)return;
+  const entries=Object.entries(cats).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){ wrap.innerHTML=''; return; }
+  const total=entries.reduce((s,[,v])=>s+v,0);
+  const size=200, r=82, cx=size/2, cy=size/2;
+  let angle=0;
+  const sliceData = entries.map(([cat,amt])=>{
+    const sliceAngle = (amt/total)*360;
+    const startAngle=angle;
+    angle += sliceAngle;
+    return {cat, amt, startAngle, endAngle:angle, pct: Math.round(amt/total*100)};
+  });
+
+  const slices = sliceData.map((s,i)=>{
+    const path = s.endAngle-s.startAngle>=359.9
+      ? `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-0.01} ${cy-r} Z`
+      : describeArc(cx,cy,r,s.startAngle,s.endAngle);
+    return `<path class="pie-slice pie-slice-3d" data-idx="${i}" d="${path}" fill="${CAT_COLORS[s.cat]||'#9b95c2'}"
+      stroke="#1b1340" stroke-width="2" style="transform-origin:${cx}px ${cy}px"
+      onmouseenter="showPieTooltip(event,${i})" onmouseleave="hidePieTooltip()"
+      ontouchstart="showPieTooltip(event,${i})"></path>`;
+  }).join('');
+
+  window._pieSliceData = sliceData;
+
+  const legend = sliceData.map(s=>`
+    <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-dim)">
+      <span style="width:9px;height:9px;border-radius:50%;background:${CAT_COLORS[s.cat]||'#9b95c2'};flex-shrink:0"></span>
+      <span>${escapeHTML(CAT_LABEL(s.cat))} · ${s.pct}%</span>
+    </div>`).join('');
+
+  wrap.innerHTML = `
+    <div style="position:relative">
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible;">${slices}<circle cx="${cx}" cy="${cy}" r="${r*0.55}" fill="#1b1340"/></svg>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+        <div style="font-size:10px;color:var(--text-faint)">${currentLang==='hi'?'कुल':'Total'}</div>
+        <div style="font-size:15px;font-weight:700">₹${total}</div>
+      </div>
+      <div id="pie-tooltip" style="display:none;position:absolute;background:#1f1840;border:1px solid var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;color:#fff;pointer-events:none;z-index:950;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,0.4)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:14px;width:100%">${legend}</div>
+  `;
+}
+
+function showPieTooltip(evt, idx){
+  const s=window._pieSliceData[idx];
+  if(!s)return;
+  document.querySelectorAll('.pie-slice').forEach(p=>p.style.transform='scale(1)');
+  evt.target.style.transform='scale(1.06)';
+  evt.target.style.transition='transform 0.15s';
+  const tip=document.getElementById('pie-tooltip');
+  const label=CAT_LABEL(s.cat);
+  tip.innerHTML=`<b>${escapeHTML(label)}</b><br>₹${s.amt} · ${s.pct}%`;
+  tip.style.display='block';
+  const x = evt.touches ? evt.touches[0].pageX : evt.pageX;
+  const y = evt.touches ? evt.touches[0].pageY : evt.pageY;
+  tip.style.left=(x+12)+'px';
+  tip.style.top=(y-10)+'px';
+}
+function hidePieTooltip(){
+  document.querySelectorAll('.pie-slice').forEach(p=>p.style.transform='scale(1)');
+  const tip=document.getElementById('pie-tooltip');
+  if(tip) tip.style.display='none';
 }
 
 function renderReport(){
@@ -1962,6 +2547,7 @@ function renderReport(){
   const cats={};
   list.filter(e=>e.type==='expense').forEach(e=>{cats[e.cat]=(cats[e.cat]||0)+e.amt;});
   const maxCat=Math.max(...Object.values(cats),1);
+  renderCategoryPieChart(cats);
   document.getElementById('cat-breakdown').innerHTML=Object.entries(cats).length?Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`
     <div class="cat-bar">
       <span style="font-size:13px;min-width:110px;color:var(--text-dim)">${CAT_LABELS[c]}</span>
@@ -1970,7 +2556,7 @@ function renderReport(){
     </div>`).join(''):`<p class="empty">${TT('no_expenses')}</p>`;
 
   const sorted=[...list].sort((a,b)=>a.date.localeCompare(b.date));
-  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):escapeHTML(CAT_LABEL(e.cat))+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):`<p class="empty">${TT('nothing_period')}</p>`;
+  document.getElementById('full-breakdown').innerHTML=sorted.length?sorted.map(e=>`<div class="report-row"><span>${fmtDate(e.date)} — ${e.type==='income'?escapeHTML(e.label):escapeHTML(displayCatLabel(e))+': '+escapeHTML(e.label)}</span><span style="color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span></div>`).join(''):`<p class="empty">${TT('nothing_period')}</p>`;
 }
 
 function copyReport(){
@@ -1983,7 +2569,7 @@ function copyReport(){
   let txt=`Weekly Expense Report\n${'─'.repeat(30)}\nTotal Income: ₹${income}\nTotal Spent:  ₹${spent}\nBalance Left: ₹${bal}\n\nSpending Breakdown:\n`;
   Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([c,a])=>{txt+=`  ${CAT_LABELS[c]}: ₹${a}\n`;});
   txt+=`\nAll Entries:\n`;
-  [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{txt+=`  ${fmtDate(e.date)} | ${e.type==='income'?'INCOME':'EXPENSE'} | ${CAT_LABEL(e.cat)} | ${e.label}${e.note?' ('+e.note+')':''} | ${e.type==='income'?'+':'-'}₹${e.amt}\n`;});
+  [...list].sort((a,b)=>a.date.localeCompare(b.date)).forEach(e=>{txt+=`  ${fmtDate(e.date)} | ${e.type==='income'?'INCOME':'EXPENSE'} | ${displayCatLabel(e)} | ${e.label}${e.note?' ('+e.note+')':''} | ${e.type==='income'?'+':'-'}₹${e.amt}\n`;});
   navigator.clipboard.writeText(txt).then(()=>toast(TT('report_copied'),'success')).catch(()=>{
     const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
     toast(TT('report_copied'),'success');
@@ -2134,7 +2720,7 @@ function exportPDF(){
     if(i%2===0){doc.setFillColor(247,246,252);doc.rect(marginL,y-4,marginR-marginL,6,'F');}
     doc.setFontSize(8.5);
     doc.setTextColor(60);
-    const label=e.type==='income'?e.label:CAT_LABEL(e.cat)+': '+e.label;
+    const label=e.type==='income'?e.label:displayCatLabel(e)+': '+e.label;
     doc.text(fmtDate(e.date)+'  |  '+(e.type==='income'?'INCOME':'EXPENSE')+'  |  '+label+(e.note?' ('+e.note+')':''),marginL+2,y);
     doc.setTextColor(...(e.type==='income'?GREEN:RED));
     doc.text((e.type==='income'?'+':'-')+'Rs.'+e.amt,marginR,y,{align:'right'});
