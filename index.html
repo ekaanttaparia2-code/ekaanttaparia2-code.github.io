@@ -73,9 +73,6 @@ body::before{
 .blob2{width:300px;height:300px;background:#ff7eb3;bottom:-80px;right:-80px;}
 .tab-enter{animation:tabEnter 0.32s ease}
 .pie-slice{cursor:pointer;transition:transform 0.15s ease}
-.pie-container-3d{margin:10px 0}
-.pie-slice-3d{filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));transform:translateZ(1px)}
-.pie-center-3d{transform:translateZ(5px)}
 @keyframes hintPulse{
   0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,0.6)}
   50%{box-shadow:0 0 0 6px rgba(255,107,107,0)}
@@ -276,26 +273,43 @@ input[type=date]{color-scheme:dark}
 
 footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2rem;padding-bottom:1rem}
 
-body.light-theme {
-  --bg1:#f0edff; --bg2:#e8e4ff; --bg3:#ddd6fe;
-  --accent:#7c3aed; --accent2:#db2777;
-  --card:rgba(255,255,255,0.85); --card-solid:#ffffff;
-  --border:rgba(0,0,0,0.1); --text:#1e1b4b;
-  --text-dim:#4c1d95; --text-faint:#6d28d9;
-  --green:#16a34a; --red:#dc2626; --amber:#ea580c;
-  background: linear-gradient(160deg, #f0edff, #e8e4ff 55%, #ddd6fe);
-  background-attachment:fixed;
+/* --- SMART LOGGER STYLES --- */
+.smart-log-paste-area{
+  width:100%;min-height:100px;padding:14px;border-radius:14px;
+  border:2px dashed var(--accent);background:rgba(155,107,255,0.06);
+  color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;
+  resize:vertical;transition:border-color 0.2s,background 0.2s;
 }
-body.light-theme::before{ background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px); }
-body.light-theme .blob1{background:#7c3aed;opacity:0.12}
-body.light-theme .blob2{background:#db2777;opacity:0.1}
-body.light-theme select option{background:#fff;color:#1e1b4b}
-body.light-theme input[type=date]{color-scheme:light}
-body.light-theme .side-menu{background:#fff;border-right-color:rgba(0,0,0,0.1)}
-body.light-theme #auth-screen{background:#f0edff}
-body.light-theme #app-modal-box,
-body.light-theme .side-menu{background:#fff}
-body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
+.smart-log-paste-area:focus{
+  outline:none;border-color:var(--accent2);
+  background:rgba(255,126,179,0.06);
+}
+.smart-log-paste-area::placeholder{color:var(--text-faint)}
+.smart-log-parsed-card{
+  background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.08));
+  border:1px solid rgba(74,222,128,0.3);border-radius:14px;padding:16px;
+  margin-top:12px;animation:tabEnter 0.3s ease;
+}
+.smart-log-badge{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 10px;
+  border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:0.2px;
+}
+.smart-log-badge.sent{background:rgba(255,107,107,0.15);color:#ff9f9f}
+.smart-log-badge.received{background:rgba(74,222,128,0.15);color:#6ee7a8}
+.smart-log-history-item{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid var(--border);font-size:13px;
+}
+.smart-log-history-item:last-child{border-bottom:none}
+.smart-log-apps{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.smart-log-app-btn{
+  padding:10px;border-radius:12px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);font-size:12px;font-weight:600;
+  cursor:pointer;text-align:center;transition:all 0.2s;
+}
+.smart-log-app-btn:hover{background:rgba(155,107,255,0.12);border-color:var(--accent)}
+.smart-log-app-btn.active{background:rgba(74,222,128,0.15);border-color:var(--green);color:var(--green)}
+
 </style>
 </head>
 <body>
@@ -401,9 +415,8 @@ body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
     <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
     <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
-    <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-link"></i> <span data-i18n="nav_upi">UPI Connect</span> <span class="exp-badge" style="margin-left:auto">🧪</span></button>
+    <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="nav_upi">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
-    <button class="side-menu-item" data-tab="appearance" onclick="setTab('appearance')"><i class="ti ti-palette"></i> <span data-i18n="tab_appearance">Appearance</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>
@@ -567,7 +580,7 @@ body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
 
     <div class="card">
       <p class="sec-title"><i class="ti ti-chart-pie"></i><span data-i18n="sec_cat">Spending by category</span></p>
-      <div id="cat-pie-wrap" style="display:flex;justify-content:center;margin:10px 0" class="pie-container-3d"></div>
+      <div id="cat-pie-wrap" style="display:flex;justify-content:center;margin:10px 0"></div>
       <div id="cat-breakdown"></div>
     </div>
 
@@ -754,17 +767,101 @@ body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
   </div>
 
   <div id="tab-upi" style="display:none">
-    <div class="card">
+    <div class="card" style="background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.08));border-color:rgba(74,222,128,0.3)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-        <p class="sec-title" style="margin:0"><i class="ti ti-link"></i><span data-i18n="sec_upi">UPI connection</span></p>
-        <span class="exp-badge">🧪 Experimental</span>
+        <p class="sec-title" style="margin:0"><i class="ti ti-clipboard"></i><span data-i18n="sec_smart_logger">Smart Logger</span></p>
+        <span class="exp-badge" style="background:rgba(74,222,128,0.14);color:#4ade80;border-color:rgba(74,222,128,0.3)">⚡ New</span>
       </div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="upi_desc">Connect your favorite UPI app to auto-track payments. This feature is a work in progress.</p>
-      <div id="upi-apps-grid">
-        <button class="upi-app-btn" onclick="tryConnectUPI('Google Pay')">📱 Google Pay</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('PhonePe')">📱 PhonePe</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('Paytm')">📱 Paytm</button>
-        <button class="upi-app-btn" onclick="tryConnectUPI('BHIM')">📱 BHIM</button>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="smart_logger_desc">Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!</p>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-player-play"></i><span data-i18n="smart_logger_how">How it works</span></p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;margin-bottom:4px">📱</div>
+          <p style="font-size:11.5px;font-weight:600;margin:0">1. <span data-i18n="step_copy">Copy notification</span></p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_copy_desc">Long-press any UPI text and copy it</p>
+        </div>
+        <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;margin-bottom:4px">📋</div>
+          <p style="font-size:11.5px;font-weight:600;margin:0">2. <span data-i18n="step_paste">Paste here</span></p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_paste_desc">Paste the text in the box below</p>
+        </div>
+        <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
+          <div style="font-size:22px;margin-bottom:4px">✅</div>
+          <p style="font-size:11.5px;font-weight:600;margin:0">3. <span data-i18n="step_log">Auto-logged!</span></p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_log_desc">Confirm and it's saved instantly</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PASTE BOX -->
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-clipboard"></i><span data-i18n="smart_logger_paste">Paste UPI notification</span></p>
+      <textarea id="smart-log-input" class="smart-log-paste-area" placeholder="Paste your UPI notification here...&#10;&#10;e.g. Paid ₹150 to Samosa Shop via Google Pay" oninput="onSmartLogInput()"></textarea>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn" onclick="pasteFromClipboard()"><i class="ti ti-clipboard"></i> <span data-i18n="btn_paste">Paste from clipboard</span></button>
+        <button class="btn primary" id="smart-log-parse-btn" onclick="parseSmartLog()" style="display:none"><i class="ti ti-wand"></i> <span data-i18n="btn_parse">Auto-detect & log</span></button>
+      </div>
+    </div>
+
+    <!-- PARSED RESULT -->
+    <div id="smart-log-parsed" style="display:none">
+      <div class="smart-log-parsed-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span id="smart-log-direction-badge" class="smart-log-badge sent">📤 Sent</span>
+          <span id="smart-log-app-badge" style="font-size:11px;color:var(--text-dim)"></span>
+        </div>
+        <div class="grid3">
+          <div>
+            <label data-i18n="lbl_amount">Amount (₹)</label>
+            <input type="number" id="smart-log-amt" min="0.01" max="10000000" step="0.01"/>
+          </div>
+          <div>
+            <label data-i18n="lbl_category">Category</label>
+            <select id="smart-log-cat">
+              <option value="food" data-hi="खाना">Food</option>
+              <option value="travel" data-hi="यात्रा">Travel</option>
+              <option value="friends" data-hi="दोस्त">Friends</option>
+              <option value="home" data-hi="घर">Home</option>
+              <option value="other" data-hi="अन्य">Other</option>
+            </select>
+          </div>
+          <div>
+            <label data-i18n="lbl_date">Date</label>
+            <input type="date" id="smart-log-date"/>
+          </div>
+        </div>
+        <label data-i18n="lbl_desc">Description</label>
+        <input type="text" id="smart-log-desc" placeholder="Merchant or note" maxlength="60"/>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn primary" onclick="confirmSmartLog()"><i class="ti ti-check"></i> <span data-i18n="btn_confirm_log">Confirm & save</span></button>
+          <button class="btn" onclick="dismissSmartLog()"><i class="ti ti-x"></i> <span data-i18n="btn_dismiss">Dismiss</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPORTED APPS -->
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-device-mobile"></i><span data-i18n="smart_logger_supported">Supported apps</span></p>
+      <div class="smart-log-apps">
+        <div class="smart-log-app-btn active">📱 Google Pay</div>
+        <div class="smart-log-app-btn active">📱 PhonePe</div>
+        <div class="smart-log-app-btn active">📱 Paytm</div>
+        <div class="smart-log-app-btn active">📱 BHIM</div>
+        <div class="smart-log-app-btn active">📱 Amazon Pay</div>
+        <div class="smart-log-app-btn active">📱 CRED</div>
+      </div>
+      <p style="font-size:11px;color:var(--text-faint);margin-top:10px" data-i18n="smart_logger_supported_desc">Works with any app that sends a payment notification. Just copy the notification text and paste it!</p>
+    </div>
+
+    <!-- RECENT AUTO-LOGS -->
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-history"></i><span data-i18n="smart_logger_recent">Recent smart logs</span></p>
+      <div id="smart-log-history">
+        <p class="empty" data-i18n="smart_logger_no_logs">No smart logs yet. Paste a notification to get started!</p>
       </div>
     </div>
   </div>
@@ -783,20 +880,6 @@ body.light-theme circle[fill="#1b1340"]{fill:#f0edff}
           <span class="lang-check">✓</span>
         </button>
       </div>
-    </div>
-  </div>
-
-  <div id="tab-appearance" class="tab-content" style="display:none">
-    <div class="card">
-      <p class="sec-title"><i class="ti ti-palette"></i><span>Appearance</span></p>
-      <button class="lang-option-btn" id="theme-dark-btn" onclick="setTheme('dark')">
-        <span><i class="ti ti-moon" style="margin-right:8px"></i> Dark</span>
-        <span class="lang-check">✓</span>
-      </button>
-      <button class="lang-option-btn" id="theme-light-btn" onclick="setTheme('light')" style="margin-top:10px">
-        <span><i class="ti ti-sun" style="margin-right:8px"></i> Light</span>
-        <span class="lang-check">✓</span>
-      </button>
     </div>
   </div>
 
@@ -899,11 +982,34 @@ const TRANSLATIONS = {
   sec_add_income_event:{en:'Add income to this event',hi:'इस इवेंट में आय जोड़ें'},
   sec_add_expense_event:{en:'Add expense to this event',hi:'इस इवेंट में खर्च जोड़ें'},
   sec_entries_event:{en:'Entries for this event',hi:'इस इवेंट की एंट्रीज़'},
-  sec_upi:{en:'UPI connection',hi:'UPI कनेक्शन'},
+  sec_upi:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
   streak_sub:{en:'Log something every day to keep it going',hi:'इसे जारी रखने के लिए हर दिन कुछ लॉग करें'},
   sec_quick_add:{en:'Quick add',hi:'झटपट जोड़ें'},
-  upi_desc:{en:'Connect your favorite UPI app to auto-track payments. This feature is a work in progress.',hi:'भुगतान अपने आप ट्रैक करने के लिए अपना पसंदीदा UPI ऐप कनेक्ट करें। यह फीचर अभी बन रहा है।'},
-  nav_upi:{en:'UPI Connect',hi:'UPI कनेक्ट'},
+  upi_desc:{en:'Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type.',hi:'कोई भी UPI भुगतान सूचना कॉपी करें और यहां पेस्ट करें। PocketTrack अपने आप राशि, मर्चेंट और प्रकार पहचान लेता है।'},
+  nav_upi:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
+  sec_smart_logger:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
+  smart_logger_desc:{en:'Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!',hi:'कोई भी UPI भुगतान सूचना कॉपी करें और यहां पेस्ट करें। PocketTrack अपने आप राशि, मर्चेंट और प्रकार पहचान लेता है — मैनुअल टाइपिंग की ज़रूरत नहीं!'},
+  smart_logger_how:{en:'How it works',hi:'यह कैसे काम करता है'},
+  step_copy:{en:'Copy notification',hi:'नोटिफिकेशन कॉपी करें'},
+  step_copy_desc:{en:'Long-press any UPI text and copy it',hi:'किसी भी UPI टेक्स्ट को लंबे समय तक दबाकर कॉपी करें'},
+  step_paste:{en:'Paste here',hi:'यहां पेस्ट करें'},
+  step_paste_desc:{en:'Paste the text in the box below',hi:'नीचे बॉक्स में टेक्स्ट पेस्ट करें'},
+  step_log:{en:'Auto-logged!',hi:'ऑटो-लॉग हो गया!'},
+  step_log_desc:{en:'Confirm and it's saved instantly',hi:'कन्फर्म करें और तुरंत सेव हो जाएगा'},
+  smart_logger_paste:{en:'Paste UPI notification',hi:'UPI सूचना पेस्ट करें'},
+  btn_paste:{en:'Paste from clipboard',hi:'क्लिपबोर्ड से पेस्ट करें'},
+  btn_parse:{en:'Auto-detect & log',hi:'ऑटो-डिटेक्ट और लॉग करें'},
+  btn_confirm_log:{en:'Confirm & save',hi:'कन्फर्म और सेव करें'},
+  btn_dismiss:{en:'Dismiss',hi:'खारिज करें'},
+  smart_logger_supported:{en:'Supported apps',hi:'समर्थित ऐप्स'},
+  smart_logger_supported_desc:{en:'Works with any app that sends a payment notification. Just copy the notification text and paste it!',hi:'किसी भी ऐप के साथ काम करता है जो भुगतान सूचना भेजता है। बस नोटिफिकेशन टेक्स्ट कॉपी करें और पेस्ट करें!'},
+  smart_logger_recent:{en:'Recent smart logs',hi:'हाल के स्मार्ट लॉग्स'},
+  smart_logger_no_logs:{en:'No smart logs yet. Paste a notification to get started!',hi:'अभी तक कोई स्मार्ट लॉग नहीं। शुरू करने के लिए कोई नोटिफिकेशन पेस्ट करें!'},
+  smart_log_parsed:{en:'Payment detected!',hi:'भुगतान मिला!'},
+  smart_log_sent:{en:'📤 Sent',hi:'📤 भेजा'},
+  smart_log_received:{en:'📥 Received',hi:'📥 प्राप्त'},
+  smart_log_not_detected:{en:'Could not detect a valid UPI payment. Please try copying the notification again.',hi:'मान्य UPI भुगतान नहीं मिला। कृपया नोटिफिकेशन फिर से कॉपी करके देखें।'},
+  smart_log_saved:{en:'Smart log saved!',hi:'स्मार्ट लॉग सेव हुआ!'},
   stat_income:{en:'Income',hi:'आय'},
   stat_spent:{en:'Spent',hi:'खर्च'},
   stat_balance:{en:'Balance',hi:'बैलेंस'},
@@ -971,16 +1077,6 @@ function setLanguage(lang){
   applyLanguage();
   toast(currentLang==='en' ? 'Switched to English' : 'हिंदी में बदल गया', 'success');
 }
-
-let currentTheme = localStorage.getItem('pockettrack_theme') || 'dark';
-function setTheme(t){
-  currentTheme = t;
-  localStorage.setItem('pockettrack_theme', t);
-  document.body.classList.toggle('light-theme', t==='light');
-  document.getElementById('theme-dark-btn').classList.toggle('active', t==='dark');
-  document.getElementById('theme-light-btn').classList.toggle('active', t==='light');
-}
-function initTheme(){ setTheme(currentTheme); }
 
 // --- Firebase setup ---
 const firebaseConfig = {
@@ -1149,6 +1245,32 @@ function showAppConfirm(message, onConfirm, title){
   document.getElementById('app-modal-backdrop').style.display='flex';
 }
 
+
+function showAppPrompt(message, defaultValue, onConfirm, title){
+  title = title || (currentLang==='hi' ? 'नया नाम' : 'Enter new name');
+  document.getElementById('app-modal-title').textContent = title;
+  document.getElementById('app-modal-message').innerHTML = `
+    <p style="margin-bottom:12px">${message}</p>
+    <input type="text" id="app-prompt-input" value="${escapeHTML(defaultValue)}"
+      style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px"
+      onkeydown="if(event.key==='Enter')document.getElementById('app-prompt-confirm-btn').click()"
+    >
+  `;
+  const okLabel = currentLang==='hi' ? 'ठीक है' : 'OK';
+  const cancelLabel = currentLang==='hi' ? 'रद्द करें' : 'Cancel';
+  document.getElementById('app-modal-buttons').innerHTML = `
+    <button class="btn" style="flex:1" onclick="closeAppModal()">${cancelLabel}</button>
+    <button class="btn primary" style="flex:1" id="app-prompt-confirm-btn">${okLabel}</button>
+  `;
+  document.getElementById('app-prompt-confirm-btn').onclick = ()=>{
+    const val = document.getElementById('app-prompt-input').value;
+    closeAppModal();
+    onConfirm(val);
+  };
+  document.getElementById('app-modal-backdrop').style.display='flex';
+  setTimeout(()=>document.getElementById('app-prompt-input')?.focus(), 50);
+}
+
 function closeAppModal(){
   document.getElementById('app-modal-backdrop').style.display='none';
 }
@@ -1262,7 +1384,6 @@ function logOut(){
 }
 
 auth.onAuthStateChanged(user=>{
-  initTheme();
   if(user){
     currentUser=user;
     document.getElementById('auth-screen').style.display='none';
@@ -1397,31 +1518,6 @@ function renderManageOptionsList(){
     </div>`).join('');
 }
 
-function showAppPrompt(message, defaultValue, onConfirm, title){
-  title = title || (currentLang==='hi' ? 'नया नाम डालें' : 'Enter new name');
-  document.getElementById('app-modal-title').textContent = title;
-  document.getElementById('app-modal-message').innerHTML = `
-    <p style="margin-bottom:12px">${message}</p>
-    <input type="text" id="app-prompt-input" value="${escapeHTML(defaultValue)}"
-      style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px"
-      onkeydown="if(event.key==='Enter')document.getElementById('app-prompt-confirm-btn').click()"
-    >
-  `;
-  const okLabel = currentLang==='hi' ? 'ठीक है' : 'OK';
-  const cancelLabel = currentLang==='hi' ? 'रद्द करें' : 'Cancel';
-  document.getElementById('app-modal-buttons').innerHTML = `
-    <button class="btn" style="flex:1" onclick="closeAppModal()">${cancelLabel}</button>
-    <button class="btn primary" style="flex:1" id="app-prompt-confirm-btn">${okLabel}</button>
-  `;
-  document.getElementById('app-prompt-confirm-btn').onclick = ()=>{
-    const val = document.getElementById('app-prompt-input').value;
-    closeAppModal();
-    onConfirm(val);
-  };
-  document.getElementById('app-modal-backdrop').style.display='flex';
-  setTimeout(()=>document.getElementById('app-prompt-input')?.select(), 50);
-}
-
 function startEditCustomOption(oldName){
   showAppPrompt(
     currentLang==='hi' ? 'नया नाम डालें:' : 'Enter new name:',
@@ -1538,12 +1634,231 @@ async function saveBudget(){
   }catch(e){toast('Could not save budget: '+e.message,'error');}
 }
 
-function tryConnectUPI(appName){
-  const msg = currentLang==='hi'
-    ? 'आपका UPI कनेक्ट नहीं है।\n\nक्षमा करें, यह फीचर अभी बन रहा है। 🚧'
-    : 'Your UPI is not connected.\n\nSorry, this feature is still under construction. 🚧';
-  showAppAlert(msg, appName);
-  showLocalNotification('UPI Connection', `${appName} — this feature is still under construction 🚧`);
+// --- SMART UPI NOTIFICATION LOGGER ---
+// Parses UPI notification text from Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, CRED
+// Supports both English and Hindi notification formats
+
+// Merchant keyword -> category mapping for auto-suggestion
+const MERCHANT_CATEGORY_MAP = {
+  // Food
+  food:{keywords:['swiggy','zomato','food','cafe','restaurant','pizza','burger','mcdonald','domino','kfc','subway','chai','samosa','mess','canteen','biryani','hotel','paratha','dosa','bhel','pani puri','vada pav','pav bhaji','bakery','cake','juice','smoothie','starbucks','barista',' CCD','pizza hut','papa johns','burger king','haldiram','bikano','sweet','mithai','grocery','bigbasket','blinkit','zepto','instamart','dmart','reliance fresh','more supermarket','supermarket']},
+  // Travel
+  travel:{keywords:['uber','ola','rapido','metro','irctc','train','bus','flight','makemytrip','ixigo','redbus','auto','taxi','cab','petrol','diesel','fuel','parking','toll','metro card','airport']},
+  // Friends / Social
+  friends:{keywords:['movie','cinema','pvr','inox','game','gaming','steam','playstation','netflix','hotstar','prime video','spotify','concert','party','bar','pub','club','event','ticket','bookmyshow']},
+  // Home / Utilities
+  home:{keywords:['electricity','electric','bill','water','gas','internet','broadband','jio','airtel','vi ','bsnl','recharge','rent','maintenance','amazon','flipkart','meesho','ajio','myntra','shopping']},
+};
+
+function parseUpiNotification(text) {
+  if (!text || !text.trim()) return null;
+  const raw = text.trim();
+
+  // --- Step 1: Detect UPI App ---
+  let app = 'Unknown UPI App';
+  if (/google\s*pay|gpay/i.test(raw)) app = 'Google Pay';
+  else if (/phonepe|phone\s*pe/i.test(raw)) app = 'PhonePe';
+  else if (/paytm/i.test(raw)) app = 'Paytm';
+  else if (/bhim/i.test(raw)) app = 'BHIM';
+  else if (/amazon\s*pay|amazon/i.test(raw)) app = 'Amazon Pay';
+  else if (/cred/i.test(raw)) app = 'CRED';
+  else if (/upi|paid|sent|received|debit|credit|transact/i.test(raw)) app = 'UPI App';
+
+  // --- Step 2: Detect Direction ---
+  let direction = 'sent'; // default
+  const receivedPatterns = [
+    /received/i, /credit/i, /deposited/i, /added to/i,
+    /आपको प्राप्त/i, /क्रेडिट/i, /जमा हुआ/i
+  ];
+  for (const pat of receivedPatterns) {
+    if (pat.test(raw)) { direction = 'received'; break; }
+  }
+
+  // --- Step 3: Extract Amount ---
+  let amount = null;
+  // Match patterns: ₹150, Rs.150, Rs 150, INR 150, रु.150, ₹1,500.00, etc.
+  const amountPatterns = [
+    /[₹रु\.]*\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/,
+    /(?:Rs\.?|INR|INR)\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/,
+  ];
+  for (const pat of amountPatterns) {
+    const match = raw.match(pat);
+    if (match) {
+      amount = parseFloat(match[1].replace(/,/g, ''));
+      if (amount > 0 && amount <= 10000000) break;
+      amount = null;
+    }
+  }
+
+  // --- Step 4: Extract Merchant / Description ---
+  let merchant = '';
+
+  // Try to find merchant after "to" or "from"
+  const merchantPatterns = [
+    /(?:to|se|को|to\s+)([A-Za-z0-9\s@._-]+?)(?:\s+on|\s+via|\s+using|\s+from|\s+UPI|\s+Ref|\s+Trans|\.)/i,
+    /(?:from|से|se\s+)([A-Za-z0-9\s@._-]+?)(?:\s+on|\s+via|\s+using|\s+to|\s+UPI|\s+Ref|\s+Trans|\.)/i,
+    /paid\s+(?:₹[\d,]+\s+)?to\s+([A-Za-z0-9\s@._-]+)/i,
+    /sent\s+(?:₹[\d,]+\s+)?to\s+([A-Za-z0-9\s@._-]+)/i,
+    /(?:₹[\d,]+|Rs\.?\s*[\d,]+)\s+(?:to|se)\s+([A-Za-z0-9\s@._-]+)/i,
+  ];
+  for (const pat of merchantPatterns) {
+    const match = raw.match(pat);
+    if (match && match[1]) {
+      merchant = match[1].trim().replace(/\s+/g, ' ');
+      if (merchant.length > 2 && merchant.length < 60) break;
+      merchant = '';
+    }
+  }
+
+  // Clean up merchant name
+  merchant = merchant.replace(/\s*(via|using|on|from|UPI|Ref|Txn|Transaction).*$/i, '').trim();
+  if (merchant.length > 40) merchant = merchant.substring(0, 40);
+
+  // If no merchant found, try to extract any meaningful text
+  if (!merchant) {
+    // Look for merchant name patterns: all caps words, or capitalized words
+    const nameMatch = raw.match(/(?:paid|sent|received|transferred|debited|credited).*?(?:to|from|se|को|से)\s+([A-Za-z][A-Za-z0-9\s]{2,30})/i);
+    if (nameMatch) merchant = nameMatch[1].trim();
+  }
+
+  // --- Step 5: Auto-suggest category ---
+  let suggestedCat = 'other';
+  const lowerRaw = raw.toLowerCase() + ' ' + merchant.toLowerCase();
+  for (const [cat, config] of Object.entries(MERCHANT_CATEGORY_MAP)) {
+    if (config.keywords.some(kw => lowerRaw.includes(kw))) {
+      suggestedCat = cat;
+      break;
+    }
+  }
+
+  return { amount, direction, merchant, app, suggestedCat, raw };
+}
+
+function pasteFromClipboard() {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    navigator.clipboard.readText().then(text => {
+      document.getElementById('smart-log-input').value = text;
+      onSmartLogInput();
+    }).catch(() => {
+      toast(currentLang === 'hi' ? 'क्लिपबोर्ड पहुंच अस्वीकृत — कृपया मैनुअली पेस्ट करें' : 'Clipboard access denied — please paste manually', 'error');
+    });
+  } else {
+    toast(currentLang === 'hi' ? 'क्लिपबोर्ड उपलब्ध नहीं — कृपया मैनुअली पेस्ट करें' : 'Clipboard not available — please paste manually', 'error');
+  }
+}
+
+function onSmartLogInput() {
+  const input = document.getElementById('smart-log-input').value.trim();
+  const parseBtn = document.getElementById('smart-log-parse-btn');
+  parseBtn.style.display = input.length > 10 ? 'inline-flex' : 'none';
+}
+
+function parseSmartLog() {
+  const text = document.getElementById('smart-log-input').value;
+  const result = parseUpiNotification(text);
+
+  if (!result || !result.amount) {
+    toast(TT('smart_log_not_detected'), 'error');
+    return;
+  }
+
+  // Show parsed card
+  document.getElementById('smart-log-parsed').style.display = 'block';
+  document.getElementById('smart-log-amt').value = result.amount;
+  document.getElementById('smart-log-cat').value = result.suggestedCat;
+  document.getElementById('smart-log-date').value = todayStr();
+  document.getElementById('smart-log-desc').value = result.merchant || (result.direction === 'received' ? 'Payment received' : 'UPI payment');
+  document.getElementById('smart-log-app-badge').textContent = result.app;
+
+  const badge = document.getElementById('smart-log-direction-badge');
+  if (result.direction === 'received') {
+    badge.className = 'smart-log-badge received';
+    badge.textContent = TT('smart_log_received');
+  } else {
+    badge.className = 'smart-log-badge sent';
+    badge.textContent = TT('smart_log_sent');
+  }
+
+  // Scroll to parsed card
+  document.getElementById('smart-log-parsed').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  toast(TT('smart_log_parsed'), 'success');
+}
+
+async function confirmSmartLog() {
+  const amt = parseFloat(document.getElementById('smart-log-amt').value);
+  const cat = document.getElementById('smart-log-cat').value;
+  const date = document.getElementById('smart-log-date').value || todayStr();
+  const desc = document.getElementById('smart-log-desc').value.trim().slice(0, 60);
+  const badge = document.getElementById('smart-log-direction-badge').textContent;
+  const isReceived = badge.includes('Received') || badge.includes('प्राप्त');
+
+  if (!isValidAmount(amt)) {
+    toast(TT('enter_valid_amount'), 'error');
+    return;
+  }
+  if (!desc) {
+    toast(TT('add_description'), 'error');
+    return;
+  }
+
+  const entryType = isReceived ? 'income' : 'expense';
+  const payload = {
+    type: entryType,
+    cat: isReceived ? 'income' : cat,
+    label: desc,
+    note: '⚡ Smart Logger',
+    amt: Math.round(amt * 100) / 100,
+    date
+  };
+
+  try {
+    await saveEntry(payload);
+    toast(TT('smart_log_saved'), 'success');
+    dismissSmartLog();
+    addSmartLogToHistory(desc, amt, isReceived);
+    if (entryType === 'expense') {
+      checkBudget();
+      showSpendMoodToast(amt);
+    }
+  } catch (e) {
+    toast('Could not save: ' + e.message, 'error');
+  }
+}
+
+function dismissSmartLog() {
+  document.getElementById('smart-log-parsed').style.display = 'none';
+  document.getElementById('smart-log-input').value = '';
+  document.getElementById('smart-log-parse-btn').style.display = 'none';
+}
+
+// Store smart log history in memory (synced from entries tagged with "⚡ Smart Logger")
+function addSmartLogToHistory(desc, amt, isReceived) {
+  renderSmartLogHistory();
+}
+
+function renderSmartLogHistory() {
+  const el = document.getElementById('smart-log-history');
+  if (!el) return;
+  const smartLogs = mainEntries()
+    .filter(e => e.note && e.note.includes('Smart Logger'))
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 10);
+
+  if (!smartLogs.length) {
+    el.innerHTML = `<p class="empty">${TT('smart_logger_no_logs')}</p>`;
+    return;
+  }
+
+  el.innerHTML = smartLogs.map(e => `
+    <div class="smart-log-history-item">
+      <span class="smart-log-badge ${e.type === 'income' ? 'received' : 'sent'}">
+        ${e.type === 'income' ? '📥' : '📤'} ${e.type === 'income' ? '+' : '-'}₹${e.amt}
+      </span>
+      <span style="flex:1;color:var(--text)">${escapeHTML(e.label)}</span>
+      <span style="font-size:11px;color:var(--text-faint)">${fmtDate(e.date)}</span>
+    </div>
+  `).join('');
 }
 
 function getThisWeekEntries(){
@@ -1873,7 +2188,7 @@ document.getElementById('exp-date').value=todayStr();
 let editingId=null; // set when editing an existing entry instead of adding new
 
 function setTab(t){
-  ['log','entries','report','events','rewards','upi','language','appearance'].forEach((x)=>{
+  ['log','entries','report','events','rewards','upi','language'].forEach((x)=>{
     const el=document.getElementById('tab-'+x);
     if(x===t){
       el.style.display='block';
@@ -2487,7 +2802,7 @@ function renderCategoryPieChart(cats){
     const path = s.endAngle-s.startAngle>=359.9
       ? `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-0.01} ${cy-r} Z`
       : describeArc(cx,cy,r,s.startAngle,s.endAngle);
-    return `<path class="pie-slice pie-slice-3d" data-idx="${i}" d="${path}" fill="${CAT_COLORS[s.cat]||'#9b95c2'}"
+    return `<path class="pie-slice" data-idx="${i}" d="${path}" fill="${CAT_COLORS[s.cat]||'#9b95c2'}"
       stroke="#1b1340" stroke-width="2" style="transform-origin:${cx}px ${cy}px"
       onmouseenter="showPieTooltip(event,${i})" onmouseleave="hidePieTooltip()"
       ontouchstart="showPieTooltip(event,${i})"></path>`;
@@ -2503,12 +2818,12 @@ function renderCategoryPieChart(cats){
 
   wrap.innerHTML = `
     <div style="position:relative">
-      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible;">${slices}<circle cx="${cx}" cy="${cy}" r="${r*0.55}" fill="#1b1340"/></svg>
+      <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible">${slices}<circle cx="${cx}" cy="${cy}" r="${r*0.55}" fill="#1b1340"/></svg>
       <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
         <div style="font-size:10px;color:var(--text-faint)">${currentLang==='hi'?'कुल':'Total'}</div>
         <div style="font-size:15px;font-weight:700">₹${total}</div>
       </div>
-      <div id="pie-tooltip" style="display:none;position:absolute;background:#1f1840;border:1px solid var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;color:#fff;pointer-events:none;z-index:950;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,0.4)"></div>
+      <div id="pie-tooltip" style="display:none;position:fixed;background:#1f1840;border:1px solid var(--accent);border-radius:10px;padding:6px 10px;font-size:12px;color:#fff;pointer-events:none;z-index:950;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,0.4)"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:14px;width:100%">${legend}</div>
   `;
@@ -2524,10 +2839,13 @@ function showPieTooltip(evt, idx){
   const label=CAT_LABEL(s.cat);
   tip.innerHTML=`<b>${escapeHTML(label)}</b><br>₹${s.amt} · ${s.pct}%`;
   tip.style.display='block';
-  const x = evt.touches ? evt.touches[0].pageX : evt.pageX;
-  const y = evt.touches ? evt.touches[0].pageY : evt.pageY;
-  tip.style.left=(x+12)+'px';
-  tip.style.top=(y-10)+'px';
+  const rect = evt.target.closest('#cat-pie-wrap').getBoundingClientRect();
+  const pageX = evt.touches ? evt.touches[0].pageX : evt.pageX;
+  const pageY = evt.touches ? evt.touches[0].pageY : evt.pageY;
+  const x = pageX - (rect.left + window.scrollX);
+  const y = pageY - (rect.top + window.scrollY);
+  tip.style.left=(x+15)+'px';
+  tip.style.top=(y-25)+'px';
 }
 function hidePieTooltip(){
   document.querySelectorAll('.pie-slice').forEach(p=>p.style.transform='scale(1)');
