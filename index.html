@@ -273,38 +273,83 @@ input[type=date]{color-scheme:dark}
 
 footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2rem;padding-bottom:1rem}
 
-body.light-theme {--bg1:#f5f3ff;--bg2:#ede9fe;--bg3:#ddd6fe;--accent:#7c3aed;--accent2:#db2777;--card:rgba(255,255,255,0.85);--card-solid:#ffffff;--border:rgba(0,0,0,0.1);--text:#1e1b4b;--text-dim:#4c1d95;--text-faint:#6d28d9;--green:#16a34a;--red:#dc2626;--amber:#ea580c;background:linear-gradient(160deg,#f5f3ff,#ede9fe 55%,#ddd6fe)}
-body.light-theme .side-menu,body.light-theme #app-modal-box,body.light-theme #manage-modal-box{background:#fff}
-body.light-theme input,body.light-theme select{color-scheme:light}
-body.light-theme .pie-slice{stroke:#fff}
-body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
-
-
-.smart-log-paste-area{width:100%;min-height:100px;padding:14px;border-radius:14px;border:2px dashed var(--accent);background:rgba(155,107,255,0.06);color:var(--text);font-size:13.5px;font-family:'Inter',sans-serif;resize:vertical;transition:border-color 0.2s,background 0.2s}
-.smart-log-paste-area:focus{outline:none;border-color:var(--accent2);background:rgba(255,126,179,0.06)}
-.smart-log-paste-area::placeholder{color:var(--text-faint)}
-.smart-log-parsed-card{background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.08));border:1px solid rgba(74,222,128,0.3);border-radius:14px;padding:16px;margin-top:12px;animation:tabEnter 0.3s ease}
-.smart-log-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:0.2px}
-.smart-log-badge.sent{background:rgba(255,107,107,0.15);color:#ff9f9f}
-.smart-log-badge.received{background:rgba(74,222,128,0.15);color:#6ee7a8}
-.smart-log-apps{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
-.smart-log-app-btn{padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.2s}
-.smart-log-app-btn:hover{background:rgba(155,107,255,0.12);border-color:var(--accent)}
-.smart-log-app-btn.active{background:rgba(74,222,128,0.15);border-color:var(--green);color:var(--green)}
-.split-chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;background:var(--card);border:2px solid var(--border);color:var(--text-dim);cursor:pointer;transition:all 0.2s;user-select:none}
-.split-chip.selected{background:rgba(74,222,128,0.12);border-color:var(--green);color:var(--green)}
-.split-chip:not(.selected){background:rgba(255,255,255,0.04);opacity:0.6}
-.split-chip:hover{border-color:var(--accent)}
-.settlement-card{background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.06));border:1px solid rgba(74,222,128,0.25);border-radius:14px;padding:14px;margin-top:8px}
+/* --- SPLITWISE KILLER STYLES --- */
+.split-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:6px 14px;
+  border-radius:100px;font-size:12px;font-weight:600;
+  background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.15);
+  color:var(--text-dim);cursor:pointer;transition:all 0.2s;user-select:none;
+}
+.split-chip:hover{border-color:rgba(155,107,255,0.4)}
+.split-chip.selected{background:rgba(74,222,128,0.15);border-color:var(--green);color:var(--green)}
+.split-chip.selected::before{content:"✓ ";font-weight:700}
+.split-chip:not(.selected){opacity:0.55;filter:brightness(0.85)}
+.settlement-card{
+  background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.06));
+  border:1px solid rgba(74,222,128,0.25);border-radius:14px;padding:14px;
+  margin-top:8px;
+}
 .settlement-arrow{color:var(--accent);font-weight:700;font-size:14px;margin:0 6px}
 .balance-positive{color:var(--green);font-weight:700}
 .balance-negative{color:var(--red);font-weight:700}
 .balance-zero{color:var(--text-faint);font-weight:600}
-.participant-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:100px;font-size:12px;font-weight:600;background:rgba(155,107,255,0.1);border:1px solid rgba(155,107,255,0.25);color:var(--accent);margin:3px}
-.shared-expense-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:700;background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);margin-left:6px}
-.split-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:rgba(255,255,255,0.04);margin-bottom:12px}
-.split-toggle button{flex:1;border:none;background:transparent;padding:8px 6px;font-size:12px;cursor:pointer;color:var(--text-dim);font-weight:500;text-align:center;white-space:nowrap}
+.participant-tag{
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+  border-radius:100px;font-size:12px;font-weight:600;
+  background:rgba(155,107,255,0.1);border:1px solid rgba(155,107,255,0.25);
+  color:var(--accent);margin:2px;
+}
+.participant-tag .remove-participant{cursor:pointer;opacity:0.6;font-size:14px}
+.participant-tag .remove-participant:hover{opacity:1;color:var(--red)}
+.shared-expense-badge{
+  display:inline-flex;align-items:center;gap:3px;padding:2px 8px;
+  border-radius:100px;font-size:10px;font-weight:700;
+  background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);
+  margin-left:6px;
+}
+.split-toggle{
+  display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  background:rgba(255,255,255,0.04);margin-bottom:12px;
+}
+.split-toggle button{flex:1;border:none;background:transparent;padding:8px 6px;
+  font-size:12px;cursor:pointer;color:var(--text-dim);font-weight:500;text-align:center;white-space:nowrap}
 .split-toggle button.active{background:linear-gradient(135deg,var(--accent),#7c4ee0);color:#fff}
+
+
+/* --- LIGHT THEME --- */
+
+
+
+
+
+
+/* Light theme overrides for inline-styled cards */
+
+.smart-log-paste-area{
+  width:100%;min-height:140px;padding:16px;border-radius:12px;
+  border:2px dashed rgba(100,200,100,0.5);
+  background:rgba(100,200,100,0.04);color:var(--text);
+  font-size:14px;font-family:'Inter',sans-serif;
+  resize:vertical;transition:border-color 0.3s,background 0.3s;line-height:1.6;
+}
+.smart-log-paste-area:focus{
+  outline:none;border-color:#4ade80;
+  box-shadow:0 0 0 3px rgba(74,222,128,0.15);
+  background:rgba(74,222,128,0.06);
+}
+.smart-log-paste-area.has-content{
+  border-color:#4ade80;border-style:solid;
+  background:rgba(74,222,128,0.08);
+}
+.smart-log-paste-area::placeholder{color:rgba(255,255,255,0.4);font-size:13.5px;font-style:normal}
+
+
+
+
+
+
+
+
 
 </style>
 </head>
@@ -312,7 +357,7 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
 <div id="toast-container" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
 
 <div id="app-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;align-items:center;justify-content:center;padding:20px">
-  <div id="app-modal-box" style="width:100%;max-width:340px;background:#1f1840;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+  <div id="app-modal-box" style="width:100%;max-width:340px;background:var(--card-solid,#1f1840);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
     <p id="app-modal-title" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin-bottom:8px"></p>
     <p id="app-modal-message" style="font-size:13.5px;color:var(--text-dim);line-height:1.5;white-space:pre-line"></p>
     <div id="app-modal-buttons" class="btn-row" style="margin-top:18px"></div>
@@ -320,7 +365,7 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
 </div>
 
 <div id="manage-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:899;align-items:center;justify-content:center;padding:20px">
-  <div style="width:100%;max-width:380px;max-height:80vh;overflow-y:auto;background:#1f1840;border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+  <div style="width:100%;max-width:380px;max-height:80vh;overflow-y:auto;background:var(--card-solid,#1f1840);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <p id="manage-modal-title" style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin:0"></p>
       <button class="icon-btn" onclick="closeManageOptions()" aria-label="close">✕</button>
@@ -411,8 +456,7 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
     <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
     <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
-    <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="nav_upi">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
-    <button class="side-menu-item" onclick="toggleTheme()"><i class="ti ti-palette"></i> <span data-i18n="theme_toggle">Toggle Theme</span></button>
+    <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
@@ -660,8 +704,57 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
         <div class="stat-pill"><span class="stat-pill-label" data-i18n="stat_entries">Entries</span><span class="stat-pill-val" id="ev-count">0</span></div>
       </div>
 
+      <!-- PARTICIPANTS MANAGEMENT -->
+      <div class="card">
+        <p class="sec-title"><i class="ti ti-users"></i><span data-i18n="sec_participants">Participants</span></p>
+        <p style="font-size:12px;color:var(--text-dim);margin:0 0 10px" data-i18n="participants_desc">Add your friends to split shared expenses and track who owes whom.</p>
+        <div id="participants-tags-display" style="margin-bottom:10px"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="flex:1">
+            <input type="text" id="new-participant-name" placeholder="Friend's name" maxlength="20"/>
+          </div>
+          <button class="btn" onclick="addParticipant()" style="white-space:nowrap"><i class="ti ti-plus"></i> <span data-i18n="btn_add">Add</span></button>
+        </div>
+        <p id="manage-participants-link" style="display:none;font-size:12px;margin:8px 0 0"><a href="#" onclick="openManageParticipants();return false;" style="color:var(--accent);text-decoration:none" data-i18n="lnk_manage_participants">Manage your participants</a></p>
+      </div>
+
+      <!-- PARTICIPANTS MANAGE MODAL -->
+      <div id="manage-participants-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:899;align-items:center;justify-content:center;padding:20px">
+        <div style="width:100%;max-width:380px;max-height:80vh;overflow-y:auto;background:var(--card-solid,#1f1840);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <p style="font-family:'Poppins',sans-serif;font-weight:600;font-size:16px;margin:0" data-i18n="manage_participants_title">Manage participants</p>
+            <button class="icon-btn" onclick="closeManageParticipants()" aria-label="close">✕</button>
+          </div>
+          <div id="manage-participants-list"></div>
+        </div>
+      </div>
+
+      <!-- SETTLEMENT SECTION -->
+      <div class="card" id="settlement-section" style="display:none">
+        <p class="sec-title"><i class="ti ti-arrows-exchange"></i><span data-i18n="sec_settlement">Settlement</span></p>
+        <p style="font-size:12px;color:var(--text-dim);margin:0 0 10px" data-i18n="settlement_desc">Smart calculation — minimizes the number of payments needed.</p>
+        <div id="settlement-balances"></div>
+        <div id="settlement-transfers"></div>
+        <div id="settlement-settled" style="display:none;text-align:center;padding:16px;color:var(--green)">
+          <p style="font-size:28px;margin:0">✅</p>
+          <p style="font-size:13px;margin:4px 0 0" data-i18n="all_settled">All settled up!</p>
+        </div>
+      </div>
+
+      <!-- SHARED EXPENSE TOGGLE (inside existing expense form) -->
       <div class="card">
         <p class="sec-title"><i class="ti ti-cash"></i><span data-i18n="sec_add_income_event">Add income to this event</span></p>
+        <div class="split-toggle" id="income-type-toggle">
+          <button class="active" onclick="setIncomeType('personal')" id="inc-type-personal">🧑 <span data-i18n="exp_type_personal">Personal</span></button>
+          <button onclick="setIncomeType('shared')" id="inc-type-shared">👥 <span data-i18n="exp_type_shared">Shared / Split</span></button>
+        </div>
+        <!-- SHARED INCOME FIELDS (hidden by default) -->
+        <div id="shared-income-fields" style="display:none">
+          <label data-i18n="lbl_received_by">Received by</label>
+          <select id="ev-inc-received-by"></select>
+          <label data-i18n="lbl_split_among">Split among</label>
+          <div id="ev-inc-split-among" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+        </div>
         <div class="grid3">
           <div>
             <label data-i18n="lbl_source">Source</label>
@@ -693,6 +786,17 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
 
       <div class="card">
         <p class="sec-title"><i class="ti ti-receipt"></i><span data-i18n="sec_add_expense_event">Add expense to this event</span></p>
+        <div class="split-toggle" id="expense-type-toggle">
+          <button class="active" onclick="setExpenseType('personal')" id="exp-type-personal">🧑 <span data-i18n="exp_type_personal">Personal</span></button>
+          <button onclick="setExpenseType('shared')" id="exp-type-shared">👥 <span data-i18n="exp_type_shared">Shared / Split</span></button>
+        </div>
+        <!-- SHARED EXPENSE FIELDS (hidden by default) -->
+        <div id="shared-expense-fields" style="display:none">
+          <label data-i18n="lbl_paid_by">Paid by</label>
+          <select id="ev-exp-paid-by"></select>
+          <label data-i18n="lbl_split_among">Split among</label>
+          <div id="ev-exp-split-among" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px"></div>
+        </div>
         <div class="grid3">
           <div>
             <label data-i18n="lbl_category">Category</label>
@@ -766,79 +870,87 @@ body.light-theme circle[fill="#1b1340"]{fill:#f5f3ff}
   <div id="tab-upi" style="display:none">
     <div class="card" style="background:linear-gradient(135deg,rgba(74,222,128,0.1),rgba(155,107,255,0.08));border-color:rgba(74,222,128,0.3)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
-        <p class="sec-title" style="margin:0"><i class="ti ti-clipboard"></i><span data-i18n="sec_smart_logger">Smart Logger</span></p>
+        <p class="sec-title" style="margin:0"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span></p>
         <span class="exp-badge" style="background:rgba(74,222,128,0.14);color:#4ade80;border-color:rgba(74,222,128,0.3)">⚡ New</span>
       </div>
-      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="smart_logger_desc">Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!</p>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:2px 0 12px" data-i18n="smart_logger_desc"><span data-i18n="smart_logger_desc">Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!</span></p>
     </div>
     <div class="card">
-      <p class="sec-title"><i class="ti ti-player-play"></i><span data-i18n="smart_logger_how">How it works</span></p>
+      <p class="sec-title"><i class="ti ti-player-play"></i><span data-i18n="smart_logger_how"> How it works</span></p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
           <div style="font-size:22px;margin-bottom:4px">📱</div>
-          <p style="font-size:11.5px;font-weight:600;margin:0">1. Copy notification</p>
-          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0">Long-press any UPI text and copy</p>
+          <p style="font-size:11.5px;font-weight:600;margin:0" data-i18n="step_copy">1. Copy notification</p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_copy_desc">Long-press any UPI text and copy</p>
         </div>
         <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
           <div style="font-size:22px;margin-bottom:4px">📋</div>
-          <p style="font-size:11.5px;font-weight:600;margin:0">2. Paste here</p>
-          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0">Paste the text in the box below</p>
+          <p style="font-size:11.5px;font-weight:600;margin:0" data-i18n="step_paste">2. Paste here</p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_paste_desc">Paste the text in the box below</p>
         </div>
         <div style="flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center">
           <div style="font-size:22px;margin-bottom:4px">✅</div>
-          <p style="font-size:11.5px;font-weight:600;margin:0">3. Auto-logged!</p>
-          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0">Confirm and it's saved instantly</p>
+          <p style="font-size:11.5px;font-weight:600;margin:0" data-i18n="step_log">3. Auto-logged!</p>
+          <p style="font-size:10.5px;color:var(--text-faint);margin:2px 0 0" data-i18n="step_log_desc">Confirm and it's saved instantly</p>
         </div>
       </div>
     </div>
     <div class="card">
-      <p class="sec-title"><i class="ti ti-clipboard"></i><span data-i18n="smart_logger_paste">Paste UPI notification</span></p>
-      <textarea id="smart-log-input" class="smart-log-paste-area" placeholder="Paste your UPI notification here...
+      <p class="sec-title"><i class="ti ti-clipboard"></i><span data-i18n="smart_logger_paste"> Paste UPI notification</span></p>
+      <textarea id="smart-log-input" class="smart-log-paste-area" placeholder="Paste your UPI notification here…
+
+e.g. Paid ₹150 to Samosa Shop via Google Pay"
 
 e.g. Paid ₹150 to Samosa Shop via Google Pay" oninput="onSmartLogInput()"></textarea>
       <div class="btn-row" style="margin-top:10px">
-        <button class="btn" onclick="pasteFromClipboard()"><i class="ti ti-clipboard"></i> Paste from clipboard</button>
-        <button class="btn primary" id="smart-log-parse-btn" onclick="parseSmartLog()" style="display:none"><i class="ti ti-wand"></i> Auto-detect &amp; log</button>
+        <button class="btn" onclick="pasteFromClipboard()"><i class="ti ti-clipboard"></i> <span data-i18n="btn_paste">Paste from clipboard</span></button>
+        <button class="btn primary" id="smart-log-parse-btn" onclick="parseSmartLog()" style="display:none"><i class="ti ti-wand"></i> <span data-i18n="btn_parse">Auto-detect &amp; log</span></button>
       </div>
     </div>
-    <div id="smart-log-parsed" style="display:none">
-      <div class="smart-log-parsed-card">
+    <div id="smart-log-parsed" style="display:none;margin-bottom:12px">
+      <div class="card" style="border:1px solid rgba(74,222,128,0.3);background:linear-gradient(135deg,rgba(74,222,128,0.08),rgba(155,107,255,0.04))">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
           <span id="smart-log-direction-badge" class="smart-log-badge sent">📤 Sent</span>
           <span id="smart-log-app-badge" style="font-size:11px;color:var(--text-dim)"></span>
+          <div id="smart-log-type-toggle" class="split-toggle" style="margin-left:auto;display:none">
+            <button class="active" onclick="setSmartLogType('expense')" id="smart-log-type-exp">📤 <span data-i18n="btn_add_expense">Expense</span></button>
+            <button onclick="setSmartLogType('income')" id="smart-log-type-inc">📥 <span data-i18n="btn_add_income">Income</span></button>
+          </div>
         </div>
         <div class="grid3">
           <div><label>Amount (₹)</label><input type="number" id="smart-log-amt" min="0.01" max="10000000" step="0.01"/></div>
-          <div><label>Category</label><select id="smart-log-cat"><option value="food">Food</option><option value="travel">Travel</option><option value="friends">Friends</option><option value="home">Home</option><option value="other">Other</option></select></div>
+          <div><label>Category</label><select id="smart-log-cat"></select>
+            <div id="smart-log-custom-wrap" style="display:none;margin-top:6px">
+              <input type="text" id="smart-log-custom-cat" placeholder="New category name" maxlength="40"/>
+            </div>
+          </div>
           <div><label>Date</label><input type="date" id="smart-log-date"/></div>
         </div>
         <label>Description</label>
         <input type="text" id="smart-log-desc" placeholder="Merchant or note" maxlength="60"/>
         <div class="btn-row" style="margin-top:12px">
-          <button class="btn primary" onclick="confirmSmartLog()"><i class="ti ti-check"></i> Confirm &amp; save</button>
-          <button class="btn" onclick="dismissSmartLog()"><i class="ti ti-x"></i> Dismiss</button>
+          <button class="btn primary" onclick="confirmSmartLog()"><i class="ti ti-check"></i> <span data-i18n="btn_confirm_log">Confirm &amp; save</span></button>
+          <button class="btn" onclick="dismissSmartLog()"><i class="ti ti-x"></i> <span data-i18n="btn_dismiss">Dismiss</span></button>
         </div>
       </div>
     </div>
     <div class="card">
-      <p class="sec-title"><i class="ti ti-device-mobile"></i> Supported apps</p>
-      <div class="smart-log-apps">
-        <div class="smart-log-app-btn active">📱 Google Pay</div>
-        <div class="smart-log-app-btn active">📱 PhonePe</div>
-        <div class="smart-log-app-btn active">📱 Paytm</div>
-        <div class="smart-log-app-btn active">📱 BHIM</div>
-        <div class="smart-log-app-btn active">📱 Amazon Pay</div>
-        <div class="smart-log-app-btn active">📱 CRED</div>
+      <p class="sec-title"><i class="ti ti-device-mobile"></i><span data-i18n="smart_logger_supported"> Supported apps</span></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">Google Pay</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">PhonePe</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">Paytm</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">BHIM</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">Amazon Pay</span></div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border-radius:12px;border:1px solid rgba(74,222,128,0.3);background:rgba(74,222,128,0.07)"><span style="font-size:15px">📱</span><span style="font-size:11.5px;font-weight:700;color:#4ade80">CRED</span></div>
       </div>
+      <p style="font-size:11px;color:var(--text-faint);margin-top:10px"><span data-i18n="smart_logger_supported_desc">Works with any app that sends a payment notification. Just copy the notification text and paste it!</span></p>
     </div>
     <div class="card">
-      <p class="sec-title"><i class="ti ti-history"></i> Recent smart logs</p>
-      <div id="smart-log-history"><p class="empty">No smart logs yet. Paste a notification to get started!</p></div>
+      <p class="sec-title"><i class="ti ti-history"></i><span data-i18n="smart_logger_recent"> Recent smart logs</span></p>
+      <div id="smart-log-history"><p class="empty"><span data-i18n="smart_logger_no_logs">No smart logs yet. Paste a notification to get started!</span></p></div>
     </div>
-
   </div>
-
-  <div id="tab-language  </div>
 
   <div id="tab-language" style="display:none">
     <div class="card">
@@ -919,6 +1031,25 @@ const TRANSLATIONS = {
   no_custom_sources:{en:"You haven't added any custom sources yet",hi:'आपने अभी तक कोई कस्टम स्रोत नहीं जोड़ा है'},
   no_custom_categories:{en:"You haven't added any custom categories yet",hi:'आपने अभी तक कोई कस्टम श्रेणी नहीं जोड़ी है'},
   give_source_name:{en:'Type a name for this source',hi:'इस स्रोत के लिए एक नाम लिखें'},
+  sec_participants:{en:'Participants',hi:'प्रतिभागी'},
+  participants_desc:{en:'Add your friends to split shared expenses and track who owes whom.',hi:'शेयर खर्च बांटने और यह ट्रैक करने के लिए अपने दोस्तों को जोड़ें कि किसने किसको देना है।'},
+  btn_add:{en:'Add',hi:'जोड़ें'},
+  lnk_manage_participants:{en:'Manage your participants',hi:'अपने प्रतिभागियों को प्रबंधित करें'},
+  manage_participants_title:{en:'Manage participants',hi:'प्रतिभागी प्रबंधित करें'},
+  lbl_received_by:{en:'Received by',hi:'प्राप्तकर्ता'},
+  no_participants_manage:{en:'No participants yet',hi:'अभी तक कोई प्रतिभागी नहीं'},
+  btn_edit_participant:{en:'Edit',hi:'बदलें'},
+  sec_settlement:{en:'Settlement',hi:'सेटलमेंट'},
+  settlement_desc:{en:'Smart calculation — minimizes the number of payments needed.',hi:'स्मार्ट कैल्कुलेशन — भुगतान की संख्या को कम करता है।'},
+  all_settled:{en:'All settled up!',hi:'सब सेटल हो गया!'},
+  exp_type_personal:{en:'Personal',hi:'व्यक्तिगत'},
+  exp_type_shared:{en:'Shared / Split',hi:'शेयर / स्प्लिट'},
+  lbl_paid_by:{en:'Paid by',hi:'भुगतान किसने किया'},
+  lbl_split_among:{en:'Split among',hi:'किनके बीच बांटें'},
+  btn_settle:{en:'Mark as settled',hi:'सेटल्ड मार्क करें'},
+  no_participants:{en:'No participants yet. Add friends above!',hi:'अभी तक कोई प्रतिभागी नहीं। ऊपर दोस्तों को जोड़ें!'},
+  owes:{en:'owes',hi:'देना है'},
+  gets_back:{en:'gets back',hi:'वापस मिलेगा'},
   give_category_name:{en:'Type a name for this category',hi:'इस श्रेणी के लिए एक नाम लिखें'},
   sec_money_tip:{en:'Money-saving tip',hi:'पैसे बचाने की सलाह'},
   btn_next_tip:{en:'Show me another tip',hi:'दूसरी सलाह दिखाएं'},
@@ -960,7 +1091,7 @@ const TRANSLATIONS = {
   streak_sub:{en:'Log something every day to keep it going',hi:'इसे जारी रखने के लिए हर दिन कुछ लॉग करें'},
   sec_quick_add:{en:'Quick add',hi:'झटपट जोड़ें'},
   upi_desc:{en:'Connect your favorite UPI app to auto-track payments. This feature is a work in progress.',hi:'भुगतान अपने आप ट्रैक करने के लिए अपना पसंदीदा UPI ऐप कनेक्ट करें। यह फीचर अभी बन रहा है।'},
-  nav_upi:{en:'UPI Connect',hi:'UPI कनेक्ट'},
+  nav_upi:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
   stat_income:{en:'Income',hi:'आय'},
   stat_spent:{en:'Spent',hi:'खर्च'},
   stat_balance:{en:'Balance',hi:'बैलेंस'},
@@ -969,37 +1100,27 @@ const TRANSLATIONS = {
   lbl_from:{en:'From',hi:'से'},
   lbl_till:{en:'Till',hi:'तक'},
   msg_no_entries:{en:'No entries yet — log something!',hi:'अभी तक कोई एंट्री नहीं — कुछ लॉग करें!'},
-  nav_upi:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
-  sec_smart_logger:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
-  smart_logger_desc:{en:'Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!',hi:'कोई भी UPI भुगतान सूचना कॉपी करें और यहां पेस्ट करें। PocketTrack अपने आप राशि, मर्चेंट और प्रकार पहचान लेता है!'},
+  smart_logger_desc:{en:'Copy any UPI payment notification and paste it here. PocketTrack auto-detects the amount, merchant, and type — no manual typing needed!',hi:'कोई भी UPI भुगतान सूचना कॉपी करें और यहां पेस्ट करें। PocketTrack अपने आप राशि, मर्चेंट और प्रकार पहचान लेता है — मैनुअल टाइपिंग की ज़रूरत नहीं!'},
   smart_logger_how:{en:'How it works',hi:'यह कैसे काम करता है'},
   smart_logger_paste:{en:'Paste UPI notification',hi:'UPI सूचना पेस्ट करें'},
+  smart_logger_supported:{en:'Supported apps',hi:'समर्थित ऐप्स'},
+  smart_logger_supported_desc:{en:'Works with any app that sends a payment notification. Just copy the notification text and paste it!',hi:'किसी भी ऐप के साथ काम करता है जो भुगतान सूचना भेजता है। बस नोटिफिकेशन टेक्स्ट कॉपी करें और पेस्ट करें!'},
   smart_logger_recent:{en:'Recent smart logs',hi:'हाल के स्मार्ट लॉग्स'},
-  smart_log_parsed:{en:'Payment detected!',hi:'भुगतान मिला!'},
-  smart_log_sent:{en:'📤 Sent',hi:'📤 भेजा'},
-  smart_log_received:{en:'📥 Received',hi:'📥 प्राप्त'},
-  smart_log_not_detected:{en:'Could not detect a valid UPI payment. Please try copying the notification again.',hi:'मान्य UPI भुगतान नहीं मिला। कृपया नोटिफिकेशन फिर से कॉपी करके देखें।'},
+  smart_logger_no_logs:{en:'No smart logs yet. Paste a notification to get started!',hi:'अभी तक कोई स्मार्ट लॉग नहीं। शुरू करने के लिए कोई नोटिफिकेशन पेस्ट करें!'},
+  btn_paste:{en:'Paste from clipboard',hi:'क्लिपबोर्ड से पेस्ट करें'},
+  btn_parse:{en:'Auto-detect & log',hi:'ऑटो-डिटेक्ट और लॉग करें'},
+  btn_confirm_log:{en:'Confirm & save',hi:'कन्फर्म और सेव करें'},
+  btn_dismiss:{en:'Dismiss',hi:'खारिज करें'},
   smart_log_saved:{en:'Smart log saved!',hi:'स्मार्ट लॉग सेव हुआ!'},
-  sec_participants:{en:'Participants',hi:'प्रतिभागी'},
-  participants_desc:{en:'Add your friends to split shared expenses and track who owes whom.',hi:'शेयर खर्च बांटने के लिए दोस्तों को जोड़ें।'},
-  btn_add:{en:'Add',hi:'जोड़ें'},
-  sec_settlement:{en:'Settlement',hi:'सेटलमेंट'},
-  settlement_desc:{en:'Smart calculation — minimizes the number of payments needed.',hi:'स्मार्ट कैल्कुलेशन — कम भुगतान।'},
-  all_settled:{en:'All settled up!',hi:'सब सेटल हो गया!'},
-  exp_type_personal:{en:'Personal',hi:'व्यक्तिगत'},
-  exp_type_shared:{en:'Shared / Split',hi:'शेयर / स्प्लिट'},
-  lbl_paid_by:{en:'Paid by',hi:'भुगतान किसने किया'},
-  lbl_split_among:{en:'Split among',hi:'किनके बीच बांटें'},
-  btn_settle:{en:'Mark as settled',hi:'सेटल्ड मार्क करें'},
-  no_participants:{en:'No participants yet. Add friends above!',hi:'अभी तक कोई प्रतिभागी नहीं। ऊपर दोस्तों को जोड़ें!'},
-  owes:{en:'owes',hi:'देना है'},
-  gets_back:{en:'gets back',hi:'वापस मिलेगा'},
-  lnk_manage_participants:{en:'Manage your participants',hi:'प्रतिभागी प्रबंधित करें'},
-  manage_participants_title:{en:'Manage participants',hi:'प्रतिभागी प्रबंधित करें'},
-  lbl_received_by:{en:'Received by',hi:'प्राप्तकर्ता'},
-  no_participants_manage:{en:'No participants yet',hi:'अभी तक कोई प्रतिभागी नहीं'},
-  btn_edit_participant:{en:'Edit',hi:'बदलें'},
-  theme_toggle:{en:'Toggle Theme',hi:'थीम बदलें'},
+  smart_log_parsed:{en:'Payment detected!',hi:'भुगतान मिला!'},
+  smart_log_not_detected:{en:'Could not detect a valid UPI payment. Please try copying the notification again.',hi:'मान्य UPI भुगतान नहीं मिला। कृपया नोटिफिकेशन फिर से कॉपी करके देखें।'},
+  sec_smart_logger:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
+  step_copy:{en:'1. Copy notification',hi:'1. नोटिफिकेशन कॉपी करें'},
+  step_copy_desc:{en:'Long-press any UPI text and copy',hi:'किसी भी UPI टेक्स्ट को दबाकर कॉपी करें'},
+  step_paste:{en:'2. Paste here',hi:'2. यहां पेस्ट करें'},
+  step_paste_desc:{en:'Paste the text in the box below',hi:'नीचे बॉक्स में टेक्स्ट पेस्ट करें'},
+  step_log:{en:'3. Auto-logged!',hi:'3. ऑटो-लॉग हो गया!'},
+  step3_desc:{en:"Confirm and it's saved instantly", hi:'कन्फर्म करें और तुरंत सेव हो जाएगा'},
 };
 let currentLang = localStorage.getItem('pocketTrackLang') || 'en';
 
@@ -1060,13 +1181,7 @@ function setLanguage(lang){
   toast(currentLang==='en' ? 'Switched to English' : 'हिंदी में बदल गया', 'success');
 }
 
-let isLight = localStorage.getItem('pocketTrackTheme') === 'light';
-if (isLight) document.body.classList.add('light-theme');
-function toggleTheme() {
-  isLight = !isLight;
-  localStorage.setItem('pocketTrackTheme', isLight ? 'light' : 'dark');
-  document.body.classList.toggle('light-theme', isLight);
-}
+
 
 // --- Firebase setup ---
 const firebaseConfig = {
@@ -1233,6 +1348,32 @@ function showAppConfirm(message, onConfirm, title){
   `;
   document.getElementById('app-modal-confirm-btn').onclick = ()=>{ closeAppModal(); onConfirm(); };
   document.getElementById('app-modal-backdrop').style.display='flex';
+}
+
+
+function showAppPrompt(message, defaultValue, onConfirm, title){
+  title = title || (currentLang==='hi' ? 'नया नाम' : 'Enter new name');
+  document.getElementById('app-modal-title').textContent = title;
+  document.getElementById('app-modal-message').innerHTML = `
+    <p style="margin-bottom:12px">${message}</p>
+    <input type="text" id="app-prompt-input" value="${escapeHTML(defaultValue)}"
+      style="width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px"
+      onkeydown="if(event.key==='Enter')document.getElementById('app-prompt-confirm-btn').click()"
+    >
+  `;
+  const okLabel = currentLang==='hi' ? 'ठीक है' : 'OK';
+  const cancelLabel = currentLang==='hi' ? 'रद्द करें' : 'Cancel';
+  document.getElementById('app-modal-buttons').innerHTML = `
+    <button class="btn" style="flex:1" onclick="closeAppModal()">${cancelLabel}</button>
+    <button class="btn primary" style="flex:1" id="app-prompt-confirm-btn">${okLabel}</button>
+  `;
+  document.getElementById('app-prompt-confirm-btn').onclick = ()=>{
+    const val = document.getElementById('app-prompt-input').value;
+    closeAppModal();
+    onConfirm(val);
+  };
+  document.getElementById('app-modal-backdrop').style.display='flex';
+  setTimeout(()=>document.getElementById('app-prompt-input')?.focus(), 50);
 }
 
 function closeAppModal(){
@@ -1483,11 +1624,16 @@ function renderManageOptionsList(){
 }
 
 function startEditCustomOption(oldName){
-  const newName=prompt(currentLang==='hi' ? 'नया नाम डालें:' : 'Enter new name:', oldName);
-  if(!newName || !newName.trim() || newName.trim()===oldName) return;
-  const trimmed=newName.trim().slice(0,40);
-  if(manageOptionsMode==='income') renameCustomIncomeSource(oldName, trimmed);
-  else renameCustomExpenseCategory(oldName, trimmed);
+  showAppPrompt(
+    currentLang==='hi' ? 'नया नाम डालें:' : 'Enter new name:',
+    oldName,
+    (newName)=>{
+      if(!newName || !newName.trim() || newName.trim()===oldName) return;
+      const trimmed=newName.trim().slice(0,40);
+      if(manageOptionsMode==='income') renameCustomIncomeSource(oldName, trimmed);
+      else renameCustomExpenseCategory(oldName, trimmed);
+    }
+  );
 }
 
 function confirmDeleteCustomOption(name){
@@ -2579,16 +2725,556 @@ function showPieTooltip(evt, idx){
   const label=CAT_LABEL(s.cat);
   tip.innerHTML=`<b>${escapeHTML(label)}</b><br>₹${s.amt} · ${s.pct}%`;
   tip.style.display='block';
-  const x = evt.touches ? evt.touches[0].clientX : evt.clientX;
-  const y = evt.touches ? evt.touches[0].clientY : evt.clientY;
-  tip.style.left=(x+12)+'px';
-  tip.style.top=(y-10)+'px';
+  const rect = evt.target.closest('#cat-pie-wrap').getBoundingClientRect();
+  const pageX = evt.touches ? evt.touches[0].pageX : evt.pageX;
+  const pageY = evt.touches ? evt.touches[0].pageY : evt.pageY;
+  const x = pageX - (rect.left + window.scrollX);
+  const y = pageY - (rect.top + window.scrollY);
+  tip.style.left=(x+15)+'px';
+  tip.style.top=(y-25)+'px';
 }
 function hidePieTooltip(){
   document.querySelectorAll('.pie-slice').forEach(p=>p.style.transform='scale(1)');
   const tip=document.getElementById('pie-tooltip');
   if(tip) tip.style.display='none';
 }
+
+// ============ SPLITWISE KILLER: Bill Splitting Engine ============
+
+let eventParticipants = {}; // {eventId: ['Broo', 'Priya', 'Rahul']}
+let sharedExpenses = {};   // {eventId: [{id, desc, amt, paidBy, splitAmong: [], date}]}
+let currentExpenseType = 'personal';
+
+// --- Participants Management ---
+function addParticipant(){
+  const input = document.getElementById('new-participant-name');
+  const name = input.value.trim().slice(0,20);
+  if(!name){ toast('Enter a name','error'); return; }
+  if(!currentEventId) return;
+
+  if(!eventParticipants[currentEventId]) eventParticipants[currentEventId] = [];
+  if(eventParticipants[currentEventId].includes(name)){
+    toast(currentLang==='hi' ? 'यह नाम पहले से है' : 'This name is already added','error');
+    return;
+  }
+  eventParticipants[currentEventId].push(name);
+  input.value = '';
+  saveParticipantsToFirestore();
+  renderParticipants();
+  renderPaidByDropdown();
+  renderSplitAmongChips();
+  toast(currentLang==='hi' ? `${name} जोड़ा गया` : `${name} added!`,'success');
+}
+
+function removeParticipant(name){
+  if(!currentEventId || !eventParticipants[currentEventId]) return;
+  eventParticipants[currentEventId] = eventParticipants[currentEventId].filter(n=>n!==name);
+  saveParticipantsToFirestore();
+  renderParticipants();
+  renderPaidByDropdown();
+  renderSplitAmongChips();
+}
+
+function renderParticipants(){
+  // Render tags in the main card
+  const tagsEl = document.getElementById('participants-tags-display');
+  const linkEl = document.getElementById('manage-participants-link');
+  if(!tagsEl) return;
+  const list = eventParticipants[currentEventId] || [];
+  if(!list.length){
+    tagsEl.innerHTML = `<p style="font-size:12px;color:var(--text-faint)">${TT('no_participants')}</p>`;
+    if(linkEl) linkEl.style.display = 'none';
+    return;
+  }
+  // Show just the first few names as preview tags
+  tagsEl.innerHTML = list.slice(0,5).map(name => `
+    <span class="participant-tag">${escapeHTML(name)}</span>
+  `).join('') + (list.length > 5 ? `<span style="font-size:12px;color:var(--text-faint)">+${list.length - 5} more</span>` : '');
+  if(linkEl) linkEl.style.display = 'block';
+}
+
+function openManageParticipants(){
+  const listEl = document.getElementById('manage-participants-list');
+  const list = eventParticipants[currentEventId] || [];
+  if(!list.length){
+    listEl.innerHTML = `<p class="empty">${TT('no_participants_manage')}</p>`;
+  } else {
+    listEl.innerHTML = list.map(name => `
+      <div class="entry-row">
+        <span style="flex:1;color:var(--text)">${escapeHTML(name)}</span>
+        <div class="row-actions">
+          <button class="icon-btn" onclick="confirmRemoveParticipant('${escapeHTML(name).replace(/'/g,"\'")}')" aria-label="delete">🗑️</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('manage-participants-backdrop').style.display='flex';
+}
+
+function closeManageParticipants(){
+  document.getElementById('manage-participants-backdrop').style.display='none';
+}
+
+function confirmRemoveParticipant(name){
+  showAppConfirm(
+    currentLang==='hi' ? `"${name}" हटाएं?` : `Remove "${name}"?`,
+    ()=>{
+      removeParticipant(name);
+      setTimeout(renderManageParticipantsList, 300);
+    }
+  );
+}
+
+function editParticipant(oldName){
+  showAppPrompt(
+    currentLang==='hi' ? 'नाम बदलें:' : 'Rename participant:',
+    oldName,
+    (newName)=>{
+      if(!newName || !newName.trim() || newName.trim()===oldName) return;
+      const trimmed = newName.trim().slice(0,20);
+      if(!eventParticipants[currentEventId]) return;
+      if(eventParticipants[currentEventId].includes(trimmed)){
+        toast(currentLang==='hi'?'यह नाम पहले से है':'Already exists','error'); return;
+      }
+      eventParticipants[currentEventId] = eventParticipants[currentEventId].map(n=>n===oldName?trimmed:n);
+      saveParticipantsToFirestore();
+      renderParticipants();
+      renderManageParticipantsList();
+      renderPaidByDropdown();
+      renderSplitAmongChips();
+      renderIncSplitAmongChips();
+    }
+  );
+}
+
+function renderManageParticipantsList(){
+  const listEl = document.getElementById('manage-participants-list');
+  const list = eventParticipants[currentEventId] || [];
+  if(!list.length){
+    listEl.innerHTML = `<p class="empty">${TT('no_participants_manage')}</p>`;
+    return;
+  }
+  listEl.innerHTML = list.map(name => `
+    <div class="entry-row">
+      <span style="flex:1;color:var(--text)">${escapeHTML(name)}</span>
+      <div class="row-actions">
+        <button class="icon-btn" onclick="editParticipant('${escapeHTML(name).replace(/'/g,"\'")}')" aria-label="edit">✏️</button>
+        <button class="icon-btn" onclick="confirmRemoveParticipant('${escapeHTML(name).replace(/'/g,"\'")}')" aria-label="delete">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function saveParticipantsToFirestore(){
+  if(!currentUser || !currentEventId) return;
+  const ev = events.find(e=>e._id===currentEventId);
+  if(!ev) return;
+  try{
+    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
+      participants: eventParticipants[currentEventId] || []
+    });
+  }catch(e){console.error('Could not save participants:',e);}
+}
+
+// --- Shared Expense Type Toggle ---
+// --- Shared Income Toggle ---
+let currentIncomeType = 'personal';
+
+function setIncomeType(type){
+  currentIncomeType = type;
+  document.getElementById('inc-type-personal').classList.toggle('active', type==='personal');
+  document.getElementById('inc-type-shared').classList.toggle('active', type==='shared');
+  document.getElementById('shared-income-fields').style.display = type==='shared' ? 'block' : 'none';
+  if(type==='shared'){
+    renderReceivedByDropdown();
+    renderIncSplitAmongChips();
+  }
+}
+
+function renderReceivedByDropdown(){
+  const sel = document.getElementById('ev-inc-received-by');
+  if(!sel) return;
+  const list = eventParticipants[currentEventId] || [];
+  sel.innerHTML = list.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+  if(!list.length) sel.innerHTML = `<option value="">${currentLang==='hi'?'पहले प्रतिभागी जोड़ें':'Add participants first'}</option>`;
+}
+
+function renderIncSplitAmongChips(){
+  const wrap = document.getElementById('ev-inc-split-among');
+  if(!wrap) return;
+  const list = eventParticipants[currentEventId] || [];
+  wrap.innerHTML = list.map(name => `
+    <label class="split-chip selected" onclick="toggleSplitAmong(this, '${escapeHTML(name).replace(/'/g,"\'")}')">
+      <input type="checkbox" checked value="${escapeHTML(name)}" style="display:none"/> ${escapeHTML(name)}
+    </label>
+  `).join('');
+}
+
+async function addSharedIncome(){
+  if(!currentEventName || !currentEventId){ toast('No event selected','error'); return; }
+
+  let src = document.getElementById('ev-inc-src').value;
+  let isNewCustom = false;
+  if(src==='__add_new__'){
+    const custom = document.getElementById('ev-inc-custom').value.trim().slice(0,40);
+    if(!custom){ toast(TT('give_source_name'),'error'); return; }
+    src = custom;
+    isNewCustom = true;
+  }
+
+  const amt = parseFloat(document.getElementById('ev-inc-amt').value);
+  const note = document.getElementById('ev-inc-note').value.trim().slice(0,60);
+  const date = document.getElementById('ev-inc-date').value || todayStr();
+  const receivedBy = document.getElementById('ev-inc-received-by').value;
+  const splitAmong = getSelectedIncSplitAmong();
+
+  if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
+  if(!note){ toast(TT('add_description'),'error'); return; }
+  if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
+  if(!receivedBy || !splitAmong.length){ toast(currentLang==='hi'?'प्राप्तकर्ता और स्प्लिट सदस्य चुनें':'Select who received and who to split with','error'); return; }
+
+  const sharedInc = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    desc: note || src, amt: Math.round(amt*100)/100, cat: 'income', label: src, receivedBy, splitAmong, date, isShared: true, type: 'income'
+  };
+
+  try{
+    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
+      sharedExpenses: firebase.firestore.FieldValue.arrayUnion(sharedInc)
+    });
+    toast(TT('income_added_event'),'success');
+
+    document.getElementById('ev-inc-amt').value = '';
+    document.getElementById('ev-inc-note').value = '';
+    document.getElementById('ev-inc-custom').value = '';
+    document.getElementById('ev-inc-custom-wrap').style.display = 'none';
+    if(isNewCustom) saveCustomIncomeSource(src);
+
+    renderEventDetail();
+    renderSettlement();
+  }catch(e){ toast('Could not save: '+e.message,'error'); }
+}
+
+function getSelectedIncSplitAmong(){
+  const wrap = document.getElementById('ev-inc-split-among');
+  if(!wrap) return [];
+  const checked = wrap.querySelectorAll('.split-chip.selected input');
+  return [...checked].map(inp => inp.value);
+}
+
+function setExpenseType(type){
+  currentExpenseType = type;
+  document.getElementById('exp-type-personal').classList.toggle('active', type==='personal');
+  document.getElementById('exp-type-shared').classList.toggle('active', type==='shared');
+  document.getElementById('shared-expense-fields').style.display = type==='shared' ? 'block' : 'none';
+  if(type==='shared'){
+    renderPaidByDropdown();
+    renderSplitAmongChips();
+  }
+}
+
+function renderPaidByDropdown(){
+  const sel = document.getElementById('ev-exp-paid-by');
+  if(!sel) return;
+  const list = eventParticipants[currentEventId] || [];
+  sel.innerHTML = list.map(name => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join('');
+  if(!list.length) sel.innerHTML = `<option value="">${currentLang==='hi'?'पहले प्रतिभागी जोड़ें':'Add participants first'}</option>`;
+}
+
+function renderSplitAmongChips(){
+  const wrap = document.getElementById('ev-exp-split-among');
+  if(!wrap) return;
+  const list = eventParticipants[currentEventId] || [];
+  wrap.innerHTML = list.map(name => `
+    <label class="split-chip selected" onclick="toggleSplitAmong(this, '${escapeHTML(name).replace(/'/g,"\'")}')">
+      <input type="checkbox" checked value="${escapeHTML(name)}" style="display:none"/> ${escapeHTML(name)}
+    </label>
+  `).join('');
+}
+
+function toggleSplitAmong(chip, name){
+  // Prevent the label from double-toggling the checkbox
+  event.preventDefault();
+  event.stopPropagation();
+  chip.classList.toggle('selected');
+  const isSelected = chip.classList.contains('selected');
+  // Uncheck all checkboxes first, then check only selected ones
+  const wrap = chip.parentElement;
+  if(wrap) {
+    wrap.querySelectorAll('.split-chip').forEach(c => {
+      const inp = c.querySelector('input');
+      if(inp) inp.checked = c.classList.contains('selected');
+    });
+  }
+}
+
+function getSelectedSplitAmong(){
+  const wrap = document.getElementById('ev-exp-split-among');
+  if(!wrap) return [];
+  const checked = wrap.querySelectorAll('.split-chip.selected input');
+  return [...checked].map(inp => inp.value);
+}
+
+// --- Override addEventExpense to handle shared expenses ---
+// We store shared expenses in a separate field on the event document
+
+async function addSharedExpense(){
+  if(!currentEventName || !currentEventId){ toast('No event selected','error'); return; }
+
+  let cat = document.getElementById('ev-exp-cat').value;
+  let customCat = '';
+  let isNewCustom = false;
+  if(cat==='__add_new__'){
+    customCat = document.getElementById('ev-exp-custom').value.trim().slice(0,40);
+    if(!customCat){ toast(TT('give_category_name'),'error'); return; }
+    cat = 'custom';
+    isNewCustom = true;
+  } else if(cat.startsWith('custom:')){
+    customCat = cat.slice(7);
+    cat = 'custom';
+  }
+
+  const amt = parseFloat(document.getElementById('ev-exp-amt').value);
+  const desc = document.getElementById('ev-exp-desc').value.trim().slice(0,60);
+  const date = document.getElementById('ev-exp-date').value || todayStr();
+  const paidBy = document.getElementById('ev-exp-paid-by').value;
+  const splitAmong = getSelectedSplitAmong();
+
+  if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
+  if(!desc){ toast(TT('add_description'),'error'); return; }
+  if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
+  if(!paidBy || !splitAmong.length){ toast(currentLang==='hi'?'भुगतानकर्ता और स्प्लिट सदस्य चुनें':'Select who paid and who to split with','error'); return; }
+
+  const sharedExp = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    desc, amt: Math.round(amt*100)/100, cat, customCat, paidBy, splitAmong, date, isShared: true
+  };
+
+  try{
+    // Save to event's sharedExpenses array
+    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
+      sharedExpenses: firebase.firestore.FieldValue.arrayUnion(sharedExp)
+    });
+
+    toast(TT('expense_added_event'),'success');
+
+    // Clear form
+    document.getElementById('ev-exp-amt').value = '';
+    document.getElementById('ev-exp-desc').value = '';
+    document.getElementById('ev-exp-custom').value = '';
+    document.getElementById('ev-exp-custom-wrap').style.display = 'none';
+    if(isNewCustom) saveCustomExpenseCategory(customCat);
+
+    // Recalculate settlement
+    renderEventDetail();
+    renderSettlement();
+  }catch(e){ toast('Could not save: '+e.message,'error'); }
+}
+
+// --- Settlement Calculator ---
+// Calculates net balance for each participant and minimizes transactions
+
+function calculateSettlement(){
+  const participants = eventParticipants[currentEventId] || [];
+  const ev = events.find(e=>e._id===currentEventId);
+  if(!ev || !participants.length || participants.length < 2) return null;
+
+  const sharedExps = ev.sharedExpenses || [];
+  if(!sharedExps.length) return null;
+
+  // Calculate net balance: positive = person is owed money, negative = person owes
+  const balances = {};
+  participants.forEach(p => balances[p] = 0);
+
+  sharedExps.forEach(exp => {
+    const share = exp.amt / exp.splitAmong.length;
+    const payer = exp.paidBy || exp.receivedBy;
+    if(exp.type === 'income'){
+      // Shared income: each person in split gets their share (credited)
+      // The receiver holds everyone's money so they owe it back
+      exp.splitAmong.forEach(person => {
+        if(balances[person] !== undefined) balances[person] += share;
+      });
+      if(balances[payer] !== undefined) balances[payer] -= exp.amt;
+    } else {
+      // Shared expense: paidBy gets credited the full amount, each person debited their share
+      if(balances[payer] !== undefined) balances[payer] += exp.amt;
+      exp.splitAmong.forEach(person => {
+        if(balances[person] !== undefined) balances[person] -= share;
+      });
+    }
+  });
+
+  // Round to 2 decimal places
+  Object.keys(balances).forEach(p => balances[p] = Math.round(balances[p] * 100) / 100);
+
+  // Greedy settlement algorithm: minimize number of transactions
+  const creditors = []; // people who are owed money (positive balance)
+  const debtors = [];   // people who owe money (negative balance)
+
+  Object.entries(balances).forEach(([name, balance]) => {
+    if(balance > 0.01) creditors.push({name, amount: balance});
+    else if(balance < -0.01) debtors.push({name, amount: -balance}); // store as positive
+  });
+
+  // Sort descending by amount
+  creditors.sort((a,b) => b.amount - a.amount);
+  debtors.sort((a,b) => b.amount - a.amount);
+
+  const transfers = [];
+  let i = 0, j = 0;
+  while(i < creditors.length && j < debtors.length){
+    const amt = Math.min(creditors[i].amount, debtors[j].amount);
+    if(amt > 0.01){
+      transfers.push({
+        from: debtors[j].name,
+        to: creditors[i].name,
+        amount: Math.round(amt * 100) / 100
+      });
+    }
+    creditors[i].amount -= amt;
+    debtors[j].amount -= amt;
+    if(creditors[i].amount < 0.01) i++;
+    if(debtors[j].amount < 0.01) j++;
+  }
+
+  return { balances, transfers };
+}
+
+function renderSettlement(){
+  const section = document.getElementById('settlement-section');
+  const balancesEl = document.getElementById('settlement-balances');
+  const transfersEl = document.getElementById('settlement-transfers');
+  const settledEl = document.getElementById('settlement-settled');
+
+  if(!section || !balancesEl || !transfersEl) return;
+
+  const result = calculateSettlement();
+  if(!result){
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+
+  // Render balances
+  const participants = eventParticipants[currentEventId] || [];
+  balancesEl.innerHTML = `
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">${currentLang==='hi'?'बैलेंस':'Balances'}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      ${participants.map(p => {
+        const bal = result.balances[p] || 0;
+        const cls = bal > 0.01 ? 'balance-positive' : (bal < -0.01 ? 'balance-negative' : 'balance-zero');
+        const sign = bal > 0 ? '+' : '';
+        return `<div style="text-align:center;flex:1;min-width:80px">
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:2px">${escapeHTML(p)}</div>
+          <div class="${cls}">${sign}₹${Math.abs(bal)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // Render transfers
+  if(result.transfers.length === 0){
+    transfersEl.innerHTML = '';
+    settledEl.style.display = 'block';
+  } else {
+    settledEl.style.display = 'none';
+    transfersEl.innerHTML = `
+      <div style="font-size:11px;color:var(--text-faint);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">${currentLang==='hi'?'भुगतान करें':'Who pays whom'}</div>
+      ${result.transfers.map(t => `
+        <div class="settlement-card">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;flex-wrap:wrap">
+              <span style="font-weight:600;color:var(--red)">${escapeHTML(t.from)}</span>
+              <span class="settlement-arrow">→</span>
+              <span style="font-weight:600;color:var(--green)">${escapeHTML(t.to)}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:15px;font-weight:700;color:var(--text)">₹${t.amount}</span>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+  }
+}
+
+// --- Override renderEventDetail to load participants and shared expenses ---
+const _originalRenderEventDetail = typeof renderEventDetail === 'function' ? renderEventDetail : null;
+
+function renderEventDetailWithSplitwise(){
+  // Call original rendering logic (stats, entries list etc.)
+  if(!currentEventName) return;
+
+  const stats = eventStats(currentEventName);
+  const ev = events.find(e=>e._id===currentEventId);
+  const participants = ev?.participants || [];
+  const sharedExps = ev?.sharedExpenses || [];
+
+  document.getElementById('ev-income').textContent = '₹' + stats.income;
+  document.getElementById('ev-spent').textContent = '₹' + (stats.spent + sharedExps.reduce((s,e)=>s+e.amt,0));
+  document.getElementById('ev-balance').textContent = '₹' + (stats.income - stats.spent - sharedExps.reduce((s,e)=>s+e.amt,0));
+  document.getElementById('ev-count').textContent = stats.count + sharedExps.length;
+
+  // Load participants into memory
+  if(!eventParticipants[currentEventId]) eventParticipants[currentEventId] = participants;
+
+  renderParticipants();
+
+  // Render entries (personal)
+  const sorted = [...stats.list].sort((a,b) => b.date.localeCompare(a.date));
+
+  // Render shared expenses too
+  const allEntries = [
+    ...sorted.map(e => ({...e, isShared: false})),
+    ...sharedExps.map(e => ({...e, isShared: true, type: 'expense'}))
+  ].sort((a,b) => b.date.localeCompare(a.date));
+
+  document.getElementById('event-entries-list').innerHTML = allEntries.length ? allEntries.map(e => {
+    const isShared = e.isShared;
+    const sharedBadge = isShared ? `<span class="shared-expense-badge">👥 ${escapeHTML(e.paidBy || '')}</span>` : '';
+    const splitInfo = isShared ? `<span style="font-size:10.5px;color:var(--text-faint);margin-left:4px">${currentLang==='hi'?'बांटा गया':'split'} ${e.splitAmong?.length || 0} ${currentLang==='hi'?'लोगों में':'ways'}</span>` : '';
+
+    return `
+    <div class="entry-row">
+      <span class="date-chip">${fmtDate(e.date)}</span>
+      ${e.type==='expense' && e.cat ? `<span class="badge ${e.cat}">${escapeHTML(isShared ? (e.customCat || CAT_LABEL(e.cat)) : displayCatLabel(e))}</span>` : ''}
+      <span style="flex:1;color:var(--text)">${escapeHTML(e.label || e.desc || '')}${e.note ? ' — '+escapeHTML(e.note) : ''}${sharedBadge}${splitInfo}</span>
+      <span style="font-weight:600;color:${e.type==='income'?'var(--green)':'var(--red)'}">${e.type==='income'?'+':'-'}₹${e.amt}</span>
+      <div class="row-actions">
+        ${isShared ? `<button class="icon-btn" onclick="deleteSharedExpense('${e.id}')" aria-label="delete">🗑️</button>` :
+          `<button class="icon-btn" onclick="startEditEventEntry('${e._id}')" aria-label="edit">✏️</button>
+           <button class="icon-btn" onclick="deleteEntry('${e._id}')" aria-label="delete">🗑️</button>`}
+      </div>
+    </div>`;
+  }).join('') : `<p class="empty">${TT('no_entries_event')}</p>`;
+
+  // Render settlement
+  renderSettlement();
+}
+
+async function deleteSharedExpense(expId){
+  if(!currentUser || !currentEventId) return;
+  const ev = events.find(e=>e._id===currentEventId);
+  if(!ev || !ev.sharedExpenses) return;
+
+  const updated = ev.sharedExpenses.filter(e => e.id !== expId);
+  try{
+    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
+      sharedExpenses: updated
+    });
+    toast(TT('entry_deleted'),'success');
+    renderEventDetail();
+  }catch(e){ toast('Could not delete: '+e.message,'error'); }
+}
+
+// --- Override openEventDetail to also load participants ---
+const _originalOpenEventDetail = typeof openEventDetail === 'function' ? openEventDetail : null;
+
+// We patch the functions after they're defined by wrapping them
+// This is done at the bottom of the script
+
 
 // ============ SMART UPI NOTIFICATION LOGGER ============
 const MERCHANT_CATEGORY_MAP = {
@@ -2601,27 +3287,30 @@ const MERCHANT_CATEGORY_MAP = {
 function parseUpiNotification(text) {
   if (!text || !text.trim()) return null;
   const raw = text.trim();
-  let app = 'Unknown UPI App';
+  let app = 'UPI App';
   if (/google\s*pay|gpay/i.test(raw)) app = 'Google Pay';
   else if (/phonepe|phone\s*pe/i.test(raw)) app = 'PhonePe';
   else if (/paytm/i.test(raw)) app = 'Paytm';
   else if (/bhim/i.test(raw)) app = 'BHIM';
   else if (/amazon\s*pay|amazon/i.test(raw)) app = 'Amazon Pay';
   else if (/cred/i.test(raw)) app = 'CRED';
-  else if (/upi|paid|sent|received|debit|credit/i.test(raw)) app = 'UPI App';
 
   let direction = 'sent';
-  if (/received|credit|deposited|आपको प्राप्त|क्रेडिट|जमा हुआ/i.test(raw)) direction = 'received';
+  if (/reciev|receiv|rsvd|rs\s*rcvd|rcv|credit|deposited|प्राप्त|क्रेडिट|जमा हुआ|rcvd|recvd/i.test(raw)) direction = 'received';
 
   let amount = null;
-  const amountPatterns = [/(?:₹|रु\.?|Rs\.?|INR)\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/i, /(?:paid|sent|received|transferred)\s+(?:₹|Rs\.?|INR)?\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/i];
+  const amountPatterns = [
+    /(?:₹|रु\.?|Rs\.?|INR)\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/i,
+    /(?:paid|sent|received|transferred|reciev|reieved)\s+(?:₹|Rs\.?|INR)?\s*(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)/i,
+    /(\d{1,3}(?:,\d{2,3})*(?:\.\d{1,2})?)\s*(?:to|se|from|ko|via)/i,
+  ];
   for (const pat of amountPatterns) {
     const match = raw.match(pat);
     if (match) { amount = parseFloat(match[1].replace(/,/g, '')); if (amount > 0 && amount <= 10000000) break; amount = null; }
   }
 
   let merchant = '';
-  const merchantPatterns = [/(?:to|ko|को)\s+([A-Za-z0-9\s@._-]{3,40}?)(?:\s+on|\s+via|\s+using|\s+UPI|\s+Ref)/i, /(?:from|se|से)\s+([A-Za-z0-9\s@._-]{3,40}?)(?:\s+on|\s+via|\s+UPI)/i];
+  const merchantPatterns = [/(?:to|ko|को)\s+([A-Za-z0-9\s@._-]{3,40}?)(?:\s+on|\s+via|\s+UPI|\s+Ref)/i, /(?:from|se|से)\s+([A-Za-z0-9\s@._-]{3,40}?)(?:\s+on|\s+via|\s+UPI)/i];
   for (const pat of merchantPatterns) {
     const match = raw.match(pat);
     if (match && match[1]) { merchant = match[1].trim().replace(/\s*(via|using|on|UPI|Ref).*$/i, '').trim(); if (merchant.length > 1 && merchant.length < 40) break; merchant = ''; }
@@ -2641,376 +3330,104 @@ function pasteFromClipboard() {
   } else { toast('Paste manually','error'); }
 }
 function onSmartLogInput() {
-  const input = document.getElementById('smart-log-input').value.trim();
-  document.getElementById('smart-log-parse-btn').style.display = input.length > 10 ? 'inline-flex' : 'none';
+  const input = document.getElementById('smart-log-input');
+  const text = input.value.trim();
+  const parseBtn = document.getElementById('smart-log-parse-btn');
+  parseBtn.style.display = text.length > 10 ? 'inline-flex' : 'none';
+  // Toggle green border when content is detected
+  if(text.length > 10) {
+    input.classList.add('has-content');
+  } else {
+    input.classList.remove('has-content');
+  }
 }
+function populateSmartLogCategories(){
+  var sel = document.getElementById('smart-log-cat');
+  if(!sel) return;
+  var html = '';
+  var cats = [
+    {value:'food', label:'Food & snacks'},
+    {value:'travel', label:'Travel'},
+    {value:'friends', label:'Friends plan'},
+    {value:'home', label:'Home goods'},
+    {value:'other', label:'Other'}
+  ];
+  cats.forEach(function(c){
+    html += '<option value="'+c.value+'">'+c.label+'</option>';
+  });
+  if(typeof customExpenseCategories !== 'undefined'){
+    customExpenseCategories.forEach(function(name){
+      html += '<option value="custom:'+name+'">'+name+'</option>';
+    });
+  }
+  html += '<option value="__add_new__">+ Add new category</option>';
+  sel.innerHTML = html;
+}
+
 function parseSmartLog() {
-  const result = parseUpiNotification(document.getElementById('smart-log-input').value);
-  if (!result || !result.amount) { toast(TT('smart_log_not_detected'), 'error'); return; }
-  document.getElementById('smart-log-parsed').style.display = 'block';
-  document.getElementById('smart-log-amt').value = result.amount;
-  document.getElementById('smart-log-cat').value = result.suggestedCat;
-  document.getElementById('smart-log-date').value = todayStr();
-  document.getElementById('smart-log-desc').value = result.merchant || (result.direction === 'received' ? 'Payment received' : 'UPI payment');
-  document.getElementById('smart-log-app-badge').textContent = result.app;
-  const badge = document.getElementById('smart-log-direction-badge');
-  if (result.direction === 'received') { badge.className = 'smart-log-badge received'; badge.textContent = TT('smart_log_received'); }
-  else { badge.className = 'smart-log-badge sent'; badge.textContent = TT('smart_log_sent'); }
-  document.getElementById('smart-log-parsed').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  toast(TT('smart_log_parsed'), 'success');
+  try {
+    var inputText = document.getElementById('smart-log-input').value;
+    var result = parseUpiNotification(inputText);
+    if (!result || !result.amount) { toast(TT('smart_log_not_detected'), 'error'); return; }
+    document.getElementById('smart-log-parsed').style.display = 'block';
+    document.getElementById('smart-log-amt').value = result.amount;
+    // Populate category dropdown THEN set value
+    populateSmartLogCategories();
+    var catSel = document.getElementById('smart-log-cat');
+    if(catSel) catSel.value = result.suggestedCat;
+    // Always fill date and description
+    var dateEl = document.getElementById('smart-log-date');
+    if(dateEl) dateEl.value = todayStr();
+    var descEl = document.getElementById('smart-log-desc');
+    if(descEl) descEl.value = result.merchant || 'UPI payment';
+    document.getElementById('smart-log-app-badge').textContent = result.app;
+    var badge = document.getElementById('smart-log-direction-badge');
+    if (result.direction === 'received') {
+      badge.className = 'smart-log-badge received';
+      badge.textContent = '📥 Income';
+      smartLogType = 'income';
+    } else {
+      badge.className = 'smart-log-badge sent';
+      badge.textContent = '📤 Expense';
+      smartLogType = 'expense';
+    }
+    document.getElementById('smart-log-parsed').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast(TT('smart_log_parsed'), 'success');
+  } catch(e) {
+    console.error('parseSmartLog error:', e);
+    toast(TT('smart_log_not_detected'), 'error');
+  }
 }
 async function confirmSmartLog() {
-  const amt = parseFloat(document.getElementById('smart-log-amt').value);
-  const cat = document.getElementById('smart-log-cat').value;
-  const date = document.getElementById('smart-log-date').value || todayStr();
-  const desc = document.getElementById('smart-log-desc').value.trim().slice(0, 60);
-  const isReceived = document.getElementById('smart-log-direction-badge').textContent.includes('Received') || document.getElementById('smart-log-direction-badge').textContent.includes('प्राप्त');
-  if (!isValidAmount(amt)) { toast(TT('enter_valid_amount'), 'error'); return; }
-  if (!desc) { toast(TT('add_description'), 'error'); return; }
-  const entryType = isReceived ? 'income' : 'expense';
-  const payload = { type: entryType, cat: isReceived ? 'income' : cat, label: desc, note: '⚡ Smart Logger', amt: Math.round(amt * 100) / 100, date };
-  try { await saveEntry(payload); toast(TT('smart_log_saved'), 'success'); dismissSmartLog(); if (entryType === 'expense') { checkBudget(); showSpendMoodToast(amt); } } catch(e) { toast('Could not save: '+e.message, 'error'); }
+  try {
+    const amt = parseFloat(document.getElementById('smart-log-amt').value);
+    const cat = document.getElementById('smart-log-cat').value;
+    const date = document.getElementById('smart-log-date').value || todayStr();
+    const desc = document.getElementById('smart-log-desc').value.trim().slice(0, 60) || 'UPI payment';
+    const badge = document.getElementById('smart-log-direction-badge');
+    const isIncome = badge.textContent.includes('Received') || badge.textContent.includes('Income');
+    if (!isValidAmount(amt)) { toast(TT('enter_valid_amount'), 'error'); return; }
+    let finalCat = isIncome ? 'income' : cat;
+    if(cat === '__add_new__'){
+      const customInput = document.getElementById('smart-log-custom-cat');
+      if(customInput && customInput.value.trim()){
+        finalCat = 'custom:' + customInput.value.trim();
+        saveCustomExpenseCategory(customInput.value.trim());
+      }
+    }
+    const payload = { type: isIncome ? 'income' : 'expense', cat: finalCat, label: desc, note: '⚡ Smart Logger', amt: Math.round(amt * 100) / 100, date };
+    await saveEntry(payload);
+    toast(TT('smart_log_saved'), 'success');
+    dismissSmartLog();
+    if (!isIncome) { checkBudget(); showSpendMoodToast(amt); }
+  } catch(e) { toast('Could not save: '+e.message, 'error'); }
 }
 function dismissSmartLog() { document.getElementById('smart-log-parsed').style.display = 'none'; document.getElementById('smart-log-input').value = ''; document.getElementById('smart-log-parse-btn').style.display = 'none'; }
 function renderSmartLogHistory() {
   const el = document.getElementById('smart-log-history'); if (!el) return;
-  const smartLogs = mainEntries().filter(e => e.note && e.note.includes('Smart Logger')).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
-  if (!smartLogs.length) { el.innerHTML = '<p class="empty">No smart logs yet.</p>'; return; }
-  el.innerHTML = smartLogs.map(e => '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="smart-log-badge '+(e.type==='income'?'received':'sent')+'">'+(e.type==='income'?'📥 +':'📤 -')+'₹'+e.amt+'</span><span style="flex:1;color:var(--text)">'+escapeHTML(e.label)+'</span><span style="font-size:11px;color:var(--text-faint)">'+fmtDate(e.date)+'</span></div>').join('');
-}
-
-// ============ SPLITWISE KILLER: Bill Splitting ============
-let eventParticipants = {};
-let currentExpenseType = 'personal';
-let currentIncomeType = 'personal';
-
-function addParticipant(){
-  const input = document.getElementById('new-participant-name');
-  const name = input.value.trim().slice(0,20);
-  if(!name){ toast('Enter a name','error'); return; }
-  if(!currentEventId) return;
-  if(!eventParticipants[currentEventId]) eventParticipants[currentEventId] = [];
-  if(eventParticipants[currentEventId].includes(name)){ toast(currentLang==='hi' ? 'यह नाम पहले से है' : 'Already added','error'); return; }
-  eventParticipants[currentEventId].push(name);
-  input.value = '';
-  saveParticipantsToFirestore();
-  renderParticipants();
-  renderPaidByDropdown();
-  renderSplitAmongChips();
-  renderIncSplitAmongChips();
-  toast(currentLang==='hi' ? name+' जोड़ा गया' : name+' added!','success');
-}
-
-function removeParticipant(name){
-  if(!currentEventId || !eventParticipants[currentEventId]) return;
-  eventParticipants[currentEventId] = eventParticipants[currentEventId].filter(n=>n!==name);
-  saveParticipantsToFirestore();
-  renderParticipants();
-  renderPaidByDropdown();
-  renderSplitAmongChips();
-  renderIncSplitAmongChips();
-  renderEventDetail();
-  renderSettlement();
-}
-
-function editParticipant(oldName){
-  showAppPrompt(
-    currentLang==='hi' ? 'नाम बदलें:' : 'Rename participant:',
-    oldName,
-    (newName)=>{
-      if(!newName || !newName.trim() || newName.trim()===oldName) return;
-      const trimmed = newName.trim().slice(0,20);
-      if(eventParticipants[currentEventId].includes(trimmed)){
-        toast(currentLang==='hi'?'यह नाम पहले से है':'Already exists','error'); return;
-      }
-      eventParticipants[currentEventId] = eventParticipants[currentEventId].map(n=>n===oldName?trimmed:n);
-      saveParticipantsToFirestore();
-      renderParticipants();
-      renderManageParticipantsList();
-      renderPaidByDropdown();
-      renderSplitAmongChips();
-      renderIncSplitAmongChips();
-    }
-  );
-}
-
-async function saveParticipantsToFirestore(){
-  if(!currentUser || !currentEventId) return;
-  try{
-    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
-      participants: eventParticipants[currentEventId] || []
-    });
-  }catch(e){console.error('Could not save participants:',e);}
-}
-
-function renderParticipants(){
-  const tagsEl = document.getElementById('participants-tags-display');
-  const linkEl = document.getElementById('manage-participants-link');
-  if(!tagsEl) return;
-  const list = eventParticipants[currentEventId] || [];
-  if(!list.length){
-    tagsEl.innerHTML = '<p style="font-size:12px;color:var(--text-faint)">'+TT('no_participants')+'</p>';
-    if(linkEl) linkEl.style.display = 'none';
-    return;
-  }
-  tagsEl.innerHTML = list.map(name => '<span class="participant-tag">'+escapeHTML(name)+'</span>').join('');
-  if(linkEl) linkEl.style.display = 'block';
-}
-
-function openManageParticipants(){
-  renderManageParticipantsList();
-  document.getElementById('manage-participants-backdrop').style.display='flex';
-}
-function closeManageParticipants(){
-  document.getElementById('manage-participants-backdrop').style.display='none';
-}
-function renderManageParticipantsList(){
-  const listEl = document.getElementById('manage-participants-list');
-  const list = eventParticipants[currentEventId] || [];
-  if(!list.length){ listEl.innerHTML = '<p class="empty">'+TT('no_participants_manage')+'</p>'; return; }
-  listEl.innerHTML = list.map(name => '<div class="entry-row"><span style="flex:1;color:var(--text)">'+escapeHTML(name)+'</span><div class="row-actions"><button class="icon-btn" onclick="editParticipant(\''+escapeHTML(name).replace(/'/g,"\\'")+'\')" aria-label="edit">✏️</button><button class="icon-btn" onclick="confirmRemoveParticipant(\''+escapeHTML(name).replace(/'/g,"\\'")+'\')" aria-label="delete">🗑️</button></div></div>').join('');
-}
-function confirmRemoveParticipant(name){
-  showAppConfirm(
-    currentLang==='hi' ? '"'+name+'" हटाएं?' : 'Remove "'+name+'"?',
-    ()=>{ removeParticipant(name); setTimeout(renderManageParticipantsList, 300); }
-  );
-}
-
-// --- Expense/Income Type Toggles ---
-function setExpenseType(type){
-  currentExpenseType = type;
-  document.getElementById('exp-type-personal').classList.toggle('active', type==='personal');
-  document.getElementById('exp-type-shared').classList.toggle('active', type==='shared');
-  document.getElementById('shared-expense-fields').style.display = type==='shared' ? 'block' : 'none';
-  if(type==='shared'){ renderPaidByDropdown(); renderSplitAmongChips(); }
-}
-function setIncomeType(type){
-  currentIncomeType = type;
-  document.getElementById('inc-type-personal').classList.toggle('active', type==='personal');
-  document.getElementById('inc-type-shared').classList.toggle('active', type==='shared');
-  document.getElementById('shared-income-fields').style.display = type==='shared' ? 'block' : 'none';
-  if(type==='shared'){ renderReceivedByDropdown(); renderIncSplitAmongChips(); }
-}
-
-function renderPaidByDropdown(){
-  const sel = document.getElementById('ev-exp-paid-by');
-  if(!sel) return;
-  const list = eventParticipants[currentEventId] || [];
-  sel.innerHTML = list.map(name => '<option value="'+escapeHTML(name)+'">'+escapeHTML(name)+'</option>').join('');
-  if(!list.length) sel.innerHTML = '<option value="">'+(currentLang==='hi'?'पहले प्रतिभागी जोड़ें':'Add participants first')+'</option>';
-}
-function renderReceivedByDropdown(){
-  const sel = document.getElementById('ev-inc-received-by');
-  if(!sel) return;
-  const list = eventParticipants[currentEventId] || [];
-  sel.innerHTML = list.map(name => '<option value="'+escapeHTML(name)+'">'+escapeHTML(name)+'</option>').join('');
-  if(!list.length) sel.innerHTML = '<option value="">'+(currentLang==='hi'?'पहले प्रतिभागी जोड़ें':'Add participants first')+'</option>';
-}
-function renderSplitAmongChips(){
-  const wrap = document.getElementById('ev-exp-split-among');
-  if(!wrap) return;
-  const list = eventParticipants[currentEventId] || [];
-  wrap.innerHTML = list.map(name => '<label class="split-chip selected" onclick="toggleSplitChip(this)"><input type="checkbox" checked value="'+escapeHTML(name)+'" style="display:none"/>'+escapeHTML(name)+'</label>').join('');
-}
-function renderIncSplitAmongChips(){
-  const wrap = document.getElementById('ev-inc-split-among');
-  if(!wrap) return;
-  const list = eventParticipants[currentEventId] || [];
-  wrap.innerHTML = list.map(name => '<label class="split-chip selected" onclick="toggleSplitChip(this)"><input type="checkbox" checked value="'+escapeHTML(name)+'" style="display:none"/>'+escapeHTML(name)+'</label>').join('');
-}
-function toggleSplitChip(chip){
-  chip.classList.toggle('selected');
-  chip.querySelector('input').checked = chip.classList.contains('selected');
-}
-function getSelectedSplitAmong(){
-  const wrap = document.getElementById('ev-exp-split-among');
-  if(!wrap) return [];
-  return [...wrap.querySelectorAll('.split-chip.selected input')].map(inp => inp.value);
-}
-function getSelectedIncSplitAmong(){
-  const wrap = document.getElementById('ev-inc-split-among');
-  if(!wrap) return [];
-  return [...wrap.querySelectorAll('.split-chip.selected input')].map(inp => inp.value);
-}
-
-// --- Add Shared Expense ---
-async function addSharedExpense(){
-  if(!currentEventName || !currentEventId){ toast('No event selected','error'); return; }
-  let cat = document.getElementById('ev-exp-cat').value;
-  let customCat = '', isNewCustom = false;
-  if(cat==='__add_new__'){ customCat = document.getElementById('ev-exp-custom').value.trim().slice(0,40); if(!customCat){ toast(TT('give_category_name'),'error'); return; } cat='custom'; isNewCustom=true; }
-  else if(cat.startsWith('custom:')){ customCat=cat.slice(7); cat='custom'; }
-  const amt = parseFloat(document.getElementById('ev-exp-amt').value);
-  const desc = document.getElementById('ev-exp-desc').value.trim().slice(0,60);
-  const date = document.getElementById('ev-exp-date').value || todayStr();
-  const paidBy = document.getElementById('ev-exp-paid-by').value;
-  const splitAmong = getSelectedSplitAmong();
-  if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
-  if(!desc){ toast(TT('add_description'),'error'); return; }
-  if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
-  if(!paidBy || !splitAmong.length){ toast(currentLang==='hi'?'भुगतानकर्ता और स्प्लिट सदस्य चुनें':'Select paid-by and split among','error'); return; }
-  const sharedExp = { id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), desc, amt:Math.round(amt*100)/100, cat, customCat, paidBy, splitAmong, date, isShared:true, type:'expense' };
-  try{
-    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({ sharedExpenses: firebase.firestore.FieldValue.arrayUnion(sharedExp) });
-    toast(TT('expense_added_event'),'success');
-    document.getElementById('ev-exp-amt').value=''; document.getElementById('ev-exp-desc').value=''; document.getElementById('ev-exp-custom').value=''; document.getElementById('ev-exp-custom-wrap').style.display='none';
-    if(isNewCustom) saveCustomExpenseCategory(customCat);
-    renderEventDetail();
-  }catch(e){ toast('Could not save: '+e.message,'error'); }
-}
-
-// --- Add Shared Income ---
-async function addSharedIncome(){
-  if(!currentEventName || !currentEventId){ toast('No event selected','error'); return; }
-  let src = document.getElementById('ev-inc-src').value;
-  let isNewCustom = false;
-  if(src==='__add_new__'){ const custom = document.getElementById('ev-inc-custom').value.trim().slice(0,40); if(!custom){ toast(TT('give_source_name'),'error'); return; } src=custom; isNewCustom=true; }
-  const amt = parseFloat(document.getElementById('ev-inc-amt').value);
-  const note = document.getElementById('ev-inc-note').value.trim().slice(0,60);
-  const date = document.getElementById('ev-inc-date').value || todayStr();
-  const receivedBy = document.getElementById('ev-inc-received-by').value;
-  const splitAmong = getSelectedIncSplitAmong();
-  if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
-  if(!note){ toast(TT('add_description'),'error'); return; }
-  if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
-  if(!receivedBy || !splitAmong.length){ toast(currentLang==='hi'?'प्राप्तकर्ता और स्प्लिट सदस्य चुनें':'Select received-by and split among','error'); return; }
-  const sharedInc = { id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), desc:note||src, amt:Math.round(amt*100)/100, label:src, cat:'income', receivedBy, splitAmong, date, isShared:true, type:'income' };
-  try{
-    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({ sharedExpenses: firebase.firestore.FieldValue.arrayUnion(sharedInc) });
-    toast(TT('income_added_event'),'success');
-    document.getElementById('ev-inc-amt').value=''; document.getElementById('ev-inc-note').value=''; document.getElementById('ev-inc-custom').value=''; document.getElementById('ev-inc-custom-wrap').style.display='none';
-    if(isNewCustom) saveCustomIncomeSource(src);
-    renderEventDetail();
-  }catch(e){ toast('Could not save: '+e.message,'error'); }
-}
-
-async function deleteSharedExpense(expId){
-  if(!currentUser || !currentEventId) return;
-  const ev = events.find(e=>e._id===currentEventId);
-  if(!ev || !ev.sharedExpenses) return;
-  try{
-    await db.collection('users').doc(currentUser.uid).collection('events').doc(currentEventId).update({
-      sharedExpenses: ev.sharedExpenses.filter(e => e.id !== expId)
-    });
-    toast(TT('entry_deleted'),'success');
-    renderEventDetail();
-  }catch(e){ toast('Could not delete: '+e.message,'error'); }
-}
-
-// --- Settlement Calculator (CORRECTED) ---
-// For shared EXPENSE: payer paid full amount, each person in split owes their share
-// For shared INCOME: receiver gets full amount, each person in split gets their share back
-// Net balance: positive = owed money, negative = owes money
-function calculateSettlement(){
-  const participants = eventParticipants[currentEventId] || [];
-  const ev = events.find(e=>e._id===currentEventId);
-  if(!ev || !participants.length || participants.length < 2) return null;
-  const sharedExps = ev.sharedExpenses || [];
-  if(!sharedExps.length) return null;
-
-  const balances = {};
-  participants.forEach(p => balances[p] = 0);
-
-  sharedExps.forEach(exp => {
-    const share = exp.amt / exp.splitAmong.length;
-    const payer = exp.paidBy || exp.receivedBy;
-
-    if(exp.type === 'income'){
-      // Shared income: The receiver got the money, but it belongs to everyone equally.
-      // So each person in splitAmong is OWED their share.
-      // The receiver "holds" everyone's share — they need to distribute.
-      exp.splitAmong.forEach(person => {
-        if(balances[person] !== undefined) balances[person] += share; // everyone is owed their share
-      });
-      // But the receiver is holding all the money, so they owe back the others' shares
-      if(balances[payer] !== undefined) balances[payer] -= exp.amt; // receiver "owes back" the full amount
-      // Net: receiver gets (share for themselves) but owes (everyone else's shares)
-    } else {
-      // Shared expense: The payer paid for everyone.
-      // Each person in splitAmong owes their share. The payer is owed everyone else's shares.
-      if(balances[payer] !== undefined) balances[payer] += exp.amt; // payer paid, gets credited
-      exp.splitAmong.forEach(person => {
-        if(balances[person] !== undefined) balances[person] -= share; // each person owes their share
-      });
-    }
-  });
-
-  Object.keys(balances).forEach(p => balances[p] = Math.round(balances[p] * 100) / 100);
-
-  // Greedy settlement: minimize transactions
-  const creditors = [], debtors = [];
-  Object.entries(balances).forEach(([name, balance]) => {
-    if(balance > 0.01) creditors.push({name, amount: balance});
-    else if(balance < -0.01) debtors.push({name, amount: -balance});
-  });
-  creditors.sort((a,b) => b.amount - a.amount);
-  debtors.sort((a,b) => b.amount - a.amount);
-
-  const transfers = [];
-  let i = 0, j = 0;
-  while(i < creditors.length && j < debtors.length){
-    const amt = Math.min(creditors[i].amount, debtors[j].amount);
-    if(amt > 0.01) transfers.push({ from: debtors[j].name, to: creditors[i].name, amount: Math.round(amt * 100) / 100 });
-    creditors[i].amount -= amt;
-    debtors[j].amount -= amt;
-    if(creditors[i].amount < 0.01) i++;
-    if(debtors[j].amount < 0.01) j++;
-  }
-  return { balances, transfers };
-}
-
-function renderSettlement(){
-  const section = document.getElementById('settlement-section');
-  const balancesEl = document.getElementById('settlement-balances');
-  const transfersEl = document.getElementById('settlement-transfers');
-  const settledEl = document.getElementById('settlement-settled');
-  if(!section || !balancesEl || !transfersEl) return;
-  const result = calculateSettlement();
-  if(!result){ section.style.display='none'; return; }
-  section.style.display='block';
-  const participants = eventParticipants[currentEventId] || [];
-  balancesEl.innerHTML = '<div style="font-size:11px;color:var(--text-faint);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">'+(currentLang==='hi'?'बैलेंस':'Balances')+'</div><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">'+participants.map(p=>{const bal=result.balances[p]||0;const cls=bal>0.01?'balance-positive':(bal<-0.01?'balance-negative':'balance-zero');const sign=bal>0?'+':'';return '<div style="text-align:center;flex:1;min-width:80px"><div style="font-size:11px;color:var(--text-dim);margin-bottom:2px">'+escapeHTML(p)+'</div><div class="'+cls+'">'+sign+'₹'+Math.abs(bal)+'</div></div>';}).join('')+'</div>';
-
-  if(result.transfers.length===0){ transfersEl.innerHTML=''; settledEl.style.display='block'; }
-  else {
-    settledEl.style.display='none';
-    transfersEl.innerHTML = '<div style="font-size:11px;color:var(--text-faint);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px">'+(currentLang==='hi'?'भुगतान करें':'Who pays whom')+'</div>'+result.transfers.map(t=>'<div class="settlement-card"><div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;flex-wrap:wrap"><span style="font-weight:600;color:var(--red)">'+escapeHTML(t.from)+'</span><span class="settlement-arrow">→</span><span style="font-weight:600;color:var(--green)">'+escapeHTML(t.to)+'</span></div><span style="font-size:15px;font-weight:700;color:var(--text)">₹'+t.amount+'</span></div></div>').join('');
-  }
-}
-
-// --- Enhanced renderEventDetail with shared expenses ---
-function renderEventDetailWithSplitwise(){
-  if(!currentEventName) return;
-  const ev = events.find(e=>e._id===currentEventId);
-  const stats = eventStats(currentEventName);
-  const participants = ev?.participants || [];
-  const sharedExps = ev?.sharedExpenses || [];
-  const sharedSpent = sharedExps.filter(e=>e.type==='expense').reduce((s,e)=>s+e.amt,0);
-  const sharedIncome = sharedExps.filter(e=>e.type==='income').reduce((s,e)=>s+e.amt,0);
-
-  document.getElementById('ev-income').textContent = '₹' + (stats.income + sharedIncome);
-  document.getElementById('ev-spent').textContent = '₹' + (stats.spent + sharedSpent);
-  document.getElementById('ev-balance').textContent = '₹' + ((stats.income+sharedIncome) - (stats.spent+sharedSpent));
-  document.getElementById('ev-count').textContent = stats.count + sharedExps.length;
-
-  if(!eventParticipants[currentEventId]) eventParticipants[currentEventId] = participants;
-  renderParticipants();
-
-  // Merge personal + shared entries
-  const personalEntries = [...stats.list].sort((a,b)=>b.date.localeCompare(a.date));
-  const allEntries = [...personalEntries.map(e=>({...e,isShared:false})), ...sharedExps.map(e=>({...e,isShared:true,type:e.type||'expense'}))].sort((a,b)=>b.date.localeCompare(a.date));
-
-  document.getElementById('event-entries-list').innerHTML = allEntries.length ? allEntries.map(e=>{
-    const isShared=e.isShared;
-    const payer = e.paidBy || e.receivedBy || '';
-    const sharedBadge = isShared ? '<span class="shared-expense-badge">👥 '+escapeHTML(payer)+'</span>' : '';
-    const splitInfo = isShared && e.splitAmong ? '<span style="font-size:10.5px;color:var(--text-faint);margin-left:4px">split '+e.splitAmong.length+' ways</span>' : '';
-    const label = isShared ? (e.desc || e.label || '') : (e.label || '') + (e.note ? ' — '+escapeHTML(e.note) : '');
-    return '<div class="entry-row"><span class="date-chip">'+fmtDate(e.date)+'</span>'+(e.type==='expense'?'<span class="badge '+(e.cat||'')+'">'+escapeHTML(isShared?(e.customCat||CAT_LABEL(e.cat)):displayCatLabel(e))+'</span>':'')+'<span style="flex:1;color:var(--text)">'+escapeHTML(label)+sharedBadge+splitInfo+'</span><span style="font-weight:600;color:'+(e.type==='income'?'var(--green)':'var(--red)')+'">'+(e.type==='income'?'+':'-')+'₹'+e.amt+'</span><div class="row-actions">'+(isShared?'<button class="icon-btn" onclick=\"deleteSharedExpense(\''+e.id+'\')\" aria-label="delete">🗑️</button>':'<button class="icon-btn" onclick=\"startEditEventEntry(\''+e._id+'\')\" aria-label="edit">✏️</button><button class="icon-btn" onclick=\"deleteEntry(\''+e._id+'\')\" aria-label="delete">🗑️</button>')+'</div></div>';
-  }).join('') : '<p class="empty">'+TT('no_entries_event')+'</p>';
-
-  renderSettlement();
+  const logs = mainEntries().filter(e => e.note && e.note.includes('Smart Logger')).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  if (!logs.length) { el.innerHTML = '<p class="empty">No smart logs yet.</p>'; return; }
+  el.innerHTML = logs.map(e => '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px"><span class="smart-log-badge '+(e.type==='income'?'received':'sent')+'">'+(e.type==='income'?'📥 +':'📤 -')+'₹'+e.amt+'</span><span style="flex:1;color:var(--text)">'+escapeHTML(e.label)+'</span><span style="font-size:11px;color:var(--text-faint)">'+fmtDate(e.date)+'</span></div>').join('');
 }
 
 function renderReport(){
@@ -3220,30 +3637,54 @@ async function clearAll(){
   });
 }
 
-// --- Patch event functions with Splitwise-enhanced versions ---
-(function(){
-  const origOpen = window.openEventDetail;
-  window.openEventDetail = function(id){
-    if(typeof origOpen==='function') origOpen(id);
-    const ev = events.find(e=>e._id===id);
-    if(ev && ev.participants) eventParticipants[id] = ev.participants;
-    renderEventDetailWithSplitwise();
-  };
+// --- Override original event functions with Splitwise-enhanced versions ---
+(function patchSplitwise(){
+  // Patch openEventDetail to load participants from Firestore
+  const origOpen = openEventDetail;
+  if(typeof origOpen === 'function'){
+    const patchedOpen = function(id){
+      origOpen(id);
+      const ev = events.find(e=>e._id===id);
+      if(ev && ev.participants) eventParticipants[id] = ev.participants;
+      renderEventDetailWithSplitwise();
+    };
+    // Replace all references
+    window.openEventDetail = patchedOpen;
+    // Update onclick handlers in rendered HTML
+    document.querySelectorAll('[onclick*="openEventDetail"]').forEach(el => {
+      el.setAttribute('onclick', el.getAttribute('onclick').replace('openEventDetail', 'window.openEventDetail'));
+    });
+  }
+
+  // Patch renderEventDetail to use our enhanced version
   window.renderEventDetail = renderEventDetailWithSplitwise;
 
-  const origAddExp = window.addEventExpense;
-  window.addEventExpense = async function(){ if(currentExpenseType==='shared') await addSharedExpense(); else if(typeof origAddExp==='function') await origAddExp(); };
+  // Patch addEventIncome to handle shared income
+  const origAddInc = addEventIncome;
+  window.addEventIncome = async function(){
+    if(currentIncomeType === 'shared'){
+      await addSharedIncome();
+    } else {
+      await origAddInc();
+    }
+  };
 
-  const origAddInc = window.addEventIncome;
-  window.addEventIncome = async function(){ if(currentIncomeType==='shared') await addSharedIncome(); else if(typeof origAddInc==='function') await origAddInc(); };
+  // Patch addEventExpense to handle shared expenses
+  const origAddExp = addEventExpense;
+  window.addEventExpense = async function(){
+    if(currentExpenseType === 'shared'){
+      await addSharedExpense();
+    } else {
+      await origAddExp();
+    }
+  };
 
-  const origBack = window.backToEventsList;
-  window.backToEventsList = function(){ currentExpenseType='personal'; currentIncomeType='personal'; if(typeof origBack==='function') origBack(); };
-
-  const origSetTab = window.setTab;
-  window.setTab = function(t){
-    if(typeof origSetTab==='function') origSetTab(t);
-    if(t==='upi') renderSmartLogHistory();
+  // Patch backToEventsList to reset expense/income type
+  const origBack = backToEventsList;
+  window.backToEventsList = function(){
+    currentExpenseType = 'personal';
+    currentIncomeType = 'personal';
+    origBack();
   };
 })();
 
