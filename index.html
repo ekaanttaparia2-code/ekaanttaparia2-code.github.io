@@ -897,11 +897,7 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
     </div>
     <div class="card">
       <p class="sec-title"><i class="ti ti-clipboard"></i><span data-i18n="smart_logger_paste"> Paste UPI notification</span></p>
-      <textarea id="smart-log-input" class="smart-log-paste-area" placeholder="Paste your UPI notification here…
-
-e.g. Paid ₹150 to Samosa Shop via Google Pay"
-
-e.g. Paid ₹150 to Samosa Shop via Google Pay" oninput="onSmartLogInput()"></textarea>
+      <textarea id="smart-log-input" class="smart-log-paste-area" oninput="onSmartLogInput()"></textarea>
       <div class="btn-row" style="margin-top:10px">
         <button class="btn" onclick="pasteFromClipboard()"><i class="ti ti-clipboard"></i> <span data-i18n="btn_paste">Paste from clipboard</span></button>
         <button class="btn primary" id="smart-log-parse-btn" onclick="parseSmartLog()" style="display:none"><i class="ti ti-wand"></i> <span data-i18n="btn_parse">Auto-detect &amp; log</span></button>
@@ -1112,6 +1108,7 @@ const TRANSLATIONS = {
   btn_confirm_log:{en:'Confirm & save',hi:'कन्फर्म और सेव करें'},
   btn_dismiss:{en:'Dismiss',hi:'खारिज करें'},
   smart_log_saved:{en:'Smart log saved!',hi:'स्मार्ट लॉग सेव हुआ!'},
+  smart_log_placeholder:{en:'Paste your UPI notification here…\n\ne.g. Paid ₹150 to Samosa Shop via Google Pay',hi:'UPI सूचना यहां पेस्ट करें…\n\nजैसे: Google Pay से Samosa Shop को ₹150 भुगतान किया'},
   smart_log_parsed:{en:'Payment detected!',hi:'भुगतान मिला!'},
   smart_log_not_detected:{en:'Could not detect a valid UPI payment. Please try copying the notification again.',hi:'मान्य UPI भुगतान नहीं मिला। कृपया नोटिफिकेशन फिर से कॉपी करके देखें।'},
   sec_smart_logger:{en:'Smart Logger',hi:'स्मार्ट लॉगर'},
@@ -1163,6 +1160,14 @@ function applyLanguage(){
   else if(document.getElementById('tab-events').style.display!=='none') renderEventsList();
   checkBudget();
   renderStreak();
+  updateSmartLogPlaceholder();
+}
+
+function updateSmartLogPlaceholder(){
+  var ta = document.getElementById('smart-log-input');
+  if(!ta) return;
+  var entry = TRANSLATIONS['smart_log_placeholder'];
+  if(entry) ta.placeholder = entry[currentLang] || entry.en;
 }
 
 function updateLanguageTabUI(){
