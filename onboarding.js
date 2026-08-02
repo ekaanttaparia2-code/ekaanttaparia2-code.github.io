@@ -12,8 +12,8 @@ const onboardingSlides = [
           <div class="ob-balance-label">TOTAL BALANCE</div>
           <div class="ob-balance-val">₹45,250<span class="ob-balance-decimal">.00</span></div>
           <div class="ob-pill-row">
-            <span class="ob-pill green">● Cloud Synced</span>
-            <span class="ob-pill purple">Offline Mode Ready</span>
+            <span class="ob-pill green">● Synced to Cloud</span>
+            <span class="ob-pill purple">PWA Offline Ready</span>
           </div>
         </div>
         <div class="ob-features-grid">
@@ -97,40 +97,30 @@ const onboardingSlides = [
         </div>
       </div>
     `,
-    btnText: { en: 'Continue to Sign In 🚀', hi: 'आगे बढ़ें 🚀' },
-    btnTextLoggedIn: { en: 'Close Showcase & Return to App 🚀', hi: 'शोकेस बंद करें और ऐप पर लौटें 🚀' }
+    btnText: { en: 'Get Started Now 🚀', hi: 'अभी शुरू करें 🚀' }
   }
 ];
 
 let currentObIndex = 0;
 
-function showOnboarding(forceStart = false) {
+function initOnboarding() {
+  const isDone = localStorage.getItem(ONBOARDING_FLAG) === 'true';
   const container = document.getElementById('onboarding-screen');
   if (!container) return;
   
-  if (forceStart) {
-    currentObIndex = 0;
-  }
-  
-  container.style.display = 'flex';
-  container.style.opacity = '1';
-  container.style.transform = 'scale(1)';
-  renderObSlide();
-}
-
-function initOnboarding() {
-  const isDone = localStorage.getItem(ONBOARDING_FLAG) === 'true';
-  if (!isDone) {
-    showOnboarding(true);
+  if (isDone) {
+    container.style.display = 'none';
+  } else {
+    container.style.display = 'flex';
+    renderObSlide();
   }
 }
 
 function renderObSlide() {
-  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
+  const lang = (window.currentLang || 'en');
   const slide = onboardingSlides[currentObIndex];
   const total = onboardingSlides.length;
-  const isUserLoggedIn = (window.currentUser || (window.firebase && firebase.auth() && firebase.auth().currentUser));
-
+  
   const stepText = lang === 'hi' ? `चरण ${slide.step} का ${total}` : `Step ${slide.step} of ${total}`;
   const stepEl = document.getElementById('ob-step-indicator');
   if (stepEl) stepEl.textContent = stepText;
@@ -149,13 +139,7 @@ function renderObSlide() {
   if (descEl) descEl.textContent = slide.subtitle[lang] || slide.subtitle.en;
   
   const btnEl = document.getElementById('ob-btn');
-  if (btnEl) {
-    if (slide.step === total && isUserLoggedIn && slide.btnTextLoggedIn) {
-      btnEl.textContent = slide.btnTextLoggedIn[lang] || slide.btnTextLoggedIn.en;
-    } else {
-      btnEl.textContent = slide.btnText[lang] || slide.btnText.en;
-    }
-  }
+  if (btnEl) btnEl.textContent = slide.btnText[lang] || slide.btnText.en;
   
   const prevBtn = document.getElementById('ob-prev-btn');
   if (prevBtn) prevBtn.style.visibility = currentObIndex > 0 ? 'visible' : 'hidden';
@@ -189,50 +173,13 @@ function prevObSlide() {
 function finishOnboarding() {
   localStorage.setItem(ONBOARDING_FLAG, 'true');
   const screen = document.getElementById('onboarding-screen');
-  const isUserLoggedIn = (window.currentUser || (window.firebase && firebase.auth() && firebase.auth().currentUser));
-
   if (screen) {
     screen.style.opacity = '0';
     screen.style.transform = 'scale(0.95)';
     setTimeout(() => {
       screen.style.display = 'none';
-      if (isUserLoggedIn) {
-        document.getElementById('auth-screen').style.display = 'none';
-      } else {
-        document.getElementById('auth-screen').style.display = 'flex';
-      }
     }, 250);
   }
-}
-
-function renderOverviewTab() {
-  const container = document.getElementById('tab-overview-content');
-  if (!container) return;
-  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
-  
-  let html = `
-    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15)); border-color:rgba(139, 92, 246, 0.35); text-align:center; padding:24px 20px; margin-bottom:20px;">
-      <div style="font-size:42px; margin-bottom:8px;">🌟</div>
-      <h2 class="sec-title" style="margin:0 0 6px; font-size:22px;"><i class="ti ti-star"></i> App Features & Overview</h2>
-      <p style="color:var(--text-dim); font-size:13.5px; margin:0 0 16px;">Everything you need to master your income, expenses, and savings</p>
-      <button class="btn primary" onclick="showOnboarding(true)"><i class="ti ti-player-play"></i> Replay Intro Slideshow</button>
-    </div>
-  `;
-  
-  onboardingSlides.forEach((slide) => {
-    html += `
-      <div class="card" style="margin-bottom:18px; padding:20px;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-          <span style="background:var(--accent); color:#fff; font-weight:700; font-size:12px; padding:2px 10px; border-radius:12px;">Feature ${slide.step}</span>
-          <h3 style="margin:0; font-size:17px; font-family:'Space Grotesk',sans-serif;">${slide.title[lang] || slide.title.en}</h3>
-        </div>
-        <p style="color:var(--text-dim); font-size:13.5px; margin:0 0 16px; line-height:1.4;">${slide.subtitle[lang] || slide.subtitle.en}</p>
-        ${slide.previewHtml}
-      </div>
-    `;
-  });
-  
-  container.innerHTML = html;
 }
 
 document.addEventListener('DOMContentLoaded', initOnboarding);
