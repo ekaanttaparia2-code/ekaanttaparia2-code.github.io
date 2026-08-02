@@ -197,10 +197,8 @@ function finishOnboarding() {
     setTimeout(() => {
       screen.style.display = 'none';
       if (isUserLoggedIn) {
-        // Logged in -> Return to App
         document.getElementById('auth-screen').style.display = 'none';
       } else {
-        // Not logged in -> Show Sign in screen
         document.getElementById('auth-screen').style.display = 'flex';
       }
     }, 250);

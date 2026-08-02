@@ -1,28 +1,18 @@
 {
-  "name": "PocketTrack — Smart Expense Tracker",
+  "name": "PocketTrack — Smart Expense & Debt Manager",
   "short_name": "PocketTrack",
-  "description": "Track your daily income and expenses, see spending reports, and export PDFs — synced securely to the cloud.",
+  "description": "Your AI-powered smart money companion for tracking income, expenses, voice logging & person-to-person debt ledgers.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#1b1340",
-  "theme_color": "#9b6bff",
+  "background_color": "#130c2e",
+  "theme_color": "#1b1340",
   "orientation": "portrait",
-  "scope": "./",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%239b6bff'/><stop offset='100%' stop-color='%23ff7eb3'/></linearGradient></defs><rect width='192' height='192' rx='44' fill='url(%23g)'/><text x='96' y='125' text-anchor='middle' font-size='100' font-family='sans-serif'>💰</text></svg>",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%239b6bff'/><stop offset='100%' stop-color='%23ff7eb3'/></linearGradient></defs><rect width='512' height='512' rx='120' fill='url(%23g)'/><text x='256' y='340' text-anchor='middle' font-size='280' font-family='sans-serif'>💰</text></svg>",
-      "sizes": "512x512",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%238b5cf6'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='280'>💸</text></svg>",
+      "sizes": "192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ],
-  "categories": ["finance", "productivity"],
-  "lang": "en",
-  "dir": "ltr"
+  ]
 }

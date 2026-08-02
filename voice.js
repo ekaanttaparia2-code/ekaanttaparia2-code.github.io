@@ -89,7 +89,6 @@ function parseVoiceInput(text) {
   const rawText = text;
   text = text.toLowerCase();
   
-  // Extract amount (find first number)
   const amountMatch = text.match(/\d+(\.\d+)?/);
   if (!amountMatch) {
     toast(TT('voice_parse_error') + ` ("${rawText}")`, 'error');
@@ -97,14 +96,12 @@ function parseVoiceInput(text) {
   }
   const amount = parseFloat(amountMatch[0]);
   
-  // Determine type
   let type = 'expense';
   const incomeKeywords = ['received', 'got', 'earned', 'income', 'salary', 'allowance', 'आय', 'मिला', 'मिले', 'आया', 'वेतन'];
   if (incomeKeywords.some(kw => text.includes(kw))) {
     type = 'income';
   }
   
-  // Determine category
   let category = 'other';
   if (type === 'expense') {
     if (/food|grocer|meal|snack|restaurant|lunch|dinner|tea|coffee|खाना|चाय|नाश्ता|होटल/.test(text)) category = 'food';
@@ -117,7 +114,6 @@ function parseVoiceInput(text) {
     else if (/rent|home|house|कमरा/.test(text)) category = 'home';
   }
   
-  // Clean up note/description
   let description = rawText.replace(amountMatch[0], '').trim();
   const stopWords = ['spent', 'paid', 'for', 'rupees', 'rs', 'inr', 'bucks', 'खर्च', 'किया', 'रुपये', 'का', 'के', 'लिए', 'पर'];
   stopWords.forEach(sw => {
@@ -204,7 +200,6 @@ async function confirmVoiceEntry() {
   }
 }
 
-// Initialize on DOM load & auth observer
 document.addEventListener('DOMContentLoaded', () => {
   initVoiceEngine();
   updateVoiceFabVisibility();
