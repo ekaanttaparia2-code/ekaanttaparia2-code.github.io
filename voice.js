@@ -47,8 +47,7 @@ function initVoiceEngine() {
 function updateVoiceFabVisibility() {
   const fab = document.getElementById('voice-fab');
   if (!fab) return;
-  const user = currentUser || (firebase.auth() && firebase.auth().currentUser);
-  fab.style.display = user ? 'flex' : 'none';
+  fab.style.display = 'flex';
 }
 
 function startVoiceRecognition() {
