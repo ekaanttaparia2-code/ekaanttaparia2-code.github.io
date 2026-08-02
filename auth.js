@@ -94,6 +94,8 @@ auth.onAuthStateChanged(user=>{
     document.getElementById('sync-status').textContent='Synced to cloud';
     listenToEntries();
     listenToEvents();
+    if(typeof listenToLedger === 'function') listenToLedger();
+    if(typeof updateVoiceFabVisibility === 'function') updateVoiceFabVisibility();
     loadBudget();
     checkHamburgerHint();
     document.getElementById('verify-banner').style.display = user.emailVerified ? 'none' : 'block';
@@ -102,6 +104,7 @@ auth.onAuthStateChanged(user=>{
     document.getElementById('auth-screen').style.display='flex';
     if(unsubscribeEntries) unsubscribeEntries();
     if(unsubscribeEvents) unsubscribeEvents();
+    if(typeof updateVoiceFabVisibility === 'function') updateVoiceFabVisibility();
     entries=[];
     events=[];
     weeklyBudget=0;

@@ -25,20 +25,23 @@
 
 </head>
 <body>
-<div id="onboarding-screen" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg, var(--bg1), #3a225c);z-index:9999;flex-direction:column;justify-content:center;align-items:center;padding:20px;transition:opacity 0.3s">
-  <button onclick="finishOnboarding()" style="position:absolute;top:20px;right:20px;background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer">Skip</button>
-  <div id="ob-content" style="text-align:center;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;max-width:300px">
-    <div id="ob-emoji" style="font-size:80px;margin-bottom:20px;animation:obBounce 2s infinite">💸</div>
-    <h2 id="ob-title" style="font-family:'Space Grotesk',sans-serif;font-size:24px;margin:0 0 10px;color:var(--text)">Title</h2>
-    <p id="ob-desc" style="color:var(--text-dim);font-size:15px;margin:0 0 40px;line-height:1.4">Desc</p>
+<div id="onboarding-screen" style="display:none;">
+  <div class="ob-header-bar">
+    <span class="ob-step-tag" id="ob-step-indicator">Step 1 of 4</span>
+    <button class="ob-skip-btn" onclick="finishOnboarding()">Skip Intro</button>
   </div>
-  <div style="display:flex;gap:8px;margin-bottom:30px" id="ob-dots-container">
-    <span class="ob-dot active"></span>
-    <span class="ob-dot"></span>
-    <span class="ob-dot"></span>
-    <span class="ob-dot"></span>
+  <div class="ob-progress-track">
+    <div class="ob-progress-fill" id="ob-progress-bar-fill"></div>
   </div>
-  <button id="ob-btn" onclick="nextSlide()" class="btn primary" style="width:100%;max-width:300px;font-size:16px;padding:12px;border-radius:12px">Next</button>
+  <div id="ob-content" class="ob-content-card">
+    <div id="ob-preview-container"></div>
+    <h2 id="ob-title" style="font-family:'Space Grotesk',sans-serif;font-size:22px;margin:0 0 6px;color:#fff;font-weight:700;">Title</h2>
+    <p id="ob-desc" style="color:var(--text-dim);font-size:13.5px;margin:0 0 20px;line-height:1.4;">Desc</p>
+  </div>
+  <div class="ob-footer-controls">
+    <button id="ob-prev-btn" class="ob-btn-back" onclick="prevObSlide()" style="visibility:hidden">← Back</button>
+    <button id="ob-btn" onclick="nextObSlide()" class="ob-btn-next">Next →</button>
+  </div>
 </div>
 
 <div id="toast-container" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
@@ -171,6 +174,19 @@
     <div class="card" id="quick-add-card" style="display:none">
       <p class="sec-title" style="margin-bottom:10px"><i class="ti ti-bolt"></i><span data-i18n="sec_quick_add">Quick add</span></p>
       <div id="quick-add-chips" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15)); border-color:rgba(139, 92, 246, 0.35);">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:22px; color:#fff; box-shadow:0 4px 15px rgba(139,92,246,0.4);">🎙️</div>
+          <div>
+            <p style="font-weight:700; font-size:15px; margin:0;">Voice Expense Entry</p>
+            <p style="font-size:12px; color:var(--text-dim); margin:2px 0 0;">Say e.g. "Spent 450 on groceries" or "Got 15000 salary"</p>
+          </div>
+        </div>
+        <button class="btn primary" onclick="startVoiceRecognition()" style="padding:8px 16px; font-size:13px; font-weight:600;"><i class="ti ti-microphone"></i> Start Voice Log</button>
+      </div>
     </div>
 
     <div class="card">

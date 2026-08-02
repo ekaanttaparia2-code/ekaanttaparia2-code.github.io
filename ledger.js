@@ -1,13 +1,13 @@
 Object.assign(TRANSLATIONS, {
-  nav_ledger: { en: 'Ledger', hi: 'खाता (लेजर)' },
-  btn_add_person: { en: 'Add Person', hi: 'व्यक्ति जोड़ें' },
-  ledger_total_owed_to_you: { en: 'Total Owed to You', hi: 'आपको कुल मिलना है' },
-  ledger_total_you_owe: { en: 'You Owe', hi: 'आपको कुल देना है' },
+  nav_ledger: { en: 'Ledger Accounts', hi: 'खाता प्रणाली' },
+  btn_add_person: { en: '+ Add Contact', hi: '+ संपर्क जोड़ें' },
+  ledger_total_owed_to_you: { en: 'Total You Will Receive', hi: 'आपको कुल मिलेगा' },
+  ledger_total_you_owe: { en: 'Total You Owe', hi: 'आपको कुल देना है' },
   ledger_give: { en: 'Gave ₹', hi: '₹ दिए' },
   ledger_receive: { en: 'Received ₹', hi: '₹ मिले' },
-  ledger_no_people: { en: 'No people added yet.', hi: 'अभी तक कोई व्यक्ति नहीं जोड़ा गया है।' },
-  ledger_person_name: { en: 'Person Name', hi: 'व्यक्ति का नाम' },
-  btn_delete_person: { en: 'Delete Person', hi: 'व्यक्ति हटाएं' }
+  ledger_no_people: { en: 'No ledger contacts added yet.', hi: 'अभी तक कोई संपर्क नहीं जोड़ा गया है।' },
+  ledger_person_name: { en: 'Contact Name (e.g. Rahul, Priya, Roommate)', hi: 'संपर्क नाम (जैसे राहुल, प्रिया)' },
+  btn_delete_person: { en: 'Delete Contact', hi: 'संपर्क हटाएं' }
 });
 
 let ledgerUnsubscribe = null;
@@ -17,31 +17,47 @@ function listenToLedger() {
   if (!currentUser) return;
   if (ledgerUnsubscribe) ledgerUnsubscribe();
   
-  ledgerUnsubscribe = db.collection('users').doc(currentUser.uid).collection('ledger')
-    .onSnapshot(async (snap) => {
-      ledgerPeople = [];
-      for (const d of snap.docs) {
-        const personData = { ...d.data(), _id: d.id, transactions: [] };
-        // Fetch transactions for this person
-        const txSnap = await db.collection('users').doc(currentUser.uid).collection('ledger').doc(d.id).collection('transactions').get();
-        txSnap.forEach(t => {
-          personData.transactions.push({ ...t.data(), _id: t.id });
-        });
-        personData.transactions.sort((a,b) => b.createdAt - a.createdAt);
-        ledgerPeople.push(personData);
-      }
-      renderLedger();
-    }, err => {
-      console.error(err);
-    });
+  try {
+    ledgerUnsubscribe = db.collection('users').doc(currentUser.uid).collection('ledger')
+      .onSnapshot(async (snap) => {
+        ledgerPeople = [];
+        for (const d of snap.docs) {
+          const personData = { ...d.data(), _id: d.id, transactions: [] };
+          try {
+            const txSnap = await db.collection('users').doc(currentUser.uid).collection('ledger').doc(d.id).collection('transactions').get();
+            txSnap.forEach(t => {
+              personData.transactions.push({ ...t.data(), _id: t.id });
+            });
+            personData.transactions.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+          } catch(e) {
+            console.error('Err fetching ledger txs:', e);
+          }
+          ledgerPeople.push(personData);
+        }
+        renderLedger();
+      }, err => {
+        console.error('Ledger listener error:', err);
+      });
+  } catch (e) {
+    console.error('Failed to attach ledger listener:', e);
+  }
 }
 
 function renderLedger() {
   const listEl = document.getElementById('ledger-people-list');
   if (!listEl) return;
   
-  if (ledgerPeople.length === 0) {
-    listEl.innerHTML = `<p class="empty">${TT('ledger_no_people')}</p>`;
+  if (!ledgerPeople || ledgerPeople.length === 0) {
+    listEl.innerHTML = `
+      <div class="card" style="text-align:center; padding:35px 20px;">
+        <div style="font-size:48px; margin-bottom:12px;">📑</div>
+        <h3 style="margin:0 0 8px; font-family:'Space Grotesk',sans-serif;">No Ledger Contacts Yet</h3>
+        <p style="color:var(--text-dim); font-size:13.5px; max-width:320px; margin:0 auto 20px; line-height:1.4;">
+          Keep track of money lent to or borrowed from friends, roommates, or vendors in one single place.
+        </p>
+        <button class="btn primary" onclick="showAddPersonModal()"><i class="ti ti-user-plus"></i> ${TT('btn_add_person')}</button>
+      </div>
+    `;
     document.getElementById('ledger-total-owed').textContent = '₹0';
     document.getElementById('ledger-total-owe').textContent = '₹0';
     return;
@@ -62,13 +78,25 @@ function renderLedger() {
     else if (personBalance < 0) totalOwe += Math.abs(personBalance);
     
     const balColor = personBalance > 0 ? 'var(--green)' : (personBalance < 0 ? 'var(--red)' : 'var(--text-dim)');
-    const balText = personBalance > 0 ? `+₹${personBalance}` : (personBalance < 0 ? `-₹${Math.abs(personBalance)}` : '₹0');
+    const balStatus = personBalance > 0 ? `Owes you ₹${personBalance}` : (personBalance < 0 ? `You owe ₹${Math.abs(personBalance)}` : 'Settled (₹0)');
+    const avatarLetter = (person.name || 'P').charAt(0).toUpperCase();
     
     html += `
-      <div class="card" style="padding:15px; cursor:pointer;" onclick="showPersonDetail('${person._id}')">
+      <div class="card" style="padding:16px; margin-bottom:12px; cursor:pointer; transition:transform 0.2s;" onclick="showPersonDetail('${person._id}')">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h4 style="margin:0; font-size:16px;">${escapeHTML(person.name)}</h4>
-          <span style="font-weight:bold; color:${balColor}">${balText}</span>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--bg3)); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; color:#fff;">
+              ${avatarLetter}
+            </div>
+            <div>
+              <h4 style="margin:0; font-size:16px;">${escapeHTML(person.name)}</h4>
+              <div style="font-size:12px; color:var(--text-dim); margin-top:2px;">${person.transactions.length} transactions</div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:700; font-size:15px; color:${balColor}">${balStatus}</div>
+            <div style="font-size:11px; color:var(--text-faint); margin-top:2px;">Tap for history →</div>
+          </div>
         </div>
       </div>
     `;
@@ -86,12 +114,15 @@ function showAddPersonModal() {
 }
 
 async function addLedgerPerson(name) {
-  if (!currentUser) return;
+  if (!currentUser) {
+    toast('Please sign in to manage ledger', 'error');
+    return;
+  }
   try {
     await db.collection('users').doc(currentUser.uid).collection('ledger').add({
       name, createdAt: Date.now()
     });
-    toast(TT('btn_add') + ' ' + name, 'success');
+    toast('Added ' + name, 'success');
   } catch (e) {
     toast('Error: ' + e.message, 'error');
   }
@@ -99,11 +130,11 @@ async function addLedgerPerson(name) {
 
 async function deleteLedgerPerson(personId) {
   if (!currentUser) return;
-  showAppConfirm(TT('btn_delete_person') + '?', async () => {
+  showAppConfirm('Delete contact and all transaction history?', async () => {
     try {
       await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).delete();
       closeModal();
-      toast('Deleted', 'success');
+      toast('Contact deleted', 'success');
     } catch(e) {
       toast('Error: ' + e.message, 'error');
     }
@@ -114,29 +145,41 @@ function showPersonDetail(personId) {
   const person = ledgerPeople.find(p => p._id === personId);
   if (!person) return;
   
+  let personBalance = 0;
+  person.transactions.forEach(tx => {
+    if (tx.type === 'gave') personBalance += tx.amount;
+    else if (tx.type === 'received') personBalance -= tx.amount;
+  });
+  
+  const balColor = personBalance > 0 ? 'var(--green)' : (personBalance < 0 ? 'var(--red)' : 'var(--text-dim)');
+  const balStatus = personBalance > 0 ? `Owes you ₹${personBalance}` : (personBalance < 0 ? `You owe ₹${Math.abs(personBalance)}` : 'Settled up');
+
   let txHtml = person.transactions.length ? person.transactions.map(tx => `
-    <div class="entry-row" style="justify-content:space-between">
+    <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:10px 14px; border-radius:10px; margin-bottom:8px; border:1px solid var(--border)">
       <div>
-        <div style="font-weight:bold; color:${tx.type === 'gave' ? 'var(--green)' : 'var(--red)'}">
+        <div style="font-weight:700; color:${tx.type === 'gave' ? 'var(--green)' : 'var(--red)'}">
           ${tx.type === 'gave' ? 'Gave' : 'Received'} ₹${tx.amount}
         </div>
-        <div style="font-size:11px; color:var(--text-dim)">${tx.date} • ${escapeHTML(tx.note)}</div>
+        <div style="font-size:11.5px; color:var(--text-dim); margin-top:2px;">${tx.date || ''} ${tx.note ? '• ' + escapeHTML(tx.note) : ''}</div>
       </div>
-      <button class="icon-btn" onclick="deleteLedgerTx('${personId}', '${tx._id}')"><i class="ti ti-trash"></i></button>
+      <button class="icon-btn" onclick="deleteLedgerTx('${personId}', '${tx._id}')" title="Delete transaction"><i class="ti ti-trash" style="color:var(--red)"></i></button>
     </div>
-  `).join('') : '<p class="empty">No transactions yet.</p>';
+  `).join('') : '<p style="text-align:center; color:var(--text-dim); padding:20px 0;">No entries yet with ' + escapeHTML(person.name) + '</p>';
   
   const content = `
-    <h3 class="sec-title" style="margin-top:0">${escapeHTML(person.name)}</h3>
-    <div class="btn-row" style="margin-bottom:15px">
-      <button class="btn primary" onclick="addLedgerTx('${personId}', 'gave')"><i class="ti ti-arrow-up-right"></i> Gave ₹</button>
-      <button class="btn danger" onclick="addLedgerTx('${personId}', 'received')"><i class="ti ti-arrow-down-left"></i> Received ₹</button>
+    <div style="text-align:center; margin-bottom:16px;">
+      <h3 style="margin:0; font-family:'Space Grotesk',sans-serif; font-size:20px;">${escapeHTML(person.name)}</h3>
+      <div style="font-size:14px; font-weight:700; color:${balColor}; margin-top:4px;">${balStatus}</div>
     </div>
-    <div style="max-height:300px; overflow-y:auto; margin-bottom:15px;">
+    <div class="btn-row" style="margin-bottom:18px">
+      <button class="btn primary" style="flex:1" onclick="addLedgerTx('${personId}', 'gave')"><i class="ti ti-arrow-up-right"></i> Gave ₹</button>
+      <button class="btn danger" style="flex:1" onclick="addLedgerTx('${personId}', 'received')"><i class="ti ti-arrow-down-left"></i> Received ₹</button>
+    </div>
+    <div style="max-height:280px; overflow-y:auto; margin-bottom:16px;">
       ${txHtml}
     </div>
-    <div style="text-align:right">
-      <button class="btn danger" style="background:transparent" onclick="deleteLedgerPerson('${personId}')">${TT('btn_delete_person')}</button>
+    <div style="text-align:center">
+      <button class="btn" style="background:rgba(255,107,107,0.15); color:var(--red); border-color:rgba(255,107,107,0.3);" onclick="deleteLedgerPerson('${personId}')"><i class="ti ti-trash"></i> ${TT('btn_delete_person')}</button>
     </div>
   `;
   showAppAlert(content);
@@ -146,16 +189,19 @@ async function addLedgerTx(personId, type) {
   const amtStr = prompt('Amount (₹):');
   if (!amtStr) return;
   const amount = parseFloat(amtStr);
-  if (isNaN(amount) || amount <= 0) return;
+  if (isNaN(amount) || amount <= 0) {
+    toast('Invalid amount', 'error');
+    return;
+  }
   
-  const note = prompt('Note (optional):') || '';
+  const note = prompt('Note (e.g. Lunch, Rent share, Uber):') || '';
   
   try {
     await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).collection('transactions').add({
-      amount, type, note, date: todayStr(), createdAt: Date.now()
+      amount, type, note, date: (typeof todayStr === 'function' ? todayStr() : new Date().toISOString().split('T')[0]), createdAt: Date.now()
     });
     closeModal();
-    toast('Added', 'success');
+    toast('Entry saved!', 'success');
   } catch(e) {
     toast('Error: ' + e.message, 'error');
   }
@@ -166,19 +212,20 @@ async function deleteLedgerTx(personId, txId) {
   try {
     await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).collection('transactions').doc(txId).delete();
     closeModal();
-    toast('Deleted', 'success');
+    toast('Entry deleted', 'success');
   } catch(e) {
     toast('Error: ' + e.message, 'error');
   }
 }
 
-// Hook into app login flow
-const originalOnAuthStateChangedLedger = firebase.auth().onAuthStateChanged;
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    listenToLedger();
-  } else {
-    if (ledgerUnsubscribe) { ledgerUnsubscribe(); ledgerUnsubscribe = null; }
-    ledgerPeople = [];
-  }
-});
+// Attach listener on auth change
+if (window.firebase && firebase.auth()) {
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      listenToLedger();
+    } else {
+      if (ledgerUnsubscribe) { ledgerUnsubscribe(); ledgerUnsubscribe = null; }
+      ledgerPeople = [];
+    }
+  });
+}

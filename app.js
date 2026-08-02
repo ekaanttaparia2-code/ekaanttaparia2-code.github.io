@@ -880,15 +880,17 @@ function celebrateEntryLogged(btnId){
 }
 
 function setTab(t){
-  ['log','entries','report','events','rewards','upi','language'].forEach((x)=>{
+  ['log','entries','report','events','rewards','upi','language','ledger'].forEach((x)=>{
     const el=document.getElementById('tab-'+x);
-    if(x===t){
-      el.style.display='block';
-      el.classList.remove('tab-enter');
-      void el.offsetWidth; // force reflow so the animation replays every time
-      el.classList.add('tab-enter');
-    } else {
-      el.style.display='none';
+    if(el){
+      if(x===t){
+        el.style.display='block';
+        el.classList.remove('tab-enter');
+        void el.offsetWidth; // force reflow so the animation replays every time
+        el.classList.add('tab-enter');
+      } else {
+        el.style.display='none';
+      }
     }
   });
   document.querySelectorAll('.side-menu-item').forEach(btn=>{
@@ -900,6 +902,9 @@ function setTab(t){
   if(t==='events'){
     showEventsListView();
     renderEventsList();
+  }
+  if(t==='ledger'){
+    if(typeof renderLedger === 'function') renderLedger();
   }
   if(t==='rewards')renderRewards();
   if(t==='language')updateLanguageTabUI();
