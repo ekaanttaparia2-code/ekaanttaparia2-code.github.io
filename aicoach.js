@@ -37,11 +37,9 @@ function calculateHealthScore() {
     }
   });
 
-  // 1. Savings Ratio Score (max 40 pts)
   let savingsRatio = totalInc > 0 ? (totalInc - totalExp) / totalInc : 0;
   let savingsPts = Math.min(40, Math.max(0, Math.round(savingsRatio * 80)));
 
-  // 2. Budget Adherence Score (max 30 pts)
   let budgetPts = 30;
   if (typeof weeklyBudget !== 'undefined' && weeklyBudget > 0) {
     const now = new Date();
@@ -60,7 +58,6 @@ function calculateHealthScore() {
     }
   }
 
-  // 3. Streak & Activity Score (max 30 pts)
   const streak = (typeof currentStreak !== 'undefined' ? currentStreak : 1);
   let streakPts = Math.min(30, Math.round(streak * 5 + 10));
 
@@ -73,10 +70,7 @@ function calculateHealthScore() {
   else if (finalScore >= 50) { status = 'Fair ⚠️'; color = '#ffb84d'; }
   else { status = 'Needs Attention 🔴'; color = '#f87171'; }
 
-  // Generate Personalized Insights
   const insights = [];
-
-  // Insight 1: Top Category
   let topCat = 'other';
   let topAmt = 0;
   Object.keys(catTotals).forEach(c => {
@@ -88,21 +82,19 @@ function calculateHealthScore() {
 
   if (totalExp > 0 && topAmt > 0) {
     const topPct = Math.round((topAmt / totalExp) * 100);
-    insights.push(`📊 Your highest spending is on <b>${escapeHTML(topCat)}</b> (₹${topAmt}, ${topPct}% of total expenses).`);
+    insights.push(`📊 Highest spending category: <b>${escapeHTML(topCat)}</b> (₹${topAmt}, ${topPct}% of total expenses).`);
   }
 
-  // Insight 2: Savings Status
   if (savingsRatio >= 0.2) {
-    insights.push(`💡 Great job! You are saving <b>${Math.round(savingsRatio * 100)}%</b> of your income (above the 20% benchmark).`);
+    insights.push(`💡 You save <b>${Math.round(savingsRatio * 100)}%</b> of your income (above the 20% benchmark).`);
   } else if (savingsRatio > 0) {
-    insights.push(`💡 You save <b>${Math.round(savingsRatio * 100)}%</b> of income. Try boosting it to 20% for stronger financial health.`);
+    insights.push(`💡 You save <b>${Math.round(savingsRatio * 100)}%</b> of income. Target 20% for optimal score.`);
   } else {
-    insights.push(`⚠️ Your total expenses currently exceed or equal your total income. Consider cutting non-essential costs.`);
+    insights.push(`⚠️ Total expenses currently exceed or equal income. Consider reviewing non-essential purchases.`);
   }
 
-  // Insight 3: Streak
   if (streak >= 3) {
-    insights.push(`🔥 Impressive ${streak}-day active logging streak! Consistency helps you catch impulse spending early.`);
+    insights.push(`🔥 ${streak}-day active logging streak!`);
   }
 
   return {
@@ -274,22 +266,118 @@ function renderAICoachTab() {
 
       <div id="ai-chat-box" style="max-height:260px; overflow-y:auto; background:rgba(0,0,0,0.2); border-radius:12px; padding:14px; margin-bottom:14px; border:1px solid var(--border)">
         <div style="background:rgba(139,92,246,0.15); padding:10px 14px; border-radius:12px; border:1px solid rgba(139,92,246,0.3); font-size:13px; line-height:1.4; margin-bottom:10px;">
-          🤖 <b>AI Financial Twin:</b> Hello! Your financial score is <b>${health.score}/100</b> (${health.status}). Ask me for savings advice or tap a quick question!
+          🤖 <b>AI Financial Twin:</b> Hello! Ask me any financial or app guide question in any way you like!
         </div>
       </div>
 
       <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
-        <button class="tag-btn" onclick="sendQuickPrompt('How can I save ₹2,000 this month?')">💡 How to save ₹2,000?</button>
-        <button class="tag-btn" onclick="sendQuickPrompt('Analyze my top spending categories')">📊 Analyze spending</button>
-        <button class="tag-btn" onclick="sendQuickPrompt('Am I spending too much on food?')">🍔 Food spending check</button>
+        <button class="tag-btn" onclick="sendQuickPrompt('How much should I save per month to buy an iPhone?')">📱 Save for iPhone</button>
+        <button class="tag-btn" onclick="sendQuickPrompt('How do I set my weekly budget limit in the app?')">⚙️ How to set budget?</button>
+        <button class="tag-btn" onclick="sendQuickPrompt('How does the Ledger debt manager work?')">📑 How Ledger works?</button>
       </div>
 
       <div style="display:flex; gap:8px;">
-        <input type="text" id="ai-user-input" placeholder="Ask your Financial Twin..." style="flex:1" onkeypress="if(event.key==='Enter')askAICoach()"/>
+        <input type="text" id="ai-user-input" placeholder="Ask any question in your own words..." style="flex:1" onkeypress="if(event.key==='Enter')askAICoach()"/>
         <button class="btn primary" onclick="askAICoach()"><i class="ti ti-send"></i></button>
       </div>
     </div>
   `;
+
+  initFloatingAIWidget();
+}
+
+function initFloatingAIWidget() {
+  if (document.getElementById('ai-widget-icon')) return;
+
+  const widget = document.createElement('div');
+  widget.id = 'ai-widget-icon';
+  widget.title = 'AI Financial Twin & App Assistant';
+  widget.style.cssText = 'position:fixed;bottom:90px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 25px rgba(139,92,246,0.6);z-index:9999;cursor:grab;touch-action:none;user-select:none;transition:transform 0.2s;';
+  widget.innerHTML = '🤖';
+
+  const panel = document.createElement('div');
+  panel.id = 'ai-widget-panel';
+  panel.style.cssText = 'position:fixed;bottom:155px;right:24px;width:340px;max-width:90vw;background:var(--card-solid,#1f1840);border:1px solid rgba(255,255,255,0.18);box-shadow:0 20px 50px rgba(0,0,0,0.7);border-radius:20px;padding:16px;z-index:9999;display:none;flex-direction:column;max-height:75vh;';
+  panel.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:10px;">
+      <div style="font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px;">🤖 <span>AI Twin & App Guide</span></div>
+      <button class="icon-btn" onclick="toggleAIPanel()" style="font-size:18px;color:var(--text-dim);"><i class="ti ti-x"></i></button>
+    </div>
+    
+    <div id="ai-panel-chat-box" style="flex:1;max-height:220px;overflow-y:auto;background:rgba(0,0,0,0.25);border-radius:12px;padding:10px;margin-bottom:10px;border:1px solid var(--border);font-size:12.5px;">
+      <div style="background:rgba(139,92,246,0.15);padding:8px 10px;border-radius:10px;line-height:1.4;">
+        👋 Ask me anything about your money or how to use any feature in PocketTrack!
+      </div>
+    </div>
+
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;">
+      <button class="tag-btn" style="font-size:10.5px;padding:3px 8px;" onclick="sendPanelPrompt('How to save for iPhone?')">📱 iPhone Goal</button>
+      <button class="tag-btn" style="font-size:10.5px;padding:3px 8px;" onclick="sendPanelPrompt('How to set weekly budget?')">⚙️ Budget Guide</button>
+      <button class="tag-btn" style="font-size:10.5px;padding:3px 8px;" onclick="sendPanelPrompt('How to track debts in Ledger?')">📑 Ledger Guide</button>
+    </div>
+
+    <div style="display:flex;gap:6px;">
+      <input type="text" id="ai-panel-input" placeholder="Ask AI or App Guide..." style="flex:1;padding:8px 10px;font-size:12.5px;" onkeypress="if(event.key==='Enter')askAIPanel()"/>
+      <button class="btn primary" style="padding:8px 12px;font-size:12px;" onclick="askAIPanel()"><i class="ti ti-send"></i></button>
+    </div>
+  `;
+
+  document.body.appendChild(widget);
+  document.body.appendChild(panel);
+
+  let isDragging = false;
+  let hasMoved = false;
+  let startX, startY, initialLeft, initialTop;
+
+  widget.addEventListener('pointerdown', e => {
+    isDragging = true;
+    hasMoved = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = widget.getBoundingClientRect();
+    initialLeft = rect.left;
+    initialTop = rect.top;
+    widget.style.cursor = 'grabbing';
+    widget.setPointerCapture(e.pointerId);
+  });
+
+  widget.addEventListener('pointermove', e => {
+    if (!isDragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved = true;
+    
+    let newLeft = initialLeft + dx;
+    let newTop = initialTop + dy;
+    
+    newLeft = Math.max(10, Math.min(window.innerWidth - 70, newLeft));
+    newTop = Math.max(10, Math.min(window.innerHeight - 70, newTop));
+
+    widget.style.left = newLeft + 'px';
+    widget.style.top = newTop + 'px';
+    widget.style.right = 'auto';
+    widget.style.bottom = 'auto';
+
+    panel.style.left = Math.min(window.innerWidth - 350, Math.max(10, newLeft - 140)) + 'px';
+    panel.style.top = Math.max(10, newTop - 360) + 'px';
+    panel.style.right = 'auto';
+    panel.style.bottom = 'auto';
+  });
+
+  widget.addEventListener('pointerup', e => {
+    isDragging = false;
+    widget.style.cursor = 'grab';
+    if (!hasMoved) {
+      toggleAIPanel();
+    }
+  });
+}
+
+function toggleAIPanel() {
+  const panel = document.getElementById('ai-widget-panel');
+  if (panel) {
+    panel.style.display = (panel.style.display === 'flex') ? 'none' : 'flex';
+  }
 }
 
 function sendQuickPrompt(text) {
@@ -297,6 +385,14 @@ function sendQuickPrompt(text) {
   if (input) {
     input.value = text;
     askAICoach();
+  }
+}
+
+function sendPanelPrompt(text) {
+  const input = document.getElementById('ai-panel-input');
+  if (input) {
+    input.value = text;
+    askAIPanel();
   }
 }
 
@@ -319,37 +415,12 @@ async function askAICoach() {
   const loadingId = 'ai-loading-' + Date.now();
   chatBox.innerHTML += `
     <div id="${loadingId}" style="background:rgba(139,92,246,0.15); padding:10px 14px; border-radius:12px; border:1px solid rgba(139,92,246,0.3); font-size:13px; margin-bottom:10px;">
-      🤖 <i>Financial Twin AI is analyzing your data...</i>
+      🤖 <i>AI Financial Twin is analyzing...</i>
     </div>
   `;
   chatBox.scrollTop = chatBox.scrollHeight;
 
-  let responseText = '';
-
-  try {
-    const health = calculateHealthScore();
-    const promptText = `Act as an expert financial coach for PocketTrack app.
-User Query: "${query}".
-Financial Summary: Score ${health.score}/100, Savings Ratio: ${health.savingsRatio}%, Total Entries: ${(entries||[]).length}.
-Recent Entries: ${JSON.stringify((entries||[]).slice(0, 10))}.
-Provide concise (2-3 sentences max), actionable financial advice tailored to this user without any disclaimers.`;
-
-    // Free public AI gateway proxy (no API key required from user)
-    const res = await fetch('https://api.pollinations.ai/p/' + encodeURIComponent(promptText));
-    if (res.ok) {
-      const text = await res.text();
-      if (text && text.length > 5) {
-        responseText = text.trim();
-      }
-    }
-  } catch (e) {
-    console.warn('Real AI endpoint fetch warning, using offline smart engine:', e);
-  }
-
-  if (!responseText) {
-    responseText = generateRuleBasedAdvice(query);
-  }
-
+  const responseText = await processSmartAIQuery(query);
   const loadEl = document.getElementById(loadingId);
   if (loadEl) {
     loadEl.innerHTML = `🤖 <b>AI Financial Twin:</b> ${escapeHTML(responseText)}`;
@@ -357,33 +428,135 @@ Provide concise (2-3 sentences max), actionable financial advice tailored to thi
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function generateRuleBasedAdvice(query) {
+async function askAIPanel() {
+  const inputEl = document.getElementById('ai-panel-input');
+  const chatBox = document.getElementById('ai-panel-chat-box');
+  if (!inputEl || !chatBox) return;
+
+  const query = inputEl.value.trim();
+  if (!query) return;
+
+  chatBox.innerHTML += `
+    <div style="background:rgba(255,255,255,0.08); text-align:right; padding:6px 10px; border-radius:10px; font-size:12px; margin-bottom:8px; margin-left:15px;">
+      <b>You:</b> ${escapeHTML(query)}
+    </div>
+  `;
+  inputEl.value = '';
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  const loadingId = 'ai-panel-loading-' + Date.now();
+  chatBox.innerHTML += `
+    <div id="${loadingId}" style="background:rgba(139,92,246,0.15); padding:8px 10px; border-radius:10px; font-size:12px; margin-bottom:8px;">
+      🤖 <i>AI Assistant is analyzing...</i>
+    </div>
+  `;
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  const responseText = await processSmartAIQuery(query);
+  const loadEl = document.getElementById(loadingId);
+  if (loadEl) {
+    loadEl.innerHTML = `🤖 <b>AI Assistant:</b> ${escapeHTML(responseText)}`;
+  }
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Multi-layered Natural Language Processor (Semantic Matcher + Live Gateway LLM)
+async function processSmartAIQuery(query) {
   const q = query.toLowerCase();
-  const health = calculateHealthScore();
 
-  let totalExp = 0;
-  let foodExp = 0;
-  let travelExp = 0;
+  // Try Semantic Concept Matching first for instant responses
+  const semanticAnswer = matchSemanticConcepts(q);
+  if (semanticAnswer) return semanticAnswer;
 
-  (entries || []).forEach(e => {
-    if (e.type === 'expense') {
-      const amt = parseFloat(e.amt) || 0;
-      totalExp += amt;
-      if (e.cat === 'food') foodExp += amt;
-      if (e.cat === 'travel') travelExp += amt;
+  // Fallback to Live Gateway LLM for arbitrary natural sentence structures
+  try {
+    const health = calculateHealthScore();
+    const promptText = `You are an AI financial twin & app guide for PocketTrack app.
+User asked: "${query}".
+User Financial Status: Health score ${health.score}/100, Savings Ratio: ${health.savingsRatio}%, Total Entries: ${(entries||[]).length}.
+Answer concisely (2-3 sentences max) with practical numbers and clear guidance.`;
+
+    const res = await fetch('https://api.pollinations.ai/p/' + encodeURIComponent(promptText));
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.length > 5) {
+        return text.trim();
+      }
     }
-  });
-
-  if (q.includes('save') || q.includes('₹2,000') || q.includes('2000')) {
-    return `To save ₹2,000 this month, cut non-essential food/dining out by 20% and set your weekly budget to ₹${Math.round((totalExp * 0.8) / 4)}. Also check unused subscription leaks!`;
-  }
-  if (q.includes('food') || q.includes('dinner') || q.includes('restaurant')) {
-    const foodPct = totalExp > 0 ? Math.round((foodExp / totalExp) * 100) : 0;
-    return `Your food spending is ₹${foodExp} (${foodPct}% of total expenses). Cooking home meals twice a week can save you ~₹1,200/month.`;
-  }
-  if (q.includes('analyze') || q.includes('category') || q.includes('spending')) {
-    return `Your total expenses are ₹${totalExp}. Food: ₹${foodExp}, Travel: ₹${travelExp}. Your overall financial score is ${health.score}/100 (${health.status}).`;
+  } catch (e) {
+    console.warn('Live LLM fetch warning:', e);
   }
 
-  return `Based on your score of ${health.score}/100 (${health.status}): Maintain your daily logging streak and keep weekly expenses under budget to save an extra 15% this month!`;
+  // Ultimate fallback
+  const health = calculateHealthScore();
+  return `🤖 Based on your financial health score of ${health.score}/100 (${health.status}): Keep your daily logging streak active and maintain your weekly budget caps to boost your savings rate!`;
+}
+
+// Semantic Synonym & Concept Pattern Matcher
+function matchSemanticConcepts(q) {
+  // Concept 1: iPhone / Smartphone savings goal (any sentence phrasing)
+  if (/iphone|apple|mobile|phone|smartphone|buy a phone|get a phone/i.test(q)) {
+    const estCost = 69900;
+    return `📱 To buy an iPhone (~₹${estCost.toLocaleString('en-IN')}): If your target timeframe is 6 months, set aside ₹${Math.round(estCost/6).toLocaleString('en-IN')}/month. If 12 months, save ₹${Math.round(estCost/12).toLocaleString('en-IN')}/month!`;
+  }
+
+  // Concept 2: Laptop / Computer goal
+  if (/laptop|macbook|computer|pc|notebook/i.test(q)) {
+    const estCost = 85000;
+    return `💻 To save for a Laptop (~₹${estCost.toLocaleString('en-IN')}): Save ₹${Math.round(estCost/6).toLocaleString('en-IN')}/mo for 6 months or ₹${Math.round(estCost/10).toLocaleString('en-IN')}/mo for 10 months!`;
+  }
+
+  // Concept 3: Trip / Vacation / Holiday goal
+  if (/trip|vacation|goa|tour|flight|holiday|travel goal/i.test(q)) {
+    const estCost = 15000;
+    return `✈️ For a Trip/Vacation (~₹15,000): Setting aside ₹2,500/month will get you fully funded in 6 months!`;
+  }
+
+  // Concept 4: Budget setting / capping
+  if (/budget|limit|max spend|cap|restrict|threshold|set spending/i.test(q)) {
+    return `⚙️ Budget Setting: Go to the Report tab or main Log screen, tap 'Set weekly budget', enter your target amount (e.g. ₹5,000) and tap Save. PocketTrack automatically tracks your progress and alerts you if you approach the cap!`;
+  }
+
+  // Concept 5: Ledger / Debts / Money lent or borrowed / Friends
+  if (/ledger|debt|borrow|lend|lent|owe|roommate|friend|gave|received|khata|hisab/i.test(q)) {
+    return `📑 Ledger Accounts: Tap ☰ Menu → Ledger. Add contacts (e.g. Rahul, Priya), then tap their name card to record 'Gave ₹' or 'Received ₹' with notes & history cards!`;
+  }
+
+  // Concept 6: Voice expense logging
+  if (/voice|mic|speak|audio|bolke|talk|say/i.test(q)) {
+    return `🎤 Voice Entry: Tap the floating purple Mic button on the bottom-right of your screen and speak naturally, e.g. "Spent 250 on lunch" or "Got 5000 salary"!`;
+  }
+
+  // Concept 7: Events / Bill splitting / Trips / Group expenses
+  if (/split|group|party|flatmate|shared|bill split|sharing/i.test(q)) {
+    return `👥 Events & Bill Splitting: Open ☰ Menu → Events. Create a group (e.g. Goa Trip, Flatmates), add participants, and log shared expenses — PocketTrack calculates 1-tap settlements!`;
+  }
+
+  // Concept 8: Smart UPI Logger / Notifications / Copy Paste
+  if (/upi|gpay|phonepe|paytm|paste|notification|autodetect|copy/i.test(q)) {
+    return `⚡ Smart Logger: Copy any GPay, PhonePe, or Paytm payment notification and paste it into ☰ Menu → Smart Logger. Amount, merchant, and type are auto-detected!`;
+  }
+
+  // Concept 9: Themes & Visuals
+  if (/theme|dark|color|style|cyberpunk|emerald|sunset|oled/i.test(q)) {
+    return `🎨 Themes: Tap ☰ Menu → Language/Settings to switch between Cyberpunk Neon, Emerald Luxury, Sunset Glow, or Midnight OLED themes!`;
+  }
+
+  // Concept 10: Offline / Cloud Sync
+  if (/offline|sync|wifi|network|no internet|airplane|cloud/i.test(q)) {
+    return `☁️ Cloud Sync & Offline Mode: PocketTrack works 100% offline! Entries saved without internet are stored locally and auto-sync with Firebase Cloud as soon as you reconnect.`;
+  }
+
+  // Concept 11: PDF / Report Export
+  if (/export|pdf|statement|report|sheet|excel|download|print/i.test(q)) {
+    return `📊 Reports & Export: Tap ☰ Menu → Report. You can view breakdown charts, tap 'Export as PDF' to save your statement, or 'Copy Report' to paste your breakdown anywhere!`;
+  }
+
+  return null;
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(initFloatingAIWidget, 500);
+} else {
+  window.addEventListener('DOMContentLoaded', () => setTimeout(initFloatingAIWidget, 500));
 }
