@@ -52,6 +52,7 @@ function listenToEntries() {
         entries.push({ id: doc.id, ...doc.data() });
       });
       renderEntries();
+      if (typeof renderBalanceStats === 'function') renderBalanceStats();
       if (typeof renderReport === 'function') renderReport();
       if (typeof updateStreak === 'function') updateStreak();
       checkEntryLimit();

@@ -163,12 +163,83 @@ function updateStreak() {
   }
 }
 
+function renderBalanceStats() {
+  let inc = 0, exp = 0;
+  (entries || []).forEach(e => {
+    const amt = parseFloat(e.amt) || 0;
+    if (e.type === 'income') inc += amt;
+    else if (e.type === 'expense') exp += amt;
+  });
+  
+  const bal = inc - exp;
+  const balEl = document.getElementById('stat-total-balance');
+  const incEl = document.getElementById('stat-total-income');
+  const expEl = document.getElementById('stat-total-expense');
+  
+  if (balEl) balEl.textContent = `₹${bal.toLocaleString()}`;
+  if (incEl) incEl.textContent = `₹${inc.toLocaleString()}`;
+  if (expEl) expEl.textContent = `₹${exp.toLocaleString()}`;
+  
+  updateBudgetUI();
+}
+
+function updateBudgetUI() {
+  const box = document.getElementById('budget-progress-box');
+  if (!box) return;
+  
+  if (!weeklyBudget || weeklyBudget <= 0) {
+    box.innerHTML = 'Set a weekly limit to track budget adherence & health score.';
+    return;
+  }
+  
+  const now = new Date();
+  const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+  startOfWeek.setHours(0,0,0,0);
+  
+  let thisWeekExp = 0;
+  (entries || []).forEach(e => {
+    if (e.type === 'expense' && new Date(e.date) >= startOfWeek) {
+      thisWeekExp += (parseFloat(e.amt) || 0);
+    }
+  });
+  
+  const pct = Math.min(100, Math.round((thisWeekExp / weeklyBudget) * 100));
+  const color = pct >= 100 ? 'var(--red)' : (pct >= 85 ? 'var(--amber)' : 'var(--green)');
+  
+  box.innerHTML = `
+    <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-weight:600;">
+      <span>Spent: ₹${thisWeekExp}</span>
+      <span style="color:${color}">${pct}% of ₹${weeklyBudget}</span>
+    </div>
+    <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;">
+      <div style="width:${pct}%; height:100%; background:${color}; border-radius:3px; transition:width 0.3s;"></div>
+    </div>
+  `;
+}
+
+function setWeeklyBudgetPrompt() {
+  const val = prompt('Enter your weekly budget cap (₹):', weeklyBudget || 2500);
+  if (val !== null) {
+    const num = parseFloat(val);
+    if (!isNaN(num) && num > 0) {
+      weeklyBudget = num;
+      localStorage.setItem('pockettrack_budget', weeklyBudget);
+      if (currentUser) {
+        db.collection('users').doc(currentUser.uid).collection('budget').doc('data').set({ weeklyBudget: num }).catch(e=>console.warn(e));
+      }
+      updateBudgetUI();
+      toast('Weekly budget updated to ₹' + num, 'success');
+    }
+  }
+}
+
 function loadBudget() {
   if (!currentUser) return;
   db.collection('users').doc(currentUser.uid).collection('budget').doc('data').get().then(doc => {
     if (doc.exists) {
       weeklyBudget = doc.data().weeklyBudget || 0;
       localStorage.setItem('pockettrack_budget', weeklyBudget);
+      updateBudgetUI();
     }
   }).catch(e => console.warn('Load budget err:', e));
 }

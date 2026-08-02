@@ -130,8 +130,33 @@
 
   <!-- TAB: LOG EXPENSE / INCOME -->
   <div id="tab-log" class="tab-content">
+    <!-- Total Balance Hero Card -->
+    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.25), rgba(236, 72, 153, 0.2)); border-color:rgba(139, 92, 246, 0.4); text-align:center; padding:22px 18px; margin-bottom:14px;">
+      <div style="font-size:11px; font-weight:700; color:var(--text-dim); letter-spacing:1px; text-transform:uppercase;">Total Balance</div>
+      <div style="font-size:36px; font-weight:800; color:#fff; margin:6px 0 14px; font-family:'Space Grotesk',sans-serif;" id="stat-total-balance">₹0</div>
+      <div class="grid2">
+        <div class="metric" style="background:rgba(0,0,0,0.25)">
+          <div class="metric-label" style="color:var(--green)">Income</div>
+          <div class="metric-val green" id="stat-total-income">₹0</div>
+        </div>
+        <div class="metric" style="background:rgba(0,0,0,0.25)">
+          <div class="metric-label" style="color:var(--red)">Expense</div>
+          <div class="metric-val red" id="stat-total-expense">₹0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Budget Card -->
+    <div class="card" id="budget-card" style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span style="font-size:13.5px; font-weight:600;"><i class="ti ti-target"></i> Weekly Budget Cap</span>
+        <button class="btn" style="padding:2px 8px; font-size:11px;" onclick="setWeeklyBudgetPrompt()">Set Budget</button>
+      </div>
+      <div id="budget-progress-box" style="font-size:12px; color:var(--text-dim)">Set a weekly limit to track budget adherence & health score.</div>
+    </div>
+
     <!-- Voice Banner -->
-    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2)); border-color:rgba(139, 92, 246, 0.3); display:flex; align-items:center; justify-content:space-between; padding:14px 16px;">
+    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2)); border-color:rgba(139, 92, 246, 0.3); display:flex; align-items:center; justify-content:space-between; padding:14px 16px; margin-bottom:14px;">
       <div>
         <div style="font-weight:700; font-size:14.5px;">🎙️ Voice Expense Entry</div>
         <div style="font-size:12px; color:var(--text-dim);">Tap the microphone FAB at bottom right to speak</div>
