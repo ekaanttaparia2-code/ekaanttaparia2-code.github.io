@@ -460,6 +460,11 @@ async function askAIPanel() {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Gemini API key (client-side for now — move behind a backend before real launch/payments)
+const GEMINI_API_KEY = 'AQ.Ab8RN6IGb1-EdnxYvSsdbFA6zX2TbiEoYl8Oe4InBPgJ8q3Ftw';
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+
 // Multi-layered Natural Language Processor (Semantic Matcher + Live Gateway LLM)
 async function processSmartAIQuery(query) {
   const q = query.toLowerCase();
@@ -468,7 +473,7 @@ async function processSmartAIQuery(query) {
   const semanticAnswer = matchSemanticConcepts(q);
   if (semanticAnswer) return semanticAnswer;
 
-  // Fallback to Live Gateway LLM for arbitrary natural sentence structures
+  // Fallback to Gemini for arbitrary natural sentence structures
   try {
     const health = calculateHealthScore();
     const promptText = `You are an AI financial twin & app guide for PocketTrack app.
@@ -476,15 +481,26 @@ User asked: "${query}".
 User Financial Status: Health score ${health.score}/100, Savings Ratio: ${health.savingsRatio}%, Total Entries: ${(entries||[]).length}.
 Answer concisely (2-3 sentences max) with practical numbers and clear guidance.`;
 
-    const res = await fetch('https://api.pollinations.ai/p/' + encodeURIComponent(promptText));
+    const res = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }],
+        generationConfig: { maxOutputTokens: 200, temperature: 0.7 }
+      })
+    });
+
     if (res.ok) {
-      const text = await res.text();
-      if (text && text.length > 5) {
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text && text.trim().length > 5) {
         return text.trim();
       }
+    } else {
+      console.warn('Gemini API error:', res.status, await res.text());
     }
   } catch (e) {
-    console.warn('Live LLM fetch warning:', e);
+    console.warn('Gemini fetch warning:', e);
   }
 
   // Ultimate fallback
