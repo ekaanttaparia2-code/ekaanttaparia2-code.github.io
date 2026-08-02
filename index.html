@@ -101,6 +101,10 @@
       <span data-i18n="btn_google">Continue with Google</span>
     </button>
 
+    <button class="btn" style="width:100%;margin-top:10px;background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.15);color:var(--text-dim);display:flex;align-items:center;justify-content:center;gap:6px" onclick="showOnboarding(true)">
+      <span>🌟 View App Features & Intro</span>
+    </button>
+
     <p style="font-size:11.5px;color:var(--text-faint);margin-top:14px;text-align:center" data-i18n="auth_footer_note">Your data is stored securely in the cloud and synced across your devices.</p>
   </div>
   </div>
@@ -158,6 +162,7 @@
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
     <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
+    <button class="side-menu-item" onclick="closeMenu();showOnboarding(true)"><i class="ti ti-star"></i> <span>App Overview</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>

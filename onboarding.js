@@ -97,22 +97,30 @@ const onboardingSlides = [
         </div>
       </div>
     `,
-    btnText: { en: 'Get Started Now 🚀', hi: 'अभी शुरू करें 🚀' }
+    btnText: { en: 'Continue to Sign In 🚀', hi: 'आगे बढ़ें 🚀' }
   }
 ];
 
 let currentObIndex = 0;
 
-function initOnboarding() {
-  const isDone = localStorage.getItem(ONBOARDING_FLAG) === 'true';
+function showOnboarding(forceStart = false) {
   const container = document.getElementById('onboarding-screen');
   if (!container) return;
   
-  if (isDone) {
-    container.style.display = 'none';
-  } else {
-    container.style.display = 'flex';
-    renderObSlide();
+  if (forceStart) {
+    currentObIndex = 0;
+  }
+  
+  container.style.display = 'flex';
+  container.style.opacity = '1';
+  container.style.transform = 'scale(1)';
+  renderObSlide();
+}
+
+function initOnboarding() {
+  const isDone = localStorage.getItem(ONBOARDING_FLAG) === 'true';
+  if (!isDone) {
+    showOnboarding(true);
   }
 }
 
@@ -178,6 +186,10 @@ function finishOnboarding() {
     screen.style.transform = 'scale(0.95)';
     setTimeout(() => {
       screen.style.display = 'none';
+      // If user is not logged in, focus on auth screen
+      if (!window.currentUser && document.getElementById('auth-screen')) {
+        document.getElementById('auth-screen').style.display = 'flex';
+      }
     }, 250);
   }
 }
