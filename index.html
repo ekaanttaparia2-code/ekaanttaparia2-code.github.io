@@ -26,21 +26,23 @@
 </head>
 <body>
 <div id="onboarding-screen" style="display:none;">
-  <div class="ob-header-bar">
-    <span class="ob-step-tag" id="ob-step-indicator">Step 1 of 4</span>
-    <button class="ob-skip-btn" onclick="finishOnboarding()">Skip Intro</button>
-  </div>
-  <div class="ob-progress-track">
-    <div class="ob-progress-fill" id="ob-progress-bar-fill"></div>
-  </div>
-  <div id="ob-content" class="ob-content-card">
-    <div id="ob-preview-container"></div>
-    <h2 id="ob-title" style="font-family:'Space Grotesk',sans-serif;font-size:22px;margin:0 0 6px;color:#fff;font-weight:700;">Title</h2>
-    <p id="ob-desc" style="color:var(--text-dim);font-size:13.5px;margin:0 0 20px;line-height:1.4;">Desc</p>
-  </div>
-  <div class="ob-footer-controls">
-    <button id="ob-prev-btn" class="ob-btn-back" onclick="prevObSlide()" style="visibility:hidden">← Back</button>
-    <button id="ob-btn" onclick="nextObSlide()" class="ob-btn-next">Next →</button>
+  <div class="ob-main-wrapper">
+    <div class="ob-header-bar">
+      <span class="ob-step-tag" id="ob-step-indicator">Step 1 of 4</span>
+      <button class="ob-skip-btn" onclick="finishOnboarding()">Skip Intro</button>
+    </div>
+    <div class="ob-progress-track">
+      <div class="ob-progress-fill" id="ob-progress-bar-fill"></div>
+    </div>
+    <div id="ob-content" class="ob-content-card">
+      <div id="ob-preview-container"></div>
+      <h2 id="ob-title" style="font-family:'Space Grotesk',sans-serif;font-size:22px;margin:0 0 6px;color:#fff;font-weight:700;">Title</h2>
+      <p id="ob-desc" style="color:var(--text-dim);font-size:13.5px;margin:0 0 20px;line-height:1.4;">Desc</p>
+    </div>
+    <div class="ob-footer-controls">
+      <button id="ob-prev-btn" class="ob-btn-back" onclick="prevObSlide()" style="visibility:hidden">← Back</button>
+      <button id="ob-btn" onclick="nextObSlide()" class="ob-btn-next">Next →</button>
+    </div>
   </div>
 </div>
 
@@ -696,8 +698,12 @@
     <div id="ledger-people-list"></div>
   </div>
 
-  <div id="voice-fab" class="voice-fab" onclick="startVoiceRecognition()" style="display:none">
-    <i class="ti ti-microphone"></i>
+  <div id="voice-fab" class="voice-fab" onclick="startVoiceRecognition()" style="display:none" title="Voice Expense Log">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+      <line x1="12" y1="19" x2="12" y2="22"></line>
+    </svg>
   </div>
 
   <div id="voice-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;align-items:center;justify-content:center;padding:20px">

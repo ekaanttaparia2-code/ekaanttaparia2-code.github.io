@@ -12,8 +12,8 @@ const onboardingSlides = [
           <div class="ob-balance-label">TOTAL BALANCE</div>
           <div class="ob-balance-val">₹45,250<span class="ob-balance-decimal">.00</span></div>
           <div class="ob-pill-row">
-            <span class="ob-pill green">● Synced to Cloud</span>
-            <span class="ob-pill purple">PWA Offline Ready</span>
+            <span class="ob-pill green">● Cloud Synced</span>
+            <span class="ob-pill purple">Offline Mode Ready</span>
           </div>
         </div>
         <div class="ob-features-grid">

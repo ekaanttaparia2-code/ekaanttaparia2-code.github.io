@@ -457,7 +457,14 @@ footer{text-align:center;color:var(--text-faint);font-size:11.5px;margin-top:2re
   padding: 24px;
   overflow-y: auto;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+}
+.ob-main-wrapper {
+  width: 100%; max-width: 440px;
+  margin: auto;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
 }
 .ob-header-bar {
   width: 100%; max-width: 440px;
