@@ -7,10 +7,14 @@ Object.assign(TRANSLATIONS, {
   ledger_receive: { en: 'Received ₹', hi: '₹ मिले' },
   ledger_no_people: { en: 'No ledger contacts added yet.', hi: 'अभी तक कोई संपर्क नहीं जोड़ा गया है।' },
   ledger_person_name: { en: 'Contact Name (e.g. Rahul, Priya, Roommate)', hi: 'संपर्क नाम (जैसे राहुल, प्रिया)' },
-  btn_delete_person: { en: 'Delete Contact', hi: 'संपर्क हटाएं' }
 });
 
 let ledgerUnsubscribe = null;
+function closeModal() {
+  if (typeof closeAppModal === 'function') closeAppModal();
+  const backdrop = document.getElementById('app-modal-backdrop');
+  if (backdrop) backdrop.style.display = 'none';
+}
 let ledgerPeople = [];
 
 function listenToLedger() {
@@ -133,7 +137,7 @@ async function deleteLedgerPerson(personId) {
   showAppConfirm('Delete contact and all transaction history?', async () => {
     try {
       await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).delete();
-      closeModal();
+      closeAppModal();
       toast('Contact deleted', 'success');
     } catch(e) {
       toast('Error: ' + e.message, 'error');
@@ -214,7 +218,7 @@ async function addLedgerTx(personId, type) {
     await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).collection('transactions').add({
       amount, type, note, date: (typeof todayStr === 'function' ? todayStr() : new Date().toISOString().split('T')[0]), createdAt: Date.now()
     });
-    closeModal();
+    closeAppModal();
     toast('Entry saved!', 'success');
   } catch(e) {
     toast('Error: ' + e.message, 'error');
@@ -225,7 +229,7 @@ async function deleteLedgerTx(personId, txId) {
   if (!currentUser) return;
   try {
     await db.collection('users').doc(currentUser.uid).collection('ledger').doc(personId).collection('transactions').doc(txId).delete();
-    closeModal();
+    closeAppModal();
     toast('Entry deleted', 'success');
   } catch(e) {
     toast('Error: ' + e.message, 'error');
