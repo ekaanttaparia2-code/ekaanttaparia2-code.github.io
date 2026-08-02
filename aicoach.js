@@ -124,8 +124,8 @@ function renderAICoachTab() {
   } else {
     leaks.forEach(l => {
       const badgeStyle = l.isUnused 
-        ? 'background:rgba(248,113,113,0.15); color:var(--red); border:1px solid rgba(248,113,113,0.3);' 
-        : 'background:rgba(74,222,128,0.15); color:var(--green); border:1px solid rgba(74,222,128,0.3);';
+        ? 'background:rgba(248,113,113,0.15); color:var(--red,#f87171); border:1px solid rgba(248,113,113,0.3);' 
+        : 'background:rgba(74,222,128,0.15); color:var(--green,#4ade80); border:1px solid rgba(74,222,128,0.3);';
       const badgeText = l.isUnused ? '⚠️ Unused Leak' : '● Active';
 
       leaksHtml += `
@@ -138,7 +138,7 @@ function renderAICoachTab() {
             </div>
           </div>
           <div style="text-align:right">
-            <div style="font-weight:700; color:var(--red)">₹${l.amount}/mo</div>
+            <div style="font-weight:700; color:var(--red,#f87171)">₹${l.amount}/mo</div>
             <div style="font-size:11px; color:var(--text-dim)">₹${l.amount * 12}/yr</div>
           </div>
         </div>
@@ -161,7 +161,7 @@ function renderAICoachTab() {
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <h4 style="margin:0; font-size:16px;" class="sec-title"><i class="ti ti-alarm"></i> Subscription Leak Detector</h4>
         <div style="text-align:right">
-          <div style="font-size:13px; font-weight:700; color:var(--red);">Total: ₹${leaksTotalMo}/mo</div>
+          <div style="font-size:13px; font-weight:700; color:var(--red,#f87171);">Total: ₹${leaksTotalMo}/mo</div>
           ${unusedTotalMo > 0 ? `<div style="font-size:11px; color:#f87171; font-weight:600;">Save ₹${unusedTotalMo * 12}/yr if canceled</div>` : ''}
         </div>
       </div>

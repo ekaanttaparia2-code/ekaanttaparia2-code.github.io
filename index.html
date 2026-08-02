@@ -153,6 +153,7 @@
     <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
     <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
     <button class="side-menu-item" data-tab="ledger" onclick="setTab('ledger')"><i class="ti ti-notebook"></i> <span data-i18n="nav_ledger">Ledger</span></button>
+    <button class="side-menu-item" data-tab="aicoach" onclick="setTab('aicoach')"><i class="ti ti-robot"></i> <span data-i18n="nav_aicoach">AI Coach & Health</span> <span class="exp-badge" style="margin-left:auto;">🤖</span></button>
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
     <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
@@ -696,6 +697,10 @@
     <div id="ledger-people-list"></div>
   </div>
 
+  <div id="tab-aicoach" style="display:none" class="tab-content">
+    <div id="tab-aicoach-content"></div>
+  </div>
+
   <div id="voice-fab" class="voice-fab" onclick="startVoiceRecognition()" title="Voice Expense Log">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
@@ -725,5 +730,6 @@
 <script src="onboarding.js"></script>
 <script src="voice.js"></script>
 <script src="ledger.js"></script>
+<script src="aicoach.js"></script>
 </body>
 </html>
