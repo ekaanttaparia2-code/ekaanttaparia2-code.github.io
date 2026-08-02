@@ -55,29 +55,60 @@ function handleForgotPassword(){
 
 function signInWithGoogle(){
   const errEl=document.getElementById('auth-error');
-  errEl.style.display='none';
+  if (errEl) errEl.style.display='none';
   const btn=document.getElementById('auth-google-btn');
-  const originalHTML=btn.innerHTML;
-  btn.disabled=true;
-  btn.style.opacity='0.6';
-  btn.innerHTML='<span class="mini-spinner"></span>';
+  const originalHTML=btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled=true;
+    btn.style.opacity='0.6';
+    btn.innerHTML='<span>Logging in...</span>';
+  }
+  
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(err=>{
-    // Popups can be blocked on some in-app/APK browsers — fall back to redirect flow
-    if(err.code==='auth/popup-blocked' || err.code==='auth/cancelled-popup-request'){
+  provider.addScope('profile');
+  provider.addScope('email');
+
+  auth.signInWithPopup(provider).then(result => {
+    if (result && result.user) {
+      document.getElementById('auth-screen').style.display = 'none';
+      toast((typeof currentLang !== 'undefined' && currentLang === 'hi') ? 'गूगल से लॉगिन सफल!' : 'Signed in as ' + (result.user.displayName || 'Google User'), 'success');
+    }
+  }).catch(err => {
+    console.error('Google Auth Error:', err);
+    if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
       auth.signInWithRedirect(provider);
       return;
     }
-    if(err.code!=='auth/popup-closed-by-user'){
-      errEl.textContent=err.message;
-      errEl.style.display='block';
+    if (err.code === 'auth/unauthorized-domain' || err.code === 'auth/operation-not-supported-in-this-environment') {
+      if (errEl) {
+        errEl.textContent = (typeof currentLang !== 'undefined' && currentLang === 'hi') 
+          ? 'गूगल साइन-इन इस डोमेन पर चालू नहीं है। कृपया ईमेल-पासवर्ड से लॉगिन करें!'
+          : 'Google Sign-In needs an authorized domain or web server. Please use Email & Password sign in above!';
+        errEl.style.display = 'block';
+      }
+    } else if (err.code !== 'auth/popup-closed-by-user') {
+      if (errEl) {
+        errEl.textContent = err.message || 'Could not sign in with Google';
+        errEl.style.display = 'block';
+      }
     }
-  }).finally(()=>{
-    btn.disabled=false;
-    btn.style.opacity='1';
-    btn.innerHTML=originalHTML;
+  }).finally(() => {
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.innerHTML = originalHTML;
+    }
   });
 }
+
+// Handle Google Redirect Result on load if popups are blocked
+auth.getRedirectResult().then(result => {
+  if (result && result.user) {
+    document.getElementById('auth-screen').style.display = 'none';
+  }
+}).catch(err => {
+  console.error('Redirect Auth Error:', err);
+});
 
 function logOut(){
   showAppConfirm(currentLang==='hi'?'क्या आप लॉग आउट करना चाहते हैं?':'Log out?', ()=>{

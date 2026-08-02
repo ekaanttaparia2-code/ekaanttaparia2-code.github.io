@@ -97,7 +97,8 @@ const onboardingSlides = [
         </div>
       </div>
     `,
-    btnText: { en: 'Continue to Sign In 🚀', hi: 'आगे बढ़ें 🚀' }
+    btnText: { en: 'Continue to Sign In 🚀', hi: 'आगे बढ़ें 🚀' },
+    btnTextLoggedIn: { en: 'Close Showcase & Return to App 🚀', hi: 'शोकेस बंद करें और ऐप पर लौटें 🚀' }
   }
 ];
 
@@ -128,7 +129,8 @@ function renderObSlide() {
   const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
   const slide = onboardingSlides[currentObIndex];
   const total = onboardingSlides.length;
-  
+  const isUserLoggedIn = (window.currentUser || (window.firebase && firebase.auth() && firebase.auth().currentUser));
+
   const stepText = lang === 'hi' ? `चरण ${slide.step} का ${total}` : `Step ${slide.step} of ${total}`;
   const stepEl = document.getElementById('ob-step-indicator');
   if (stepEl) stepEl.textContent = stepText;
@@ -147,7 +149,13 @@ function renderObSlide() {
   if (descEl) descEl.textContent = slide.subtitle[lang] || slide.subtitle.en;
   
   const btnEl = document.getElementById('ob-btn');
-  if (btnEl) btnEl.textContent = slide.btnText[lang] || slide.btnText.en;
+  if (btnEl) {
+    if (slide.step === total && isUserLoggedIn && slide.btnTextLoggedIn) {
+      btnEl.textContent = slide.btnTextLoggedIn[lang] || slide.btnTextLoggedIn.en;
+    } else {
+      btnEl.textContent = slide.btnText[lang] || slide.btnText.en;
+    }
+  }
   
   const prevBtn = document.getElementById('ob-prev-btn');
   if (prevBtn) prevBtn.style.visibility = currentObIndex > 0 ? 'visible' : 'hidden';
@@ -181,12 +189,18 @@ function prevObSlide() {
 function finishOnboarding() {
   localStorage.setItem(ONBOARDING_FLAG, 'true');
   const screen = document.getElementById('onboarding-screen');
+  const isUserLoggedIn = (window.currentUser || (window.firebase && firebase.auth() && firebase.auth().currentUser));
+
   if (screen) {
     screen.style.opacity = '0';
     screen.style.transform = 'scale(0.95)';
     setTimeout(() => {
       screen.style.display = 'none';
-      if (!window.currentUser && document.getElementById('auth-screen')) {
+      if (isUserLoggedIn) {
+        // Logged in -> Return to App
+        document.getElementById('auth-screen').style.display = 'none';
+      } else {
+        // Not logged in -> Show Sign in screen
         document.getElementById('auth-screen').style.display = 'flex';
       }
     }, 250);
