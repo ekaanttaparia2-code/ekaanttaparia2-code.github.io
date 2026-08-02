@@ -125,7 +125,7 @@ function initOnboarding() {
 }
 
 function renderObSlide() {
-  const lang = (window.currentLang || 'en');
+  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
   const slide = onboardingSlides[currentObIndex];
   const total = onboardingSlides.length;
   
@@ -186,12 +186,41 @@ function finishOnboarding() {
     screen.style.transform = 'scale(0.95)';
     setTimeout(() => {
       screen.style.display = 'none';
-      // If user is not logged in, focus on auth screen
       if (!window.currentUser && document.getElementById('auth-screen')) {
         document.getElementById('auth-screen').style.display = 'flex';
       }
     }, 250);
   }
+}
+
+function renderOverviewTab() {
+  const container = document.getElementById('tab-overview-content');
+  if (!container) return;
+  const lang = (typeof currentLang !== 'undefined' ? currentLang : 'en');
+  
+  let html = `
+    <div class="card" style="background:linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15)); border-color:rgba(139, 92, 246, 0.35); text-align:center; padding:24px 20px; margin-bottom:20px;">
+      <div style="font-size:42px; margin-bottom:8px;">🌟</div>
+      <h2 class="sec-title" style="margin:0 0 6px; font-size:22px;"><i class="ti ti-star"></i> App Features & Overview</h2>
+      <p style="color:var(--text-dim); font-size:13.5px; margin:0 0 16px;">Everything you need to master your income, expenses, and savings</p>
+      <button class="btn primary" onclick="showOnboarding(true)"><i class="ti ti-player-play"></i> Replay Intro Slideshow</button>
+    </div>
+  `;
+  
+  onboardingSlides.forEach((slide) => {
+    html += `
+      <div class="card" style="margin-bottom:18px; padding:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+          <span style="background:var(--accent); color:#fff; font-weight:700; font-size:12px; padding:2px 10px; border-radius:12px;">Feature ${slide.step}</span>
+          <h3 style="margin:0; font-size:17px; font-family:'Space Grotesk',sans-serif;">${slide.title[lang] || slide.title.en}</h3>
+        </div>
+        <p style="color:var(--text-dim); font-size:13.5px; margin:0 0 16px; line-height:1.4;">${slide.subtitle[lang] || slide.subtitle.en}</p>
+        ${slide.previewHtml}
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
 }
 
 document.addEventListener('DOMContentLoaded', initOnboarding);

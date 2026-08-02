@@ -162,7 +162,7 @@
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
     <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="language" onclick="setTab('language')"><i class="ti ti-language"></i> <span data-i18n="nav_language">Language</span></button>
-    <button class="side-menu-item" onclick="closeMenu();showOnboarding(true)"><i class="ti ti-star"></i> <span>App Overview</span></button>
+    <button class="side-menu-item" data-tab="overview" onclick="setTab('overview')"><i class="ti ti-star"></i> <span data-i18n="nav_overview">App Overview</span></button>
     <div style="border-top:1px solid var(--border);margin:8px 4px 8px;margin-top:auto"></div>
     <button class="side-menu-item" onclick="logOut()" style="color:var(--red)">🚪 <span data-i18n="nav_logout">Log out</span></button>
   </div>
@@ -701,6 +701,10 @@
       </div>
     </div>
     <div id="ledger-people-list"></div>
+  </div>
+
+  <div id="tab-overview" style="display:none" class="tab-content">
+    <div id="tab-overview-content"></div>
   </div>
 
   <div id="voice-fab" class="voice-fab" onclick="startVoiceRecognition()" style="display:none" title="Voice Expense Log">
