@@ -141,6 +141,20 @@ async function deleteLedgerPerson(personId) {
   });
 }
 
+function showLedgerHtmlModal(contentHtml) {
+  const titleEl = document.getElementById('app-modal-title');
+  const msgEl = document.getElementById('app-modal-message');
+  const btnEl = document.getElementById('app-modal-buttons');
+  const backdrop = document.getElementById('app-modal-backdrop');
+
+  if (titleEl && msgEl && backdrop) {
+    titleEl.textContent = 'Ledger Details';
+    msgEl.innerHTML = contentHtml;
+    if (btnEl) btnEl.innerHTML = `<button class="btn" style="flex:1" onclick="closeAppModal()">Close</button>`;
+    backdrop.style.display = 'flex';
+  }
+}
+
 function showPersonDetail(personId) {
   const person = ledgerPeople.find(p => p._id === personId);
   if (!person) return;
@@ -182,7 +196,7 @@ function showPersonDetail(personId) {
       <button class="btn" style="background:rgba(255,107,107,0.15); color:var(--red); border-color:rgba(255,107,107,0.3);" onclick="deleteLedgerPerson('${personId}')"><i class="ti ti-trash"></i> ${TT('btn_delete_person')}</button>
     </div>
   `;
-  showAppAlert(content);
+  showLedgerHtmlModal(content);
 }
 
 async function addLedgerTx(personId, type) {
