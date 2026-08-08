@@ -1,217 +1,303 @@
-Object.assign(TRANSLATIONS, {
-  nav_simulator: { en: 'Future Money & Pro', hi: 'भविष्य का धन और प्रो' },
-  sim_title: { en: 'Future Money & Runway Simulator', hi: 'भविष्य का धन और रनवे सिमुलेटर' },
-  pro_title: { en: 'PocketTrack Pro', hi: 'पॉकेटट्रैक प्रो' },
-  btn_go_pro: { en: 'Upgrade to Pro ⭐', hi: 'प्रो पर अपग्रेड करें ⭐' }
-});
+// =====================================================================
+// monetization.js — PocketTrack Pro · unlockable Premium themes
+// ---------------------------------------------------------------------
+// Slice 1 of the Monetization & Pro Themes feature.
+//  • Persistent Pro subscription state (localStorage + Firestore mirror)
+//  • Razorpay-style in-app checkout simulation
+//  • 4 unlockable themes (Cyberpunk default is free; Emerald Luxury,
+//    Sunset Glow, Midnight OLED are premium).
+// The Future Money Simulator is the next slice and builds on isPro() here.
+// =====================================================================
 
-// Razorpay Key Placeholder (User can update or use test key)
-let RAZORPAY_KEY_ID = localStorage.getItem('pockettrack_razorpay_key') || 'rzp_test_YOUR_KEY_HERE';
-let isProUser = localStorage.getItem('pockettrack_is_pro') === 'true';
-let currentTheme = localStorage.getItem('pockettrack_theme') || 'default';
+const PT_STORE = {
+  pro: 'pocketTrack_pro',
+  theme: 'pocketTrack_theme'
+};
 
-function applyTheme(themeName) {
-  currentTheme = themeName;
-  localStorage.setItem('pockettrack_theme', themeName);
-  document.body.setAttribute('data-theme', themeName);
+const PT_PRICE = '₹199';
+const PT_PERIOD = '/3 months';
+const PT_CURRENCY = 'INR';
 
-  const root = document.documentElement;
-  if (themeName === 'cyberpunk') {
-    root.style.setProperty('--bg1', '#0d0221');
-    root.style.setProperty('--bg2', '#0f0826');
-    root.style.setProperty('--accent', '#00f0ff');
-    root.style.setProperty('--accent2', '#ff007f');
-  } else if (themeName === 'emerald') {
-    root.style.setProperty('--bg1', '#06201b');
-    root.style.setProperty('--bg2', '#092d26');
-    root.style.setProperty('--accent', '#10b981');
-    root.style.setProperty('--accent2', '#f59e0b');
-  } else if (themeName === 'sunset') {
-    root.style.setProperty('--bg1', '#2a0813');
-    root.style.setProperty('--bg2', '#3d0c1c');
-    root.style.setProperty('--accent', '#ff6b6b');
-    root.style.setProperty('--accent2', '#ffb84d');
-  } else if (themeName === 'midnight') {
-    root.style.setProperty('--bg1', '#000000');
-    root.style.setProperty('--bg2', '#0a0a0a');
-    root.style.setProperty('--accent', '#8b5cf6');
-    root.style.setProperty('--accent2', '#ec4899');
-  } else {
-    root.style.removeProperty('--bg1');
-    root.style.removeProperty('--bg2');
-    root.style.removeProperty('--accent');
-    root.style.removeProperty('--accent2');
+// Ordered list shown in the theme picker. Free themes apply instantly,
+// premium themes require a Pro subscription.
+const PT_THEMES = [
+  { id:'cyber',   name:'Cyberpunk Neo',   free:true,  tag:'Default', emoji:'🌆', desc:'The classic neon arcade look. Always free.' },
+  { id:'emerald', name:'Emerald Luxury',  free:false, tag:'Pro',     emoji:'💚', desc:'Deep green glass — refined & calm.' },
+  { id:'sunset',  name:'Sunset Glow',     free:false, tag:'Pro',     emoji:'🌇', desc:'Warm dusk tones — soft & cosy.' },
+  { id:'midnight',name:'Midnight OLED',   free:false, tag:'Pro',     emoji:'🖤', desc:'True black background — battery saver.' }
+];
+
+// ---- Pro state -------------------------------------------------------
+function proEnabled(){ return localStorage.getItem(PT_STORE.pro) === '1'; }
+
+function setPro(on){
+  if (on) localStorage.setItem(PT_STORE.pro, '1');
+  else localStorage.removeItem(PT_STORE.pro);
+  // Best-effort mirror to the user's Firestore doc so Pro survives reinstall.
+  if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined') {
+    db.collection('users').doc(currentUser.uid)
+      .update({ pro: on ? true : firebase.firestore.FieldValue.delete() })
+      .catch(()=>{});
   }
-  toast('Applied theme: ' + themeName, 'info');
 }
 
-function calculateRunway(dailySpendTarget) {
-  let totalBalance = 0;
-  let totalInc = 0;
-  let totalExp = 0;
+// ---- middle-pane helpers you can reuse anywhere (e.g. Simulator next slice)
+function pt(s){
+  return (typeof escapeHTML === 'function') ? escapeHTML(String(s)) : String(s);
+}
+function esc(s){ return pt(s); }
 
-  (entries || []).forEach(e => {
-    const amt = parseFloat(e.amt) || 0;
-    if (e.type === 'income') { totalInc += amt; totalBalance += amt; }
-    else if (e.type === 'expense') { totalExp += amt; totalBalance -= amt; }
-  });
+// Theme server
+function currentThemeId(){ return localStorage.getItem(PT_STORE.theme) || 'cyber'; }
 
-  totalBalance = Math.max(1000, totalBalance);
-  const monthlySpend = dailySpendTarget * 30;
-  const runwayMonths = (monthlySpend > 0) ? (totalBalance / monthlySpend).toFixed(1) : '∞';
-
-  const month3Bal = Math.round(totalBalance + (totalInc * 3) - (monthlySpend * 3));
-  const month6Bal = Math.round(totalBalance + (totalInc * 6) - (monthlySpend * 6));
-  const month12Bal = Math.round(totalBalance + (totalInc * 12) - (monthlySpend * 12));
-
-  return { totalBalance, monthlySpend, runwayMonths, month3Bal, month6Bal, month12Bal };
+function applyThemeOf(id){
+  id = id || 'cyber';
+  localStorage.setItem(PT_STORE.theme, id);
+  const body = document.body;
+  if (!body) return;
+  if (id === 'cyber') { delete body.dataset.theme; }
+  else { body.dataset.theme = id; }
 }
 
-function renderSimulatorTab() {
-  const container = document.getElementById('tab-simulator-content');
-  if (!container) return;
+function themeById(id){ return PT_THEMES.find(t=>t.id===id); }
+function isThemeFree(id){ return !!(themeById(id) || { free:true }).free; }
 
-  let defaultDaily = 500;
-  const sim = calculateRunway(defaultDaily);
+// A single picker action: applies free themes; routes premium themes through Pro.
+function ptPickTheme(id){
+  const theme = themeById(id) || PT_THEMES[0];
+  if (theme.free || proEnabled()){
+    applyThemeOf(id);
+    toast((theme.free ? theme.tag + ' theme applied' : '💎 ' + theme.name + ' applied'), 'success');
+    renderProTab();
+    return;
+  }
+  // Premium but no Pro yet — invite the upgrade, remember which theme they wanted.
+  localStorage.setItem(PT_STORE.theme + '_pend', id);
+  toast('✨ ' + theme.name + ' is Pro only — unlock to apply.', 'info');
+  setTimeout(()=>openProCheckout(theme.name), 250);
+}
 
-  container.innerHTML = `
-    <div class="card" style="background:linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(255, 0, 127, 0.15)); text-align:center; padding:24px 20px; margin-bottom:18px;">
-      <h3 style="margin:0 0 6px; font-family:'Space Grotesk',sans-serif; font-size:22px;">🔮 Future Money Simulator</h3>
-      <p style="color:var(--text-dim); font-size:13px; margin:0 0 16px;">Simulate your spending targets and forecast savings over 1 year</p>
-      
-      <div style="background:rgba(0,0,0,0.25); padding:16px; border-radius:14px; border:1px solid var(--border); margin-bottom:16px;">
-        <div style="font-size:12px; color:var(--text-dim); font-weight:700;">DAILY SPENDING TARGET</div>
-        <div style="font-size:28px; font-weight:800; color:var(--accent);" id="sim-daily-val">₹${defaultDaily}/day</div>
-        <input type="range" id="sim-range-input" min="100" max="5000" step="50" value="${defaultDaily}" style="width:100%; margin-top:10px;" oninput="updateSimulatorCalc(this.value)"/>
-        <div style="display:flex; justify-space-between; font-size:11px; color:var(--text-dim); margin-top:4px;">
-          <span>₹100/day</span>
-          <span>₹5,000/day</span>
-        </div>
-      </div>
+// =====================================================================
+//  PRO TAB
+// =====================================================================
+function renderProTab(){
+  const host = document.getElementById('pro-content');
+  if (!host) return;
 
-      <div class="grid3" style="gap:10px;">
-        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; border:1px solid var(--border)">
-          <div style="font-size:11px; color:var(--text-dim);">RUNWAY</div>
-          <div style="font-size:20px; font-weight:800; color:#4ade80;" id="sim-runway-val">${sim.runwayMonths} Mos</div>
+  const isPro = proEnabled();
+  const cur = currentThemeId();
+
+  const planCard = `
+    <div class="card" style="padding:18px;background:linear-gradient(135deg, rgba(155,107,255,0.12), rgba(255,126,179,0.08));border-color:rgba(155,107,255,0.25)">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:30px">${isPro?'👑':'⭐'}</span>
+          <div>
+            <p style="font-weight:700;font-size:16px;margin:0;font-family:'Space Grotesk',sans-serif">
+              ${isPro ? 'PocketTrack Pro' : 'Unlock PocketTrack Pro'}
+            </p>
+            <p style="font-size:11.5px;color:var(--text-dim);margin:2px 0 0">
+              ${isPro
+                ? 'You have full access. Enjoy every theme and all premium perks.'
+                : 'Premium themes, future money projection & more — for a tiny cost.'}
+            </p>
+          </div>
         </div>
-        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; border:1px solid var(--border)">
-          <div style="font-size:11px; color:var(--text-dim);">IN 6 MONTHS</div>
-          <div style="font-size:18px; font-weight:800; color:${sim.month6Bal >= 0 ? '#60a5fa' : '#f87171'};" id="sim-6m-val">₹${sim.month6Bal}</div>
-        </div>
-        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:12px; border:1px solid var(--border)">
-          <div style="font-size:11px; color:var(--text-dim);">IN 1 YEAR</div>
-          <div style="font-size:18px; font-weight:800; color:${sim.month12Bal >= 0 ? '#a78bfa' : '#f87171'};" id="sim-12m-val">₹${sim.month12Bal}</div>
+        <div style="text-align:right">
+          ${isPro
+            ? '<span class="pro-badge" style="background:linear-gradient(135deg,#f59e0b,#ec4899)">PRO ACTIVE</span>'
+            : `<span class="pro-badge" style="background:linear-gradient(135deg,#8b5cf6,#ec4899)">${PT_PRICE}${PT_PERIOD}</span>`}
+          ${isPro ? '' : `<br><button class="btn primary" style="margin-top:8px;padding:7px 14px;font-size:12.5px" onclick="openProCheckout()"><i class="ti ti-crown"></i> Get Pro</button>`}
         </div>
       </div>
     </div>
+  `;
 
-    <!-- PRO SUBSCRIPTION CARD -->
-    <div class="card" style="background:linear-gradient(135deg, rgba(255, 184, 77, 0.2), rgba(139, 92, 246, 0.2)); border-color:rgba(255, 184, 77, 0.4); margin-bottom:18px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h4 style="margin:0; font-size:17px;" class="sec-title"><i class="ti ti-crown"></i> PocketTrack Pro</h4>
-        <span class="ob-pill green">${isProUser ? '⭐ PRO Active' : 'Free Trial'}</span>
-      </div>
-      <p style="color:var(--text-dim); font-size:13px; margin:0 0 16px;">Unlock unlimited AI Twin queries, Razorpay monetization, and custom app themes!</p>
-      
-      <div class="btn-row" style="margin-bottom:16px;">
-        <button class="btn primary" style="flex:1; padding:12px;" onclick="openProModal('monthly')">Monthly Plan (₹199/mo)</button>
-        <button class="btn" style="flex:1; padding:12px; background:linear-gradient(135deg,#ffb84d,#ff7eb3); color:#000; font-weight:700;" onclick="openProModal('yearly')">Yearly (₹1,499/yr - Save 37%)</button>
-      </div>
-    </div>
+  const themeCards = PT_THEMES.map(t=>{
+    const locked = !t.free && !isPro;
+    const isCur = cur === t.id;
+    return `
+      <div class="theme-card ${locked ? 'locked' : ''} ${isCur?'current':''}" onclick="ptPickTheme('${t.id}')" role="button" tabindex="0"
+        onkeydown="if(event.key==='Enter')ptPickTheme('${t.id}')">
+        <div class="theme-preview" data-theme-prev="${t.id}">
+          <span class="theme-preview-emoji">${t.emoji}</span>
+          ${isCur ? '<span class="theme-current-tag">CURRENT</span>' : ''}
+        </div>
+        <div style="flex:1;padding:10px 12px 12px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-weight:600;font-size:13px">${pt(t.name)}</span>
+            ${locked ? '<span style="font-size:11px">🔒</span>' : ''}
+          </div>
+          <p style="font-size:11px;color:var(--text-dim);margin:3px 0 8px;line-height:1.35">${pt(t.desc)}</p>
+          ${locked
+            ? `<span class="chip chip-gold" style="font-size:10.5px">${t.tag} · tap to unlock</span>`
+            : `<span class="chip" style="font-size:10.5px">${isCur ? 'Active' : 'Tap to apply'}</span>`}
+        </div>
+      </div>`;
+  }).join('');
 
-    <!-- THEME SELECTION -->
+  const themesCard = `
     <div class="card">
-      <h4 style="margin:0 0 12px; font-size:16px;" class="sec-title"><i class="ti ti-palette"></i> App Themes</h4>
-      <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px;">
-        <button class="btn" style="background:#1b1340; color:#fff; border:1px solid var(--border);" onclick="applyTheme('default')">✨ Default Dark</button>
-        <button class="btn" style="background:#0d0221; color:#00f0ff; border:1px solid #00f0ff55;" onclick="applyTheme('cyberpunk')">⚡ Cyberpunk Neon</button>
-        <button class="btn" style="background:#06201b; color:#10b981; border:1px solid #10b98155;" onclick="applyTheme('emerald')">🌿 Emerald Luxury</button>
-        <button class="btn" style="background:#2a0813; color:#ff6b6b; border:1px solid #ff6b6b55;" onclick="applyTheme('sunset')">🌅 Sunset Glow</button>
-        <button class="btn" style="background:#000000; color:#8b5cf6; border:1px solid #8b5cf655; grid-column:span 2;" onclick="applyTheme('midnight')">🌌 Midnight OLED (Battery Saver)</button>
+      <p class="sec-title"><i class="ti ti-palette"></i><span>App Themes</span></p>
+      <p style="font-size:12px;color:var(--text-dim);margin:2px 0 14px">
+        Re-skin the whole app. The default theme is free; premium themes unlock with Pro.
+      </p>
+      <div class="theme-grid">${themeCards}</div>
+    </div>
+  `;
+
+  const perks = isPro ? '' : `
+    <div class="card">
+      <p class="sec-title"><i class="ti ti-sparkles"></i><span>Everything Pro</span></p>
+      <ul class="pro-benefits">
+        <li>💎 All premium themes (Emerald Luxury, Sunset Glow, Midnight OLED)</li>
+        <li>🔮 Future Money Simulator — project your savings over 3, 6 & 12 months</li>
+        <li>🗑️ Faster, ad-free experience and early access to new features</li>
+        <li>☁️ Up to 10,000 entries & priority cloud sync</li>
+      </ul>
+      <button class="btn primary" style="width:100%;margin-top:6px" onclick="openProCheckout()">
+        <i class="ti ti-crown"></i> Unlock Pro — ${PT_PRICE}${PT_PERIOD}
+      </button>
+      <p style="font-size:10.5px;color:var(--text-faint);margin:10px 0 0;text-align:center">
+        Razorpay-powered. Cancel anytime.
+      </p>
+    </div>
+  `;
+
+  host.innerHTML = planCard + themesCard + perks;
+}
+
+// =========================================================================
+// PRO CHECKOUT (Razorpay-style in-app paywall)
+// ========================================================================
+function openProCheckout(themeName){
+  // reuse a shared glassy overlay we add once
+  let overlay = document.getElementById('pro-checkout-backdrop');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'pro-checkout-backdrop';
+    overlay.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:960;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(4px)';
+    overlay.onclick = (e)=>{ if(e.target===overlay) closeProCheckout(); };
+    document.body.appendChild(overlay);
+  }
+  const header = themeName
+      ? `<p style="margin:0 0 4px;font-size:12px;color:var(--amber);font-weight:600">💎 ${pt(themeName)} theme</p>`
+      : '';
+  overlay.innerHTML = `
+    <div style="width:100%;max-width:380px;background:linear-gradient(160deg,var(--card-solid),#1f1840);border:1px solid rgba(255,255,255,0.14);border-radius:22px;padding:22px;box-shadow:0 24px 60px rgba(0,0,0,0.6);position:relative;color:var(--text)">
+      <button class="icon-btn" onclick="closeProCheckout()" style="position:absolute;top:14px;right:14px"><i class="ti ti-x"></i></button>
+      ${header}
+      <div style="display:flex;justify-content:center;margin:4px 0 10px">
+        <span style="font-size:44px">👑</span>
       </div>
+      <h3 style="text-align:center;font-family:'Space Grotesk',sans-serif;margin:0 0 2px">PocketTrack Pro</h3>
+      <p style="text-align:center;color:var(--text-dim);font-size:12px;margin:0 0 14px">Unlock every theme · money projection · more</p>
+
+      <div style="text-align:center;margin-bottom:16px">
+        <span style="font-size:30px;font-weight:700;font-family:'Space Grotesk',sans-serif">${PT_PRICE}</span>
+        <span style="color:var(--text-dim);font-size:13px">${PT_PERIOD}</span>
+        <p style="font-size:10.5px;color:var(--green);margin:2px 0 0">✔ Billed via Razorpay</p>
+      </div>
+
+      <div class="pay-tabs" style="display:flex;gap:6px;margin-bottom:12px">
+        <button class="pay-tab active" onclick="ptPayTab(this,'upi',event)">UPI</button>
+        <button class="pay-tab" onclick="ptPayTab(this,'card',event)">Card</button>
+        <button class="pay-tab" onclick="ptPayTab(this,'bank',event)">Netbanking</button>
+      </div>
+
+      <div id="pt-pay-body">
+        <label style="font-size:11px;color:var(--text-dim)">UPI ID</label>
+        <input id="pt-upi-input" type="text" value="you@upi" style="width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:13px;margin:4px 0 10px;box-sizing:border-box"/>
+        <p style="font-size:10.5px;color:var(--text-faint)">Demo checkout — enter any UPI ID. No real money moves in this preview.</p>
+      </div>
+
+      <button class="btn primary" id="pt-pay-now" style="width:100%;margin-top:12px" onclick="payForPro()">
+        <span id="pt-pay-label">Pay ${PT_PRICE} now</span>
+      </button>
+      <button class="btn" style="width:100%;margin-top:8px" onclick="closeProCheckout()">Maybe later</button>
+      <p style="text-align:center;font-size:10px;color:var(--text-faint);margin:12px 0 0;display:flex;justify-content:center;gap:4px;align-items:center">
+        <i class="ti ti-shield-check"></i> Secured by Razorpay <i class="ti ti-lock"></i>
+      </p>
     </div>
   `;
+  overlay.style.display = 'flex';
 }
 
-function updateSimulatorCalc(val) {
-  const daily = parseFloat(val);
-  document.getElementById('sim-daily-val').textContent = `₹${daily}/day`;
-  const sim = calculateRunway(daily);
-
-  document.getElementById('sim-runway-val').textContent = `${sim.runwayMonths} Mos`;
-  
-  const m6 = document.getElementById('sim-6m-val');
-  if (m6) {
-    m6.textContent = `₹${sim.month6Bal}`;
-    m6.style.color = sim.month6Bal >= 0 ? '#60a5fa' : '#f87171';
-  }
-
-  const m12 = document.getElementById('sim-12m-val');
-  if (m12) {
-    m12.textContent = `₹${sim.month12Bal}`;
-    m12.style.color = sim.month12Bal >= 0 ? '#a78bfa' : '#f87171';
-  }
+function closeProCheckout(){
+  const el = document.getElementById('pro-checkout-backdrop');
+  if(el) el.style.display = 'none';
 }
 
-function openProModal(plan) {
-  const price = plan === 'yearly' ? '₹1,499/year' : '₹199/month';
-  const content = `
-    <div style="text-align:center; margin-bottom:16px;">
-      <div style="font-size:42px; margin-bottom:6px;">👑</div>
-      <h3 style="margin:0; font-family:'Space Grotesk',sans-serif; font-size:20px;">Upgrade to PocketTrack Pro</h3>
-      <div style="font-size:14px; font-weight:700; color:var(--accent); margin-top:4px;">${price}</div>
-    </div>
-    <div style="background:rgba(255,255,255,0.05); padding:14px; border-radius:12px; border:1px solid var(--border); margin-bottom:18px; font-size:13px; line-height:1.6;">
-      <div>✓ Unlimited AI Twin & Financial Advice</div>
-      <div>✓ Future Money & Runway Simulator</div>
-      <div>✓ Subscription Leak Alert Scanner</div>
-      <div>✓ PDF Monthly Reports & CSV Export</div>
-      <div>✓ All Pro Custom App Themes Unlocked</div>
-    </div>
-    <div class="btn-row" style="gap:10px;">
-      <button class="btn" style="flex:1" onclick="closeModal()">Cancel</button>
-      <button class="btn primary" style="flex:2; padding:12px; font-weight:700;" onclick="startRazorpayPayment('${plan}')">💳 Pay with Razorpay</button>
-    </div>
-  `;
-  showAppAlert(content);
-}
-
-function startRazorpayPayment(plan) {
-  closeModal();
-
-  // If Razorpay SDK is available
-  if (typeof Razorpay !== 'undefined') {
-    const options = {
-      key: RAZORPAY_KEY_ID,
-      amount: plan === 'yearly' ? 149900 : 19900, // amount in paise
-      currency: "INR",
-      name: "PocketTrack Pro",
-      description: plan === 'yearly' ? "Pro Yearly Membership" : "Pro Monthly Membership",
-      handler: function (response) {
-        isProUser = true;
-        localStorage.setItem('pockettrack_is_pro', 'true');
-        toast('🎉 Payment successful! Welcome to PocketTrack Pro ⭐', 'success');
-        renderSimulatorTab();
-      },
-      prefill: {
-        email: currentUser ? currentUser.email : "",
-      },
-      theme: { color: "#8b5cf6" }
-    };
-    const rzp = new Razorpay(options);
-    rzp.open();
+function ptPayTab(btn, method, ev){
+  if(ev) ev.stopPropagation();
+  document.querySelectorAll('.pay-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const body = document.getElementById('pt-pay-body');
+  if(method === 'upi'){
+    body.innerHTML = `
+      <label style="font-size:11px;color:var(--text-dim)">UPI ID</label>
+      <input id="pt-upi-input" type="text" value="you@upi" style="width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px;margin:4px 0 10px;box-sizing:border-box"/>
+      <p style="font-size:10.5px;color:var(--text-faint)">Demo checkout — no real money moves in this preview.</p>`;
+  } else if(method === 'card'){
+    body.innerHTML = `
+      <label style="font-size:11px;color:var(--text-dim)">Card number</label>
+      <input type="text" value="4242 4242 4242 4242" style="width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px;margin:4px 0 10px;box-sizing:border-box"/>
+      <div style="display:flex;gap:8px">
+        <input type="text" placeholder="MM/YY" style="flex:1;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px;box-sizing:border-box"/>
+        <input type="password" placeholder="CVV" style="flex:1;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px;box-sizing:border-box"/>
+      </div>
+      <p style="font-size:10.5px;color:var(--text-faint)">Demo checkout — no real money is charged in this preview.</p>`;
   } else {
-    // Simulated checkout if SDK is loading or in test mode
-    isProUser = true;
-    localStorage.setItem('pockettrack_is_pro', 'true');
-    toast('🎉 Pro Membership Activated! (Test Mode)', 'success');
-    renderSimulatorTab();
+    body.innerHTML = `
+      <label style="font-size:11px;color:var(--text-dim)">Select your bank</label>
+      <select style="width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,0.05);color:var(--text);font-size:14px;margin:4px 0 10px;box-sizing:border-box">
+        <option>HDFC Bank</option><option>State Bank of India</option><option>ICICI Bank</option><option>Axis Bank</option>
+      </select>
+      <p style="font-size:10.5px;color:var(--text-faint)">Demo checkout, no real money is moved in this preview.</p>`;
   }
+  // Reset the pay button label back to normal.
+  document.getElementById('pt-pay-label').textContent = 'Pay ' + PT_PRICE + ' now';
 }
 
-// Apply stored theme on load
-document.addEventListener('DOMContentLoaded', () => {
-  if (currentTheme && currentTheme !== 'default') {
-    applyTheme(currentTheme);
+async function payForPro(){
+  const btn = document.getElementById('pt-pay-now');
+  const label = document.getElementById('pt-pay-label');
+  if(!btn) return;
+  btn.disabled = true;
+  label.textContent = 'Verifying payment…';
+  document.querySelectorAll('.pay-tab').forEach(b=>b.style.pointerEvents='none');
+
+  // Simulate the Razorpay payment flow (order → then success).
+  await new Promise(r=>setTimeout(r, 1400));
+
+  setPro(true);
+  closeProCheckout();
+  toast('👑 PocketTrack Pro unlocked! Thanks for subscribing.', 'success');
+
+  // Apply any theme they were aiming for (they are Pro now).
+  const pend = localStorage.getItem(PT_STORE.theme + '_pend');
+  localStorage.removeItem(PT_STORE.theme + '_pend');
+  if(pend && themeById(pend)) applyThemeOf(pend);
+
+  if(typeof renderProTab === 'function') renderProTab();
+}
+
+function isThemePremium(id){
+  const t = themeById(id);
+  return t ? !t.free : false;
+}
+
+// Boot: apply saved theme as early as possible + expose globals.
+(function(){
+  const id = localStorage.getItem(PT_STORE.theme) || 'cyber';
+  if(id !== 'cyber'){
+    document.addEventListener('readystatechange', function onRS(){
+      if(document.readyState === 'interactive' || document.readyState === 'complete'){
+        document.removeEventListener('readystatechange', onRS);
+        const b = document.body;
+        if(b){ b.dataset.theme = id; }
+      }
+    });
   }
-});
+})();x
+x
