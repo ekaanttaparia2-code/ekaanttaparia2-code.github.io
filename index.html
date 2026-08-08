@@ -44,7 +44,7 @@
   </div>
 </div>
 
-<div id="toast-container" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
+<div id="toast-container" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none"></div>
 
 <div id="app-modal-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:900;align-items:center;justify-content:center;padding:20px">
   <div id="app-modal-box" style="width:100%;max-width:340px;background:var(--card-solid,#1f1840);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
@@ -148,12 +148,7 @@
       <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px" data-i18n="menu_title">Menu</span>
       <button class="icon-btn" onclick="closeMenu()" style="margin-left:auto"><i class="ti ti-x"></i></button>
     </div>
-    <button class="side-menu-item active" data-tab="log" onclick="setTab('log')"><i class="ti ti-plus"></i> <span data-i18n="nav_log">Log</span></button>
-    <button class="side-menu-item" data-tab="entries" onclick="setTab('entries')"><i class="ti ti-list"></i> <span data-i18n="nav_entries">Entries</span></button>
-    <button class="side-menu-item" data-tab="report" onclick="setTab('report')"><i class="ti ti-chart-bar"></i> <span data-i18n="nav_report">Report</span></button>
     <button class="side-menu-item" data-tab="events" onclick="setTab('events')"><i class="ti ti-confetti"></i> <span data-i18n="nav_events">Events</span></button>
-    <button class="side-menu-item" data-tab="ledger" onclick="setTab('ledger')"><i class="ti ti-notebook"></i> <span data-i18n="nav_ledger">Ledger</span></button>
-    <button class="side-menu-item" data-tab="aicoach" onclick="setTab('aicoach')"><i class="ti ti-robot"></i> <span data-i18n="nav_aicoach">AI Coach & Health</span> <span class="exp-badge" style="margin-left:auto;">🤖</span></button>
     <button class="side-menu-item" data-tab="rewards" onclick="setTab('rewards')"><i class="ti ti-trophy"></i> <span data-i18n="nav_rewards">Rewards</span></button>
     <button class="side-menu-item" data-tab="upi" onclick="setTab('upi')"><i class="ti ti-clipboard"></i> <span data-i18n="sec_smart_logger">Smart Logger</span> <span class="exp-badge" style="margin-left:auto">⚡</span></button>
     <button class="side-menu-item" data-tab="pro" onclick="setTab('pro')"><i class="ti ti-crown"></i> <span data-i18n="nav_pro">Pro & Themes</span> <span class="exp-badge" style="margin-left:auto;">✨</span></button>
@@ -217,7 +212,7 @@
         <input type="text" id="inc-custom" placeholder="e.g. Tuition income" maxlength="40"/>
       </div>
       <p id="inc-manage-link" style="display:none;font-size:12px;margin:2px 0 10px"><a href="#" onclick="openManageOptions('income');return false;" style="color:var(--accent);text-decoration:none" data-i18n="lnk_manage_sources">Manage your custom sources</a></p>
-      <label data-i18n="lbl_note">Note</label>
+      <label data-i18n="lbl_note">Note (optional)</label>
       <input type="text" id="inc-note" placeholder="e.g. Monthly allowance" maxlength="60" data-i18n-ph="ph_inc_note"/>
       <div class="btn-row">
         <button class="btn primary" id="add-income-btn" onclick="addIncome()"><i class="ti ti-plus"></i> <span id="inc-btn-label" data-i18n="btn_add_income">Add income</span></button>
@@ -251,7 +246,7 @@
         <input type="text" id="exp-custom" placeholder="e.g. Medical, Repairs" maxlength="40"/>
       </div>
       <p id="exp-manage-link" style="display:none;font-size:12px;margin:2px 0 10px"><a href="#" onclick="openManageOptions('expense');return false;" style="color:var(--accent);text-decoration:none" data-i18n="lnk_manage_categories">Manage your custom categories</a></p>
-      <label data-i18n="lbl_desc">Description</label>
+      <label data-i18n="lbl_desc">Description (optional)</label>
       <input type="text" id="exp-desc" placeholder="e.g. Samosa at school, Auto to market..." maxlength="60" data-i18n-ph="ph_exp_desc"/>
       <div class="btn-row">
         <button class="btn primary" id="add-expense-btn" onclick="addExpense()"><i class="ti ti-plus"></i> <span id="exp-btn-label" data-i18n="btn_add_expense">Add expense</span></button>
@@ -490,7 +485,7 @@
           <label data-i18n="lbl_custom_source">New source name</label>
           <input type="text" id="ev-inc-custom" placeholder="e.g. Envelope gift" maxlength="40"/>
         </div>
-        <label data-i18n="lbl_note">Note</label>
+        <label data-i18n="lbl_note">Note (optional)</label>
         <input type="text" id="ev-inc-note" placeholder="e.g. From Grandma" maxlength="60" data-i18n-ph="ph_ev_inc_note"/>
         <div class="btn-row">
           <button class="btn primary" onclick="addEventIncome()"><i class="ti ti-plus"></i> <span id="ev-inc-submit-btn">Add income</span></button>
@@ -534,7 +529,7 @@
           <label data-i18n="lbl_custom_category">New category name</label>
           <input type="text" id="ev-exp-custom" placeholder="e.g. Photography, Gifts" maxlength="40"/>
         </div>
-        <label data-i18n="lbl_desc">Description</label>
+        <label data-i18n="lbl_desc">Description (optional)</label>
         <input type="text" id="ev-exp-desc" placeholder="e.g. Cake order, Decorations..." maxlength="60" data-i18n-ph="ph_ev_exp_desc"/>
         <div class="btn-row">
           <button class="btn primary" onclick="addEventExpense()"><i class="ti ti-plus"></i> <span id="ev-exp-submit-btn">Add expense</span></button>
@@ -703,8 +698,6 @@
     <div id="ledger-people-list"></div>
   </div>
 
-  <div id="tab-aicoach" style="display:none" class="tab-content">
-    <div id="tab-aicoach-content"></div>
   </div>
 
   <div id="voice-fab" class="voice-fab" onclick="startVoiceRecognition()" title="Voice Expense Log">
@@ -730,14 +723,38 @@
   <footer>PocketTrack · synced to the cloud · your data, your account</footer>
 </div>
 
+<!-- Bottom Tab Bar — outside .shell so it spans full screen width -->
+<div class="bottom-tab-bar" id="bottom-tab-bar">
+  <button class="bottom-tab active" data-tab="log" onclick="setTab('log')">
+    <i class="ti ti-home"></i>
+    <span>Home</span>
+  </button>
+  <button class="bottom-tab" data-tab="entries" onclick="setTab('entries')">
+    <i class="ti ti-list"></i>
+    <span>Entries</span>
+  </button>
+  <button class="bottom-tab" data-tab="ledger" onclick="setTab('ledger')">
+    <i class="ti ti-notebook"></i>
+    <span>Ledger</span>
+  </button>
+  <button class="bottom-tab" data-tab="report" onclick="setTab('report')">
+    <i class="ti ti-chart-bar"></i>
+    <span>Report</span>
+  </button>
+  <button class="bottom-tab" onclick="openMenu()">
+    <i class="ti ti-menu-2"></i>
+    <span>Menu</span>
+  </button>
+</div>
+
 <script src="app.js"></script>
 <script src="transactions.js"></script>
 <script src="auth.js"></script>
 <script src="onboarding.js"></script>
 <script src="voice.js"></script>
 <script src="ledger.js"></script>
-<script src="aicoach.js"></script>
 <script src="monetization.js"></script>
 </body>
 </html>
+
 

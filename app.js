@@ -880,7 +880,7 @@ function celebrateEntryLogged(btnId){
 }
 
 function setTab(t){
-  ['log','entries','report','events','rewards','upi','language','pro','ledger','aicoach'].forEach((x)=>{
+  ['log','entries','report','events','rewards','upi','language','pro','ledger'].forEach((x)=>{
     const el=document.getElementById('tab-'+x);
     if(el){
       if(x===t){
@@ -896,6 +896,9 @@ function setTab(t){
   document.querySelectorAll('.side-menu-item').forEach(btn=>{
     btn.classList.toggle('active', btn.dataset.tab===t);
   });
+  document.querySelectorAll('.bottom-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.tab===t);
+  });
   document.getElementById('header-stat-pills').style.display = (t==='log'||t==='entries') ? 'flex' : 'none';
   if(t==='entries')renderEntries();
   if(t==='report'){renderReport();showNextTip();}
@@ -908,9 +911,6 @@ function setTab(t){
   }
   if(t==='pro'){
     if(typeof renderProTab === 'function') renderProTab();
-  }
-  if(t==='aicoach'){
-    if(typeof renderAICoachTab === 'function') renderAICoachTab();
   }
   if(t==='rewards')renderRewards();
   if(t==='language')updateLanguageTabUI();
@@ -1171,7 +1171,6 @@ async function addEventIncome(){
   const note=document.getElementById('ev-inc-note').value.trim().slice(0,60);
   const date=document.getElementById('ev-inc-date').value||todayStr();
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
-  if(!note){toast(TT('add_description'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'income',cat:'income',label:src,note,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
@@ -1209,7 +1208,6 @@ async function addEventExpense(){
   const desc=document.getElementById('ev-exp-desc').value.trim().slice(0,60);
   const date=document.getElementById('ev-exp-date').value||todayStr();
   if(!isValidAmount(amt)){toast(TT('enter_valid_amount'),'error');return;}
-  if(!desc){toast(TT('add_description'),'error');return;}
   if(!isValidDate(date)){toast(TT('enter_valid_date'),'error');return;}
   const payload={type:'expense',cat,customCat,label:desc,event:currentEventName,amt:Math.round(amt*100)/100,date};
   try{
@@ -1437,7 +1435,6 @@ async function addSharedIncome(){
   const splitAmong = getSelectedIncSplitAmong();
 
   if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
-  if(!note){ toast(TT('add_description'),'error'); return; }
   if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
   if(!receivedBy || !splitAmong.length){ toast(currentLang==='hi'?'प्राप्तकर्ता और स्प्लिट सदस्य चुनें':'Select who received and who to split with','error'); return; }
 
@@ -1549,7 +1546,6 @@ async function addSharedExpense(){
   const splitAmong = getSelectedSplitAmong();
 
   if(!isValidAmount(amt)){ toast(TT('enter_valid_amount'),'error'); return; }
-  if(!desc){ toast(TT('add_description'),'error'); return; }
   if(!isValidDate(date)){ toast(TT('enter_valid_date'),'error'); return; }
   if(!paidBy || !splitAmong.length){ toast(currentLang==='hi'?'भुगतानकर्ता और स्प्लिट सदस्य चुनें':'Select who paid and who to split with','error'); return; }
 
@@ -2015,3 +2011,12 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt',(e)=>{
   deferredPrompt=e;
 });
+
+// --- Bottom tab bar visibility (hide on the auth/login screen) ---
+function updateBottomBarVisibility(){
+  const bar = document.getElementById('bottom-tab-bar');
+  const auth = document.getElementById('auth-screen');
+  if(!bar) return;
+  const onAuthScreen = auth && auth.style.display !== 'none';
+  bar.style.display = onAuthScreen ? 'none' : 'flex';
+}

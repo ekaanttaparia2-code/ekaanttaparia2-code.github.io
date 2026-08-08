@@ -90,7 +90,7 @@ function logOut(){
 auth.onAuthStateChanged(user=>{
   if(user){
     currentUser=user;
-    document.getElementById('auth-screen').style.display='none';
+    document.getElementById('auth-screen').style.display='none'; if(typeof updateBottomBarVisibility==='function') updateBottomBarVisibility();
     document.getElementById('sync-status').textContent='Synced to cloud';
     listenToEntries();
     listenToEvents();
@@ -101,7 +101,7 @@ auth.onAuthStateChanged(user=>{
     document.getElementById('verify-banner').style.display = user.emailVerified ? 'none' : 'block';
   } else {
     currentUser=null;
-    document.getElementById('auth-screen').style.display='flex';
+    document.getElementById('auth-screen').style.display='flex'; if(typeof updateBottomBarVisibility==='function') updateBottomBarVisibility();
     if(unsubscribeEntries) unsubscribeEntries();
     if(unsubscribeEvents) unsubscribeEvents();
     if(typeof updateVoiceFabVisibility === 'function') updateVoiceFabVisibility();

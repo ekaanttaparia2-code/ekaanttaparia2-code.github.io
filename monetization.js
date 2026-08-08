@@ -14,9 +14,59 @@ const PT_STORE = {
   theme: 'pocketTrack_theme'
 };
 
-const PT_PRICE = '₹199';
-const PT_PERIOD = '/3 months';
+// --- 3-tier pricing model (real-revenue setup) ---
+const PT_PLANS = [
+  { id:'monthly', label:'Monthly', price:99,  period:'/month',  perMonth:99,  tag:'',        highlight:false },
+  { id:'annual',  label:'Annual',  price:599, period:'/year',   perMonth:50,  tag:'BEST VALUE', highlight:true },
+  { id:'life',    label:'Lifetime',price:1499, period:'one-time', perMonth:0, tag:'Own it forever', highlight:false }
+];
+// Default / featured plan used as the anchor (annual).
+const PT_PRICE = '₹599';
+const PT_PERIOD = '/year';
 const PT_CURRENCY = 'INR';
+
+// --- PocketPoints → Pro discount (retention loop from streaks) ---
+// 500 points = ₹50 off any Pro purchase, stackable up to one free month.
+const PT_POINTS_KV = { deduct: 500, rupees: 50, maxMonths: 1, storeKey: 'pocketTrack_points_used' };
+function pocketPointsBalance(){
+  // Reuse the app's real rewards engine when available.
+  if (typeof calculateRewardPoints === 'function') {
+    try { return calculateRewardPoints() || 0; } catch(e){}
+  }
+  return 0;
+}
+function pocketPointsMaxDiscount(){
+  // Cap the discount at one month of the chosen plan (use ₹99 monthly as the cap base).
+  const cashable = Math.floor(pocketPointsBalance() / PT_POINTS_KV.deduct) * PT_POINTS_KV.rupees;
+  return Math.min(cashable, PT_POINTS_KV.maxMonths * PT_PLANS[0].price);
+}
+function pocketPointsUsedToday(){ return Number(localStorage.getItem(PT_POINTS_KV.storeKey) || 0); }
+
+// Reset Pro so you can preview the free experience (also removes locked themes).
+function resetProForPreview(){
+  showAppConfirm(
+    'Turn off Pro and go back to the free version? Your data stays intact — only the Pro unlock is removed.',
+    ()=>{
+      localStorage.removeItem(PT_STORE.pro);
+      localStorage.removeItem(PT_STORE.theme);
+      localStorage.removeItem(PT_STORE.theme + '_pend');
+      if (typeof currentUser !== 'undefined' && currentUser && typeof db !== 'undefined') {
+        db.collection('users').doc(currentUser.uid)
+          .update({ pro: firebase.firestore.FieldValue.delete() })
+          .catch(()=>{});
+      }
+      delete document.body.dataset.theme;
+      if (typeof renderProTab === 'function') renderProTab();
+      toast('Pro reset — you’re on the free tier now.', 'success');
+    },
+    'Reset Pro'
+  );
+}
+
+// Currently selected plan id in the checkout / plan card.
+let selectedPlanId = 'annual';
+function ptGetSelectedPlan(){ return PT_PLANS.find(p=>p.id===selectedPlanId) || PT_PLANS[1]; }
+function ptFormatINR(n){ return '₹' + Number(n).toLocaleString('en-IN'); }
 
 // Ordered list shown in the theme picker. Free themes apply instantly,
 // premium themes require a Pro subscription.
@@ -87,6 +137,21 @@ function renderProTab(){
   const isPro = proEnabled();
   const cur = currentThemeId();
 
+  const planCards = PT_PLANS.map(p=>{
+    const priceLine = p.id==='life' ? `${ptFormatINR(p.price)} ${p.period}` : `${ptFormatINR(p.price)}${p.period}`;
+    const perLine = p.id==='life' ? 'One-time · yours forever' : (p.perMonth ? `≈ ${ptFormatINR(p.perMonth)}/mo` : '');
+    return `
+      <div class="pt-plan ${p.highlight?'featured':''}" onclick="ptPickPlan('${p.id}')" role="button" tabindex="0"
+        onkeydown="if(event.key==='Enter')ptPickPlan('${p.id}')">
+        <div class="pt-plan-top">
+          <span class="pt-plan-name">${p.label}</span>
+          ${p.tag ? `<span class="pt-plan-tag">${p.tag}</span>` : ''}
+        </div>
+        <div class="pt-plan-price">${priceLine}</div>
+        <div class="pt-plan-per">${perLine}</div>
+      </div>`;
+  }).join('');
+
   const planCard = `
     <div class="card" style="padding:18px;background:linear-gradient(135deg, rgba(155,107,255,0.12), rgba(255,126,179,0.08));border-color:rgba(155,107,255,0.25)">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
@@ -99,7 +164,7 @@ function renderProTab(){
             <p style="font-size:11.5px;color:var(--text-dim);margin:2px 0 0">
               ${isPro
                 ? 'You have full access. Enjoy every theme and all premium perks.'
-                : 'Premium themes, future money projection & more — for a tiny cost.'}
+                : 'Premium themes, money projection, AI coach & more.'}
             </p>
           </div>
         </div>
@@ -110,6 +175,11 @@ function renderProTab(){
           ${isPro ? '' : `<br><button class="btn primary" style="margin-top:8px;padding:7px 14px;font-size:12.5px" onclick="openProCheckout()"><i class="ti ti-crown"></i> Get Pro</button>`}
         </div>
       </div>
+      ${isPro
+        ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);text-align:center">
+             <button class="btn" style="font-size:12px" onclick="resetProForPreview()"><i class="ti ti-rotate"></i> Reset Pro (view free experience)</button>
+           </div>`
+        : `<div class="pt-plan-grid" style="margin-top:14px">${planCards}</div>`}
     </div>
   `;
 
@@ -156,7 +226,7 @@ function renderProTab(){
         <li>☁️ Up to 10,000 entries & priority cloud sync</li>
       </ul>
       <button class="btn primary" style="width:100%;margin-top:6px" onclick="openProCheckout()">
-        <i class="ti ti-crown"></i> Unlock Pro — ${PT_PRICE}${PT_PERIOD}
+        <i class="ti ti-crown"></i> Unlock Pro — from ${ptFormatINR(50)}/mo
       </button>
       <p style="font-size:10.5px;color:var(--text-faint);margin:10px 0 0;text-align:center">
         Razorpay-powered. Cancel anytime.
@@ -193,11 +263,19 @@ function openProCheckout(themeName){
       <h3 style="text-align:center;font-family:'Space Grotesk',sans-serif;margin:0 0 2px">PocketTrack Pro</h3>
       <p style="text-align:center;color:var(--text-dim);font-size:12px;margin:0 0 14px">Unlock every theme · money projection · more</p>
 
-      <div style="text-align:center;margin-bottom:16px">
-        <span style="font-size:30px;font-weight:700;font-family:'Space Grotesk',sans-serif">${PT_PRICE}</span>
-        <span style="color:var(--text-dim);font-size:13px">${PT_PERIOD}</span>
+      <div id="pt-selected-summary" style="text-align:center;margin-bottom:14px">
+        <span id="pt-plan-price" style="font-size:30px;font-weight:700;font-family:'Space Grotesk',sans-serif">₹599</span>
+        <span id="pt-plan-period" style="color:var(--text-dim);font-size:13px">/year</span>
         <p style="font-size:10.5px;color:var(--green);margin:2px 0 0">✔ Billed via Razorpay</p>
       </div>
+
+      <div id="pt-plan-tabs" style="display:flex;gap:6px;margin-bottom:8px">
+        ${PT_PLANS.map(p=>`
+          <button class="pt-plan-tab ${p.id===selectedPlanId?'active':''}" data-id="${p.id}" onclick="ptSelectPlan('${p.id}')">
+            ${p.label}${p.tag?`<small> ${p.tag}</small>`:''}
+          </button>`).join('')}
+      </div>
+      <div id="pt-points-line" style="font-size:11px;color:var(--text-dim);text-align:center;margin:0 0 12px"></div>
 
       <div class="pay-tabs" style="display:flex;gap:6px;margin-bottom:12px">
         <button class="pay-tab active" onclick="ptPayTab(this,'upi',event)">UPI</button>
@@ -212,7 +290,7 @@ function openProCheckout(themeName){
       </div>
 
       <button class="btn primary" id="pt-pay-now" style="width:100%;margin-top:12px" onclick="payForPro()">
-        <span id="pt-pay-label">Pay ${PT_PRICE} now</span>
+        <span id="pt-pay-label">Pay now</span>
       </button>
       <button class="btn" style="width:100%;margin-top:8px" onclick="closeProCheckout()">Maybe later</button>
       <p style="text-align:center;font-size:10px;color:var(--text-faint);margin:12px 0 0;display:flex;justify-content:center;gap:4px;align-items:center">
@@ -221,6 +299,44 @@ function openProCheckout(themeName){
     </div>
   `;
   overlay.style.display = 'flex';
+  reflectPlanUI();
+}
+
+// Highlight the chosen plan on the pricing cards in the Pro tab.
+function ptPickPlan(id){
+  document.querySelectorAll('.pt-plan').forEach(el=> el.classList.remove('selected'));
+  document.querySelectorAll('.pt-plan').forEach(el=>{
+    if(el.querySelector('.pt-plan-name') && el.querySelector('.pt-plan-name').textContent.trim()===(PT_PLANS.find(p=>p.id===id)||{}).label){
+      el.classList.add('selected');
+    }
+  });
+  // Remember the choice, then open checkout with that plan.
+  ptSelectPlan(id);
+  openProCheckout();
+}
+
+function reflectPlanUI(){
+  const p = ptGetSelectedPlan();
+  document.getElementById('pt-plan-price').textContent = ptFormatINR(p.price);
+  document.getElementById('pt-plan-period').textContent = ' ' + p.period;
+  document.querySelectorAll('.pt-plan-tab').forEach(b=> b.classList.toggle('active', b.dataset.id===p.id));
+  document.getElementById('pt-pay-label').textContent = 'Pay ' + ptFormatINR(p.price) + ' now';
+
+  // PocketPoints discount affordance (visual only; real money is server-side later).
+  const bal = pocketPointsBalance();
+  const ptsEl = document.getElementById('pt-points-line');
+  if(ptsEl){
+    ptsEl.style.display = bal >= PT_POINTS_KV.deduct ? 'block' : 'none';
+    if(bal >= PT_POINTS_KV.deduct){
+      ptsEl.textContent = `🎟️ ${bal} points — apply ${ptFormatINR(pocketPointsMaxDiscount())} off at checkout`;
+    }
+  }
+}
+
+function ptSelectPlan(id){
+  selectedPlanId = id;
+  document.querySelectorAll('.pt-plan-tab').forEach(b=> b.classList.toggle('active', b.dataset.id===id));
+  reflectPlanUI();
 }
 
 function closeProCheckout(){
@@ -255,14 +371,16 @@ function ptPayTab(btn, method, ev){
       </select>
       <p style="font-size:10.5px;color:var(--text-faint)">Demo checkout, no real money is moved in this preview.</p>`;
   }
-  // Reset the pay button label back to normal.
-  document.getElementById('pt-pay-label').textContent = 'Pay ' + PT_PRICE + ' now';
+  // Reset the pay button label back to normal (selected plan).
+  const p = ptGetSelectedPlan();
+  document.getElementById('pt-pay-label').textContent = 'Pay ' + ptFormatINR(p.price) + ' now';
 }
 
 async function payForPro(){
   const btn = document.getElementById('pt-pay-now');
   const label = document.getElementById('pt-pay-label');
   if(!btn) return;
+  const plan = ptGetSelectedPlan();
   btn.disabled = true;
   label.textContent = 'Verifying payment…';
   document.querySelectorAll('.pay-tab').forEach(b=>b.style.pointerEvents='none');
@@ -272,7 +390,8 @@ async function payForPro(){
 
   setPro(true);
   closeProCheckout();
-  toast('👑 PocketTrack Pro unlocked! Thanks for subscribing.', 'success');
+  const planMsg = plan.id==='life' ? ' lifetime access' : (' ' + plan.label.toLowerCase() + ' plan');
+  toast('👑 PocketTrack Pro unlocked' + planMsg + '! Thanks for subscribing.', 'success');
 
   // Apply any theme they were aiming for (they are Pro now).
   const pend = localStorage.getItem(PT_STORE.theme + '_pend');
